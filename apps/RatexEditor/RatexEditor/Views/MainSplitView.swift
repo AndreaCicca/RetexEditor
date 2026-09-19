@@ -99,16 +99,34 @@ public struct MainSplitView: View {
                 .lineLimit(1)
             
             if isCurrentFileEntryPoint {
-                Text("Entry Point")
+                Text(workspace.entryPointURL == nil ? String(localized: "Active Document") : String(localized: "Entry Point"))
                     .font(.system(size: 9, weight: .bold))
                     .padding(.horizontal, 6)
                     .padding(.vertical, 2)
                     .foregroundStyle(.blue)
                     .liquidGlassCapsule(tint: .blue)
-            } else if let entry = workspace.entryPointURL {
-                Text("(Building: \(entry.lastPathComponent))")
-                    .font(.system(size: 10))
-                    .foregroundStyle(.secondary)
+            } else {
+                if let entry = workspace.entryPointURL {
+                    Text(String.localizedStringWithFormat(NSLocalizedString("(Building: %@)", comment: ""), entry.lastPathComponent))
+                        .font(.system(size: 10))
+                        .foregroundStyle(.secondary)
+                }
+                
+                if let doc = state.documentURL, ["tex", "ltx"].contains(doc.pathExtension.lowercased()) {
+                    Button(action: {
+                        setAsCurrentEntryPoint()
+                    }) {
+                        HStack(spacing: 3) {
+                            Image(systemName: "play.circle.fill")
+                            Text("Compile This File")
+                        }
+                        .font(.system(size: 10, weight: .semibold))
+                        .foregroundStyle(.blue)
+                    }
+                    .buttonStyle(.bordered)
+                    .controlSize(.mini)
+                    .help("Set this file as project entry point and compile it")
+                }
             }
             
             Spacer()
@@ -140,6 +158,17 @@ public struct MainSplitView: View {
                 .padding(.horizontal, 4)
                 .padding(.vertical, 2)
                 .liquidGlass(cornerRadius: 6, isInteractive: true)
+                
+                Button(action: { reloadCurrentFileFromDisk() }) {
+                    Image(systemName: "arrow.clockwise")
+                        .font(.system(size: 9, weight: .semibold))
+                        .padding(4)
+                }
+                .buttonStyle(.plain)
+                .padding(.horizontal, 2)
+                .padding(.vertical, 2)
+                .liquidGlass(cornerRadius: 6, isInteractive: true)
+                .help("Reload active file from disk")
                 
                 Text("•")
                     .font(.system(size: 10))
@@ -270,12 +299,25 @@ public struct MainSplitView: View {
     }
     
     private var isCurrentFileEntryPoint: Bool {
-        guard let doc = state.documentURL, let entry = workspace.entryPointURL else { return false }
+        guard let doc = state.documentURL else { return false }
+        guard let entry = workspace.entryPointURL else { return true }
         return doc.standardizedFileURL == entry.standardizedFileURL
     }
     
-    private func switchToFile(_ newURL: URL) {
-        if let currentURL = state.documentURL {
+    private func setAsCurrentEntryPoint() {
+        guard let doc = state.documentURL else { return }
+        workspace.entryPointURL = doc
+        state.entryPointURL = doc
+        state.scheduleCompilation()
+    }
+    
+    private func reloadCurrentFileFromDisk() {
+        guard let currentURL = state.documentURL else { return }
+        switchToFile(currentURL, forceReload: true)
+    }
+    
+    private func switchToFile(_ newURL: URL, forceReload: Bool = false) {
+        if !forceReload, let currentURL = state.documentURL, currentURL != newURL {
             workspace.flushSaveNow(content: state.source, for: currentURL)
         }
         
@@ -286,6 +328,12 @@ public struct MainSplitView: View {
         workspace.selectedFileURL = newURL
         state.documentURL = newURL
         state.source = newContent
+        
+        // If entrypoint points to an invalid path, reset to active document mode
+        if let entry = workspace.entryPointURL, !FileManager.default.fileExists(atPath: entry.path) {
+            workspace.entryPointURL = nil
+        }
+        
         state.entryPointURL = workspace.entryPointURL
         state.customProjectDirectory = workspace.rootDirectory
         state.scheduleCompilation()
@@ -294,9 +342,9 @@ public struct MainSplitView: View {
     private func exportPDF() {
         guard let data = state.pdfData else { return }
         let panel = NSSavePanel()
-        panel.title = "Export Compiled PDF"
+        panel.title = String(localized: "Export Compiled PDF")
         panel.allowedContentTypes = [.pdf]
-        let baseName = workspace.entryPointURL?.deletingPathExtension().lastPathComponent ?? "document"
+        let baseName = (workspace.entryPointURL ?? state.documentURL)?.deletingPathExtension().lastPathComponent ?? "document"
         panel.nameFieldStringValue = "\(baseName).pdf"
         
         if panel.runModal() == .OK, let url = panel.url {

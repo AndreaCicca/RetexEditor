@@ -92,21 +92,16 @@ public final class WorkspaceModel {
     // MARK: - Open Actions
     
     public func openFolder(url: URL) {
-        self.rootDirectory = url.standardizedFileURL
-        self.selectedFileURL = nil
         self.entryPointURL = nil
-        refreshTree()
-        
-        // Auto-select initial entrypoint (e.g. main.tex, Tesi.tex, or the first .tex file)
-        autoSelectEntryPoint()
+        self.selectedFileURL = nil
+        self.rootDirectory = url.standardizedFileURL
     }
     
     public func openSingleDocument(url: URL) {
         let parentDir = url.deletingLastPathComponent()
-        self.rootDirectory = parentDir.standardizedFileURL
-        refreshTree()
-        self.entryPointURL = url.standardizedFileURL
+        self.entryPointURL = nil
         self.selectedFileURL = url.standardizedFileURL
+        self.rootDirectory = parentDir.standardizedFileURL
     }
     
     public func closeWorkspace() {
@@ -123,6 +118,8 @@ public final class WorkspaceModel {
         guard let root = rootDirectory else {
             fileTree = []
             allTexFiles = []
+            selectedFileURL = nil
+            entryPointURL = nil
             return
         }
         
@@ -130,17 +127,17 @@ public final class WorkspaceModel {
         self.fileTree = tree
         self.allTexFiles = texList
         
-        // Validate entrypoint
+        // Validate entrypoint: if set to a non-existent file, reset to active document mode
         if let entry = entryPointURL, !FileManager.default.fileExists(atPath: entry.path) {
             self.entryPointURL = nil
-            autoSelectEntryPoint()
-        } else if entryPointURL == nil {
-            autoSelectEntryPoint()
         }
         
         // Validate selected file
         if let sel = selectedFileURL, !FileManager.default.fileExists(atPath: sel.path) {
-            self.selectedFileURL = entryPointURL
+            self.selectedFileURL = nil
+            autoSelectInitialFile()
+        } else if selectedFileURL == nil {
+            autoSelectInitialFile()
         }
     }
     
@@ -190,22 +187,21 @@ public final class WorkspaceModel {
         return (nodes, texFiles)
     }
     
-    private func autoSelectEntryPoint() {
+    public func autoSelectInitialFile() {
         guard !allTexFiles.isEmpty else { return }
+        if let sel = selectedFileURL, FileManager.default.fileExists(atPath: sel.path) {
+            return
+        }
         
         // Priority heuristics: Tesi.tex, main.tex, index.tex, or first root .tex
         if let tesi = allTexFiles.first(where: { $0.lastPathComponent.lowercased() == "tesi.tex" }) {
-            entryPointURL = tesi
+            selectedFileURL = tesi
         } else if let main = allTexFiles.first(where: { $0.lastPathComponent.lowercased() == "main.tex" }) {
-            entryPointURL = main
+            selectedFileURL = main
         } else if let rootTex = allTexFiles.first(where: { $0.deletingLastPathComponent().standardizedFileURL == rootDirectory?.standardizedFileURL }) {
-            entryPointURL = rootTex
+            selectedFileURL = rootTex
         } else {
-            entryPointURL = allTexFiles.first
-        }
-        
-        if selectedFileURL == nil {
-            selectedFileURL = entryPointURL
+            selectedFileURL = allTexFiles.first
         }
     }
     
@@ -227,9 +223,6 @@ public final class WorkspaceModel {
         if fileManager.createFile(atPath: targetURL.path, contents: data) {
             refreshTree()
             self.selectedFileURL = targetURL
-            if targetURL.pathExtension.lowercased() == "tex" && entryPointURL == nil {
-                self.entryPointURL = targetURL
-            }
             return targetURL
         }
         return nil
@@ -273,7 +266,8 @@ public final class WorkspaceModel {
         do {
             try FileManager.default.trashItem(at: url, resultingItemURL: nil)
             if selectedFileURL == url {
-                selectedFileURL = entryPointURL
+                selectedFileURL = nil
+                autoSelectInitialFile()
             }
             if entryPointURL == url {
                 entryPointURL = nil
@@ -322,7 +316,7 @@ public final class WorkspaceModel {
             let initialContent = templateSource ?? TeXTemplate.article.source
             try initialContent.write(to: mainTex, atomically: true, encoding: .utf8)
             self.openFolder(url: projectDir)
-            self.entryPointURL = mainTex
+            self.entryPointURL = nil
             self.selectedFileURL = mainTex
             return projectDir
         } catch {

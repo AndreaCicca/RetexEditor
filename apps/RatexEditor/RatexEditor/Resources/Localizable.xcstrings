@@ -214,6 +214,21 @@
         }
       }
     },
+    "Active Document" : {
+
+    },
+    "Active Document (%@)" : {
+
+    },
+    "Active Document (Auto)" : {
+
+    },
+    "Active File" : {
+
+    },
+    "Active: %@" : {
+
+    },
     "Actual Size Text" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -244,6 +259,19 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "alfa"
+          }
+        }
+      }
+    },
+    "Apply a starter LaTeX document template" : {
+
+    },
+    "Applying the '%@' template will replace all text in '%@'. This action can be undone with ⌘Z." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Applying the '%1$@' template will replace all text in '%2$@'. This action can be undone with ⌘Z."
           }
         }
       }
@@ -584,6 +612,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Errore di compilazione"
+          }
+        }
+      }
+    },
+    "Compile This File" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compile This File"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compila questo file"
           }
         }
       }
@@ -1404,6 +1449,9 @@
         }
       }
     },
+    "Follow Active Document (Auto)" : {
+
+    },
     "for all" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1726,6 +1774,9 @@
           }
         }
       }
+    },
+    "Insert Lorem Ipsum dummy text at cursor position" : {
+
     },
     "Insert Multi-paragraph" : {
       "extractionState" : "manual",
@@ -2117,6 +2168,9 @@
           }
         }
       }
+    },
+    "Master: %@" : {
+
     },
     "Math" : {
       "extractionState" : "manual",
@@ -3277,6 +3331,23 @@
         }
       }
     },
+    "Reload active file from disk" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reload active file from disk"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ricarica file attivo da disco"
+          }
+        }
+      }
+    },
     "Rename" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -3324,6 +3395,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Rinomina…"
+          }
+        }
+      }
+    },
+    "Replace Document" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Replace Document"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sostituisci documento"
+          }
+        }
+      }
+    },
+    "Replace Document Content?" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Replace Document Content?"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sostituire il contenuto del documento?"
           }
         }
       }
@@ -3517,6 +3622,9 @@
           }
         }
       }
+    },
+    "Set this file as project entry point and compile it" : {
+
     },
     "Show Diagnostics" : {
       "extractionState" : "manual",
@@ -3892,6 +4000,23 @@
         }
       }
     },
+    "Templates" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Templates"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modelli"
+          }
+        }
+      }
+    },
     "TeX Log" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -3973,6 +4098,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Theta"
+          }
+        }
+      }
+    },
+    "this item" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "this item"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "questo elemento"
           }
         }
       }

@@ -7,6 +7,7 @@ REPO_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
 
 echo "=== Building libtex (Rust C ABI) ==="
 cd "$REPO_ROOT"
+export MACOSX_DEPLOYMENT_TARGET="${MACOSX_DEPLOYMENT_TARGET:-14.0}"
 cargo build --profile ffi-release -p libtex
 
 LIB_PATH="$REPO_ROOT/target/ffi-release/libtex.a"

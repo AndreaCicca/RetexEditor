@@ -29,7 +29,7 @@ public struct ProjectSidebarView: View {
                 Image(systemName: "folder.fill")
                     .foregroundStyle(Color.accentColor)
                     .font(.system(size: 13))
-                Text(workspace.rootDirectory?.lastPathComponent ?? "Project")
+                Text(workspace.rootDirectory?.lastPathComponent ?? String(localized: "Project"))
                     .font(.system(size: 12, weight: .semibold))
                     .lineLimit(1)
                     .truncationMode(.middle)
@@ -147,7 +147,7 @@ public struct ProjectSidebarView: View {
                 Image(systemName: "play.circle.fill")
                     .foregroundStyle(.blue)
                     .font(.caption)
-                Text(workspace.entryPointURL?.lastPathComponent ?? "No Entry")
+                Text(workspace.entryPointURL?.lastPathComponent ?? (workspace.selectedFileURL?.lastPathComponent ?? String(localized: "Active File")))
                     .font(.caption2)
                     .foregroundStyle(.secondary)
                     .lineLimit(1)
@@ -177,7 +177,7 @@ public struct ProjectSidebarView: View {
                 Text("New Document")
                     .font(.headline)
                 
-                Text("Create file inside: \(targetParentDirectory?.lastPathComponent ?? "Project")")
+                Text("Create file inside: \(targetParentDirectory?.lastPathComponent ?? String(localized: "Project"))")
                     .font(.caption)
                     .foregroundStyle(.secondary)
                 
@@ -203,7 +203,7 @@ public struct ProjectSidebarView: View {
                 Text("New Folder")
                     .font(.headline)
                 
-                Text("Create folder inside: \(targetParentDirectory?.lastPathComponent ?? "Project")")
+                Text("Create folder inside: \(targetParentDirectory?.lastPathComponent ?? String(localized: "Project"))")
                     .font(.caption)
                     .foregroundStyle(.secondary)
                 
@@ -258,7 +258,7 @@ public struct ProjectSidebarView: View {
                 }
             }
         } message: {
-            Text("Are you sure you want to move \"\(targetItemToDelete?.lastPathComponent ?? "this item")\" to the Trash?")
+            Text("Are you sure you want to move \"\(targetItemToDelete?.lastPathComponent ?? String(localized: "this item"))\" to the Trash?")
         }
     }
     
@@ -304,7 +304,8 @@ struct FileTreeNodeRow: View {
     }
     
     var isEntryPoint: Bool {
-        workspace.entryPointURL == node.url
+        guard let entry = workspace.entryPointURL else { return false }
+        return entry.standardizedFileURL == node.url.standardizedFileURL
     }
     
     var body: some View {
@@ -406,10 +407,18 @@ struct FileTreeNodeRow: View {
     private var fileContextMenu: some View {
         let ext = node.url.pathExtension.lowercased()
         if ext == "tex" || ext == "ltx" {
-            Button(action: {
-                workspace.entryPointURL = node.url
-            }) {
-                Label("Set as Project Entry Point", systemImage: "play.circle")
+            if workspace.entryPointURL?.standardizedFileURL == node.url.standardizedFileURL {
+                Button(action: {
+                    workspace.entryPointURL = nil
+                }) {
+                    Label("Follow Active Document (Auto)", systemImage: "arrow.triangle.2.circlepath")
+                }
+            } else {
+                Button(action: {
+                    workspace.entryPointURL = node.url
+                }) {
+                    Label("Set as Project Entry Point", systemImage: "play.circle")
+                }
             }
             Divider()
         }

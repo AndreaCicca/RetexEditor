@@ -58,6 +58,10 @@ public final class EditorState {
     @ObservationIgnored
     public var textModifier: ((_ insert: String?, _ wrapPrefix: String?, _ wrapSuffix: String?, _ placeholder: String?) -> Void)? = nil
     
+    // Text full replacement closure hook with Undo support (communicates with NSTextView)
+    @ObservationIgnored
+    public var textReplacer: ((_ newText: String) -> Void)? = nil
+    
     public init(source: String, documentURL: URL? = nil, entryPointURL: URL? = nil) {
         self.source = source
         self.documentURL = documentURL
@@ -84,6 +88,16 @@ public final class EditorState {
         let dir = self.projectDirectory
         
         let targetEntryURL = entryPointURL ?? documentURL
+        
+        // If target file is not a TeX file (e.g. bib, sty, png), do not invoke ratex engine as root entry
+        if let target = targetEntryURL {
+            let ext = target.pathExtension.lowercased()
+            if !["tex", "ltx"].contains(ext) {
+                isCompiling = false
+                return
+            }
+        }
+        
         let entryFilename = targetEntryURL?.lastPathComponent ?? "main.tex"
         
         // Determine what source text to compile as entrypoint
@@ -142,6 +156,8 @@ public final class EditorState {
             filename: entryFilename,
             additionalFiles: additionalFiles
         )
+        
+        guard !Task.isCancelled else { return }
         
         self.isCompiling = false
         self.lastStatus = result.status
@@ -328,6 +344,14 @@ c & d
             modifier(nil, prefix, suffix, placeholder)
         } else {
             self.source.append("\n\(prefix)\(placeholder)\(suffix)")
+        }
+    }
+    
+    public func setSourceWithUndo(_ newText: String) {
+        if let replacer = textReplacer {
+            replacer(newText)
+        } else {
+            self.source = newText
         }
     }
     

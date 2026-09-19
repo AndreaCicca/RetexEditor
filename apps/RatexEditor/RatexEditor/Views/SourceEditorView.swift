@@ -82,9 +82,14 @@ public struct SourceEditorView: NSViewRepresentable {
         context.coordinator.textView = textView
         
         // Connect the state modifier closure
+        // Connect the state modifier closures
         state.textModifier = { [weak textView] insert, wrapPrefix, wrapSuffix, placeholder in
             guard let textView = textView else { return }
             textView.applyWYSIWYG(insert: insert, wrapPrefix: wrapPrefix, wrapSuffix: wrapSuffix, placeholder: placeholder)
+        }
+        state.textReplacer = { [weak textView] newText in
+            guard let textView = textView else { return }
+            textView.replaceAllTextWithUndo(newText: newText)
         }
         
         return scrollView
@@ -121,8 +126,20 @@ public struct SourceEditorView: NSViewRepresentable {
         if context.coordinator.lastSource != state.source && !context.coordinator.isInternalUpdate {
             context.coordinator.lastSource = state.source
             let selectedRanges = textView.selectedRanges
+            let currentLength = (state.source as NSString).length
+            let clampedRanges = textView.selectedRanges.compactMap { val -> NSValue? in
+                let r = val.rangeValue
+                if r.location + r.length <= currentLength {
+                    return val
+                } else if r.location <= currentLength {
+                    return NSValue(range: NSRange(location: r.location, length: currentLength - r.location))
+                } else {
+                    return NSValue(range: NSRange(location: currentLength, length: 0))
+                }
+            }
             textView.string = state.source
             textView.selectedRanges = selectedRanges
+            textView.selectedRanges = clampedRanges.isEmpty ? [NSValue(range: NSRange(location: 0, length: 0))] : clampedRanges
             
             // Re-apply font attributes to new string
             let currentFont = NSFont.monospacedSystemFont(ofSize: state.editorFontSize, weight: .regular)
@@ -213,6 +230,15 @@ final class LaTeXNSTextView: NSTextView {
                 let newCursor = range.location + (prefix as NSString).length + (body as NSString).length
                 self.setSelectedRange(NSRange(location: newCursor, length: 0))
             }
+        }
+    }
+    
+    func replaceAllTextWithUndo(newText: String) {
+        let fullRange = NSRange(location: 0, length: (self.string as NSString).length)
+        if self.shouldChangeText(in: fullRange, replacementString: newText) {
+            self.replaceCharacters(in: fullRange, with: newText)
+            self.didChangeText()
+            self.setSelectedRange(NSRange(location: 0, length: 0))
         }
     }
 }

@@ -160,6 +160,7 @@ struct WorkspaceRootView: View {
                 WelcomeView(workspace: workspace)
             } else {
                 MainSplitView(workspace: workspace)
+                    .id(workspace.rootDirectory)
             }
         }
         .navigationTitle(windowTitle)
@@ -175,6 +176,8 @@ struct WorkspaceRootView: View {
         if let root = workspace.rootDirectory {
             if let entry = workspace.entryPointURL {
                 return "\(root.lastPathComponent) — \(entry.lastPathComponent)"
+            } else if let sel = workspace.selectedFileURL {
+                return "\(root.lastPathComponent) — \(sel.lastPathComponent)"
             }
             return root.lastPathComponent
         }

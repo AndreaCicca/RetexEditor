@@ -6,6 +6,8 @@ public struct WYSIWYGToolbar: View {
     var workspace: WorkspaceModel? = nil
     
     @State private var isStatusHovered = false
+    @State private var pendingTemplate: TeXTemplate? = nil
+    @State private var showingTemplateConfirmation = false
     
     public init(state: EditorState, workspace: WorkspaceModel? = nil) {
         self.state = state
@@ -66,36 +68,24 @@ public struct WYSIWYGToolbar: View {
             .controlSize(.small)
             .fixedSize()
             
-            // Lorem Ipsum & Templates Menu (native macOS bordered menu)
+            // Lorem Ipsum Text Menu (native macOS bordered menu)
             Menu {
-                Section("Document Templates") {
-                    ForEach(TeXTemplate.all) { template in
-                        Button(action: {
-                            state.source = template.source
-                        }) {
-                            Label(template.name, systemImage: template.icon)
-                        }
-                    }
-                }
-                
-                Divider()
-                
-                Section("Lorem Ipsum Text") {
-                    Button("Insert Paragraph") {
-                        state.insertText("""
+                Button("Insert Paragraph") {
+                    state.insertText("""
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
 """)
-                    }
-                    Button("Insert Short Sample") {
-                        state.insertText("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.")
-                    }
-                    Button("Insert Multi-paragraph") {
-                        state.insertText("""
+                }
+                Button("Insert Short Sample") {
+                    state.insertText("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.")
+                }
+                Button("Insert Multi-paragraph") {
+                    state.insertText("""
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur vel hendrerit libero, vitae dapibus nisi. Mauris posuere, velit vel suscipit tincidunt, turpis odio auctor risus, ut dignissim lectus nisl vitae diam.
 
 Nullam ac urna eu felis dapibus condimentum sit amet a augue. Sed non neque elit. Sed ut imperdiet nisi. Proin condimentum fermentum nunc. Etiam pharetra, erat sed fermentum feugiat, velit mauris egestas quam.
+
+Fusce vehicula dolor arcu, sit amet blandit dolor mollis nec. Donec viverra eleifend lacus, vitae ullamcorper metus.
 """)
-                    }
                 }
             } label: {
                 Label("Lorem Ipsum", systemImage: "doc.plaintext")
@@ -103,7 +93,24 @@ Nullam ac urna eu felis dapibus condimentum sit amet a augue. Sed non neque elit
             .menuStyle(.button)
             .controlSize(.small)
             .fixedSize()
-            .help("Insert default templates and Lorem Ipsum dummy text")
+            .help("Insert Lorem Ipsum dummy text at cursor position")
+            
+            // Starter Templates Menu (native macOS bordered menu)
+            Menu {
+                ForEach(TeXTemplate.all) { template in
+                    Button(action: {
+                        handleTemplateSelected(template)
+                    }) {
+                        Label(template.name, systemImage: template.icon)
+                    }
+                }
+            } label: {
+                Label("Templates", systemImage: "doc.badge.ellipsis")
+            }
+            .menuStyle(.button)
+            .controlSize(.small)
+            .fixedSize()
+            .help("Apply a starter LaTeX document template")
             
             Divider()
                 .frame(height: 16)
@@ -153,6 +160,26 @@ Nullam ac urna eu felis dapibus condimentum sit amet a augue. Sed non neque elit
                     Text("Project Entrypoint (Master TeX file):")
                         .font(.caption)
                     Divider()
+                    
+                    Button(action: {
+                        ws.entryPointURL = nil
+                        state.entryPointURL = nil
+                        state.scheduleCompilation()
+                    }) {
+                        HStack {
+                            if let doc = state.documentURL {
+                                Label("Active Document (\(doc.lastPathComponent))", systemImage: "doc.text")
+                            } else {
+                                Label("Active Document (Auto)", systemImage: "doc.text")
+                            }
+                            if ws.entryPointURL == nil {
+                                Image(systemName: "checkmark")
+                            }
+                        }
+                    }
+                    
+                    Divider()
+                    
                     ForEach(ws.allTexFiles, id: \.self) { texURL in
                         Button(action: {
                             ws.entryPointURL = texURL
@@ -161,7 +188,7 @@ Nullam ac urna eu felis dapibus condimentum sit amet a augue. Sed non neque elit
                         }) {
                             HStack {
                                 Text(ws.relativePath(for: texURL))
-                                if texURL == ws.entryPointURL {
+                                if ws.entryPointURL?.standardizedFileURL == texURL.standardizedFileURL {
                                     Image(systemName: "checkmark")
                                 }
                             }
@@ -171,8 +198,16 @@ Nullam ac urna eu felis dapibus condimentum sit amet a augue. Sed non neque elit
                     HStack(spacing: 5) {
                         Image(systemName: "play.circle.fill")
                             .foregroundStyle(.blue)
-                        Text("Entry: \(ws.entryPointURL?.lastPathComponent ?? String(localized: "Select…"))")
-                            .lineLimit(1)
+                        if let entry = ws.entryPointURL {
+                            Text("Master: \(entry.lastPathComponent)")
+                                .lineLimit(1)
+                        } else if let doc = state.documentURL {
+                            Text("Active: \(doc.lastPathComponent)")
+                                .lineLimit(1)
+                        } else {
+                            Text(String(localized: "Active Document"))
+                                .lineLimit(1)
+                        }
                     }
                 }
                 .menuStyle(.button)
@@ -249,5 +284,29 @@ Nullam ac urna eu felis dapibus condimentum sit amet a augue. Sed non neque elit
         .padding(.horizontal, 12)
         .padding(.vertical, 7)
         .liquidGlassBar(hasBottomBorder: true, hasTopHighlight: true)
+        .confirmationDialog(
+            "Replace Document Content?",
+            isPresented: $showingTemplateConfirmation,
+            presenting: pendingTemplate
+        ) { template in
+            Button("Replace Document", role: .destructive) {
+                state.setSourceWithUndo(template.source)
+                pendingTemplate = nil
+            }
+            Button("Cancel", role: .cancel) {
+                pendingTemplate = nil
+            }
+        } message: { template in
+            Text("Applying the '\(template.name)' template will replace all text in '\(state.documentURL?.lastPathComponent ?? "Untitled.tex")'. This action can be undone with ⌘Z.")
+        }
+    }
+    
+    private func handleTemplateSelected(_ template: TeXTemplate) {
+        if state.source.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            state.setSourceWithUndo(template.source)
+        } else {
+            pendingTemplate = template
+            showingTemplateConfirmation = true
+        }
     }
 }

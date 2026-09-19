@@ -86,6 +86,13 @@ public struct DiagnosticsView: View {
                     .textSelection(.enabled)
             }
             .background(Color(nsColor: .textBackgroundColor).opacity(0.85))
+            let contentText = selectedTab == 0
+                ? (state.diagnostics.isEmpty ? String(localized: "No diagnostics or errors reported.") : state.diagnostics)
+                : (state.log.isEmpty ? String(localized: "TeX log is empty.") : state.log)
+            let isErrorText = selectedTab == 0 && state.lastStatus != .success && !state.diagnostics.isEmpty
+
+            ConsoleLogTextView(text: contentText, isError: isErrorText)
+                .background(Color(nsColor: .textBackgroundColor).opacity(0.85))
         }
         .frame(height: 180)
     }
