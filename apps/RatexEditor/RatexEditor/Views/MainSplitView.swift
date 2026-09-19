@@ -95,7 +95,7 @@ public struct MainSplitView: View {
     }
     
     private var editorSubheader: some View {
-        HStack(spacing: 6) {
+        HStack(spacing: 8) {
             Image(systemName: activeFileIcon)
                 .foregroundStyle(.blue)
                 .font(.caption)
@@ -107,11 +107,10 @@ public struct MainSplitView: View {
             if isCurrentFileEntryPoint {
                 Text("Entry Point")
                     .font(.system(size: 9, weight: .bold))
-                    .padding(.horizontal, 5)
-                    .padding(.vertical, 1.5)
-                    .background(Color.blue.opacity(0.2))
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 2)
                     .foregroundStyle(.blue)
-                    .cornerRadius(4)
+                    .liquidGlassCapsule(tint: .blue)
             } else if let entry = workspace.entryPointURL {
                 Text("(Building: \(entry.lastPathComponent))")
                     .font(.system(size: 10))
@@ -120,25 +119,33 @@ public struct MainSplitView: View {
             
             Spacer()
             
-            HStack(spacing: 5) {
-                Button(action: { state.decreaseFontSize() }) {
-                    Image(systemName: "minus")
-                        .font(.system(size: 9, weight: .semibold))
+            HStack(spacing: 8) {
+                // Font Size Stepper in Liquid Glass Capsule
+                HStack(spacing: 4) {
+                    Button(action: { state.decreaseFontSize() }) {
+                        Image(systemName: "minus")
+                            .font(.system(size: 9, weight: .semibold))
+                            .padding(4)
+                    }
+                    .buttonStyle(.plain)
+                    .help("Decrease Font Size (⌘-)")
+                    
+                    Text(String(format: "%.1f pt", state.editorFontSize))
+                        .font(.system(size: 11, weight: .medium, design: .monospaced))
+                        .foregroundStyle(.secondary)
+                        .frame(minWidth: 44, alignment: .center)
+                    
+                    Button(action: { state.increaseFontSize() }) {
+                        Image(systemName: "plus")
+                            .font(.system(size: 9, weight: .semibold))
+                            .padding(4)
+                    }
+                    .buttonStyle(.plain)
+                    .help("Increase Font Size (⌘+)")
                 }
-                .buttonStyle(.plain)
-                .help("Decrease Font Size (⌘-)")
-                
-                Text(String(format: "%.1f pt", state.editorFontSize))
-                    .font(.system(size: 11, weight: .medium, design: .monospaced))
-                    .foregroundStyle(.secondary)
-                    .frame(minWidth: 44, alignment: .center)
-                
-                Button(action: { state.increaseFontSize() }) {
-                    Image(systemName: "plus")
-                        .font(.system(size: 9, weight: .semibold))
-                }
-                .buttonStyle(.plain)
-                .help("Increase Font Size (⌘+)")
+                .padding(.horizontal, 4)
+                .padding(.vertical, 2)
+                .liquidGlass(cornerRadius: 6, isInteractive: true)
                 
                 Text("•")
                     .font(.system(size: 10))
@@ -150,8 +157,8 @@ public struct MainSplitView: View {
             }
         }
         .padding(.horizontal, 14)
-        .padding(.vertical, 7)
-        .background(Color(nsColor: .controlBackgroundColor).opacity(0.5))
+        .padding(.vertical, 6)
+        .liquidGlassBar(hasBottomBorder: true, hasTopHighlight: false)
     }
     
     // MARK: - Preview Pane
@@ -204,19 +211,23 @@ public struct MainSplitView: View {
                 }
                 .help("Fit to Width")
             }
+            .liquidGlass(cornerRadius: 7)
             
             if state.pdfData != nil {
                 Button(action: exportPDF) {
                     Label("Export…", systemImage: "arrow.down.doc")
-                        .font(.system(size: 11))
+                        .font(.system(size: 11, weight: .medium))
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
                 }
-                .buttonStyle(.borderless)
+                .buttonStyle(.plain)
+                .liquidGlass(cornerRadius: 6, isInteractive: true, tint: .blue)
                 .help("Export Master PDF to Disk")
             }
         }
         .padding(.horizontal, 14)
-        .padding(.vertical, 7)
-        .background(Color(nsColor: .controlBackgroundColor).opacity(0.5))
+        .padding(.vertical, 6)
+        .liquidGlassBar(hasBottomBorder: true, hasTopHighlight: false)
     }
     
     @ViewBuilder

@@ -169,10 +169,11 @@ public struct MathPaletteView: View {
         }
         .padding(14)
         .frame(width: 410, height: 370)
+        .liquidGlass(cornerRadius: 14)
     }
 }
 
-// Reusable symbol button with hover effect
+// Reusable symbol button with Liquid Glass hover effect
 struct SymbolButton: View {
     let symbol: MathSymbol
     let onSelect: () -> Void
@@ -181,15 +182,13 @@ struct SymbolButton: View {
     var body: some View {
         Button(action: onSelect) {
             Text(symbol.label)
-                .font(.system(size: 15, weight: .regular, design: .serif))
+                .font(.system(size: 15, weight: .medium, design: .serif))
                 .frame(width: 38, height: 38)
-                .background(
-                    RoundedRectangle(cornerRadius: 6)
-                        .fill(isHovered ? Color.accentColor.opacity(0.18) : Color.primary.opacity(0.06))
-                )
-                .overlay(
-                    RoundedRectangle(cornerRadius: 6)
-                        .stroke(isHovered ? Color.accentColor : Color.primary.opacity(0.12), lineWidth: 1)
+                .liquidGlass(
+                    cornerRadius: 8,
+                    isInteractive: true,
+                    isHovered: isHovered,
+                    tint: isHovered ? Color.accentColor : nil
                 )
         }
         .buttonStyle(.plain)
@@ -198,7 +197,7 @@ struct SymbolButton: View {
     }
 }
 
-// Reusable structure/template button with hover effect
+// Reusable structure/template button with Liquid Glass effect
 struct StructureButton: View {
     let title: String
     let latex: String
@@ -210,10 +209,9 @@ struct StructureButton: View {
         Button(action: onSelect) {
             HStack(spacing: 12) {
                 Text(preview)
-                    .font(.system(size: 14, weight: .bold, design: .serif))
+                    .font(.system(size: 13, weight: .bold, design: .serif))
                     .frame(width: 36, height: 28)
-                    .background(Color.primary.opacity(0.08))
-                    .cornerRadius(4)
+                    .liquidGlass(cornerRadius: 6, isInteractive: true)
                 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(title)
@@ -232,13 +230,11 @@ struct StructureButton: View {
             }
             .padding(.horizontal, 10)
             .padding(.vertical, 6)
-            .background(
-                RoundedRectangle(cornerRadius: 6)
-                    .fill(isHovered ? Color.accentColor.opacity(0.12) : Color.primary.opacity(0.04))
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 6)
-                    .stroke(isHovered ? Color.accentColor.opacity(0.5) : Color.primary.opacity(0.08), lineWidth: 1)
+            .liquidGlass(
+                cornerRadius: 8,
+                isInteractive: true,
+                isHovered: isHovered,
+                tint: isHovered ? Color.accentColor : nil
             )
         }
         .buttonStyle(.plain)

@@ -4,6 +4,8 @@ import AppKit
 public struct DiagnosticsView: View {
     @Bindable var state: EditorState
     @State private var selectedTab = 0
+    @State private var isCopyHovered = false
+    @State private var isCloseHovered = false
     
     public init(state: EditorState) {
         self.state = state
@@ -11,9 +13,7 @@ public struct DiagnosticsView: View {
     
     public var body: some View {
         VStack(spacing: 0) {
-            Divider()
-            
-            // Header bar
+            // Header bar in Liquid Glass
             HStack(spacing: 12) {
                 Picker("", selection: $selectedTab) {
                     Text("Diagnostics").tag(0)
@@ -22,25 +22,32 @@ public struct DiagnosticsView: View {
                 .pickerStyle(.segmented)
                 .labelsHidden()
                 .frame(width: 220)
+                .liquidGlass(cornerRadius: 7)
                 
-                // Status indicator
+                // Status indicator capsule
                 if selectedTab == 0 {
                     if state.diagnostics.isEmpty {
                         HStack(spacing: 4) {
                             Image(systemName: "checkmark.circle.fill")
                                 .foregroundStyle(.green)
                             Text("No errors")
-                                .font(.caption)
+                                .font(.system(size: 11, weight: .medium))
                                 .foregroundStyle(.secondary)
                         }
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 3)
+                        .liquidGlassCapsule(tint: .green)
                     } else {
                         HStack(spacing: 4) {
                             Image(systemName: "exclamationmark.triangle.fill")
                                 .foregroundStyle(.orange)
                             Text("Issues detected")
-                                .font(.caption)
+                                .font(.system(size: 11, weight: .semibold))
                                 .foregroundStyle(.orange)
                         }
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 3)
+                        .liquidGlassCapsule(tint: .orange)
                     }
                 }
                 
@@ -52,22 +59,29 @@ public struct DiagnosticsView: View {
                     NSPasteboard.general.setString(content, forType: .string)
                 }) {
                     Label("Copy", systemImage: "doc.on.doc")
-                        .font(.caption)
+                        .font(.system(size: 11, weight: .medium))
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
                 }
-                .buttonStyle(.borderless)
+                .buttonStyle(.plain)
+                .liquidGlass(cornerRadius: 6, isInteractive: true, isHovered: isCopyHovered)
+                .onHover { isCopyHovered = $0 }
                 .help("Copy content to clipboard")
                 
                 Button(action: { state.isDiagnosticsDrawerOpen = false }) {
-                    Image(systemName: "xmark.circle.fill")
-                        .font(.system(size: 14))
+                    Image(systemName: "xmark")
+                        .font(.system(size: 10, weight: .bold))
                         .foregroundStyle(.secondary)
+                        .padding(5)
                 }
-                .buttonStyle(.borderless)
+                .buttonStyle(.plain)
+                .liquidGlass(cornerRadius: 12, isInteractive: true, isHovered: isCloseHovered)
+                .onHover { isCloseHovered = $0 }
                 .help("Close Diagnostics Drawer")
             }
-            .padding(.horizontal, 10)
+            .padding(.horizontal, 12)
             .padding(.vertical, 6)
-            .background(Color(nsColor: .controlBackgroundColor))
+            .liquidGlassBar(hasBottomBorder: true, hasTopHighlight: true)
             
             // Content
             ScrollView(.vertical) {
@@ -76,10 +90,10 @@ public struct DiagnosticsView: View {
                     .font(.system(size: 11, weight: .regular, design: .monospaced))
                     .foregroundStyle(selectedTab == 0 && state.lastStatus != .success ? Color.red : Color.primary)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(8)
+                    .padding(10)
                     .textSelection(.enabled)
             }
-            .background(Color(nsColor: .textBackgroundColor))
+            .background(Color(nsColor: .textBackgroundColor).opacity(0.85))
         }
         .frame(height: 180)
     }

@@ -19,20 +19,26 @@ public struct WelcomeView: View {
             // Left Pane: Welcome & Main Actions
             VStack(alignment: .leading, spacing: 24) {
                 // App Branding
-                HStack(spacing: 14) {
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 16, style: .continuous)
-                            .fill(LinearGradient(colors: [.blue, .purple], startPoint: .topLeading, endPoint: .bottomTrailing))
+                HStack(spacing: 16) {
+                    if let iconImage = NSImage(named: "AppIcon") ?? NSApp.applicationIconImage {
+                        Image(nsImage: iconImage)
+                            .resizable()
                             .frame(width: 64, height: 64)
-                            .shadow(color: .black.opacity(0.15), radius: 8, x: 0, y: 4)
-                        
-                        Text("TeX")
-                            .font(.system(size: 26, weight: .black, design: .serif))
-                            .foregroundStyle(.white)
+                            .shadow(color: .black.opacity(0.25), radius: 8, x: 0, y: 4)
+                    } else {
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                                .fill(Color(white: 0.15))
+                                .frame(width: 64, height: 64)
+                            Text("R")
+                                .font(.system(size: 32, weight: .bold, design: .serif))
+                                .foregroundStyle(Color.red)
+                        }
+                        .liquidGlass(cornerRadius: 16)
                     }
                     
                     VStack(alignment: .leading, spacing: 4) {
-                        Text("Ratex Editor")
+                        Text("RetexEditor")
                             .font(.system(size: 24, weight: .bold))
                         Text("High-performance Rust TeX engine & live preview")
                             .font(.subheadline)
@@ -148,8 +154,7 @@ public struct WelcomeView: View {
                                     }
                                     .padding(.horizontal, 10)
                                     .padding(.vertical, 8)
-                                    .background(Color(nsColor: .controlBackgroundColor).opacity(0.4))
-                                    .cornerRadius(8)
+                                    .liquidGlass(cornerRadius: 8, isInteractive: true)
                                 }
                                 .buttonStyle(.plain)
                             }
@@ -159,7 +164,7 @@ public struct WelcomeView: View {
             }
             .padding(24)
             .frame(width: 320)
-            .background(Color(nsColor: .controlBackgroundColor).opacity(0.25))
+            .liquidGlassBar(hasBottomBorder: false, hasTopHighlight: false)
         }
         .frame(minWidth: 760, minHeight: 460)
         .overlay(
@@ -255,14 +260,9 @@ struct WelcomeActionButton: View {
                         .foregroundStyle(.secondary)
                 }
             }
-            .padding(.horizontal, 14)
-            .padding(.vertical, 12)
-            .background(isHovered ? Color(nsColor: .controlAccentColor).opacity(0.12) : Color(nsColor: .controlBackgroundColor).opacity(0.5))
-            .cornerRadius(10)
-            .overlay(
-                RoundedRectangle(cornerRadius: 10)
-                    .stroke(isHovered ? Color.accentColor.opacity(0.4) : Color.gray.opacity(0.15), lineWidth: 1)
-            )
+            .padding(.horizontal, 16)
+            .padding(.vertical, 14)
+            .liquidGlassCard(cornerRadius: 12, isHovered: isHovered, accentTint: iconColor)
         }
         .buttonStyle(.plain)
         .onHover { isHovered = $0 }

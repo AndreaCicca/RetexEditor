@@ -25,11 +25,12 @@ public struct ProjectSidebarView: View {
     public var body: some View {
         VStack(spacing: 0) {
             // Sidebar Header
-            HStack(spacing: 6) {
+            HStack(spacing: 8) {
                 Image(systemName: "folder.fill")
                     .foregroundStyle(Color.accentColor)
+                    .font(.system(size: 13))
                 Text(workspace.rootDirectory?.lastPathComponent ?? "Project")
-                    .font(.headline)
+                    .font(.system(size: 12, weight: .semibold))
                     .lineLimit(1)
                     .truncationMode(.middle)
                 
@@ -78,16 +79,17 @@ public struct ProjectSidebarView: View {
                     }
                 } label: {
                     Image(systemName: "ellipsis.circle")
-                        .font(.system(size: 14))
+                        .font(.system(size: 13, weight: .medium))
+                        .foregroundStyle(.secondary)
+                        .padding(3)
                 }
                 .menuStyle(.borderlessButton)
+                .liquidGlass(cornerRadius: 8, isInteractive: true)
                 .fixedSize()
             }
             .padding(.horizontal, 12)
-            .padding(.vertical, 8)
-            .background(Color(nsColor: .controlBackgroundColor).opacity(0.6))
-            
-            Divider()
+            .padding(.vertical, 7)
+            .liquidGlassBar(hasBottomBorder: true, hasTopHighlight: false)
             
             // File Tree List
             if workspace.fileTree.isEmpty {
@@ -140,8 +142,6 @@ public struct ProjectSidebarView: View {
                 .listStyle(.sidebar)
             }
             
-            Divider()
-            
             // Bottom bar: Project entrypoint info & quick actions
             HStack(spacing: 6) {
                 Image(systemName: "play.circle.fill")
@@ -160,14 +160,16 @@ public struct ProjectSidebarView: View {
                     showingNewFileSheet = true
                 }) {
                     Image(systemName: "plus")
-                        .font(.caption)
+                        .font(.system(size: 10, weight: .semibold))
+                        .padding(4)
                 }
-                .buttonStyle(.borderless)
+                .buttonStyle(.plain)
+                .liquidGlass(cornerRadius: 6, isInteractive: true)
                 .help("New File in Project Root")
             }
             .padding(.horizontal, 10)
             .padding(.vertical, 6)
-            .background(Color(nsColor: .controlBackgroundColor).opacity(0.4))
+            .liquidGlassBar(hasBottomBorder: false, hasTopHighlight: true)
         }
         // New File Sheet
         .sheet(isPresented: $showingNewFileSheet) {
@@ -336,7 +338,16 @@ struct FileTreeNodeRow: View {
                 rowLabel
             }
             .buttonStyle(.plain)
-            .listRowBackground(isSelected ? Color.accentColor.opacity(0.18) : Color.clear)
+            .listRowBackground(
+                isSelected
+                    ? RoundedRectangle(cornerRadius: 6, style: .continuous)
+                        .fill(Color.accentColor.opacity(0.18))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 6, style: .continuous)
+                                .strokeBorder(Color.accentColor.opacity(0.35), lineWidth: 0.75)
+                        )
+                    : nil
+            )
             .contextMenu {
                 fileContextMenu
             }
@@ -359,11 +370,10 @@ struct FileTreeNodeRow: View {
             if isEntryPoint {
                 Text("Entry")
                     .font(.system(size: 9, weight: .bold))
-                    .padding(.horizontal, 4)
-                    .padding(.vertical, 1)
-                    .background(Color.blue)
-                    .foregroundStyle(.white)
-                    .cornerRadius(4)
+                    .padding(.horizontal, 5)
+                    .padding(.vertical, 1.5)
+                    .foregroundStyle(.blue)
+                    .liquidGlassCapsule(tint: .blue)
             }
         }
         .contentShape(Rectangle())

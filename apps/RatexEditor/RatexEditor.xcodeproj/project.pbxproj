@@ -24,6 +24,13 @@
 			<key>isa</key>
 			<string>PBXBuildFile</string>
 		</dict>
+		<key>A1C01C01C01C01C01C01C011</key>
+		<dict>
+			<key>fileRef</key>
+			<string>A1C01C01C01C01C01C01C010</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
 		<key>01CC597ABAD15DB9D2376BE0</key>
 		<dict>
 			<key>buildActionMask</key>
@@ -508,6 +515,7 @@
 				<string>3D4AFC07CF3C59CB23B78A75</string>
 				<string>C90AE133133FDDE6B931F5D9</string>
 				<string>2D6C5FF3F0A4792E53002240</string>
+				<string>A1C01C01C01C01C01C01C011</string>
 			</array>
 			<key>isa</key>
 			<string>PBXSourcesBuildPhase</string>
@@ -647,6 +655,17 @@
 			<key>name</key>
 			<string>Release</string>
 		</dict>
+		<key>A1C01C01C01C01C01C01C010</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>LiquidGlass.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
 		<key>D1612EA3F45DF5BA2BE63FF7</key>
 		<dict>
 			<key>isa</key>
@@ -727,6 +746,7 @@
 		<dict>
 			<key>children</key>
 			<array>
+				<string>A1C01C01C01C01C01C01C010</string>
 				<string>F4529BBBC6942CA1D0E54F30</string>
 				<string>6E1BDBF0E8FEA2E92F80AEAE</string>
 				<string>D1612EA3F45DF5BA2BE63FF7</string>
