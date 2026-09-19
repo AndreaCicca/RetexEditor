@@ -5,6 +5,10 @@ public struct MainSplitView: View {
     @Bindable var workspace: WorkspaceModel
     @State private var state: EditorState
     @State private var columnVisibility: NavigationSplitViewVisibility = .all
+    @AppStorage("editor_preview_split_ratio") private var splitRatio: Double = 0.5
+    @State private var isHoveringDivider = false
+    @State private var isDraggingDivider = false
+    @State private var dragStartRatio: CGFloat? = nil
     
     public init(workspace: WorkspaceModel) {
         self.workspace = workspace
@@ -41,10 +45,7 @@ public struct MainSplitView: View {
                 
                 Divider()
                 
-                HSplitView {
-                    editorPane
-                    previewPane
-                }
+                splitPanes
                 
                 if state.isDiagnosticsDrawerOpen {
                     DiagnosticsView(state: state)
@@ -77,6 +78,76 @@ public struct MainSplitView: View {
         ))
     }
     
+    // MARK: - Split Panes
+    
+    private var splitPanes: some View {
+        GeometryReader { geometry in
+            let totalWidth = geometry.size.width
+            let dividerWidth: CGFloat = 16
+            let availableWidth = max(0, totalWidth - dividerWidth)
+            let minEditor: CGFloat = 300
+            let minPreview: CGFloat = 320
+            
+            let safeRatio: CGFloat = {
+                guard availableWidth > (minEditor + minPreview) else { return 0.5 }
+                let minRatio = minEditor / availableWidth
+                let maxRatio = 1.0 - (minPreview / availableWidth)
+                return min(max(CGFloat(splitRatio), minRatio), maxRatio)
+            }()
+            
+            let editorWidth: CGFloat = {
+                guard availableWidth > (minEditor + minPreview) else {
+                    return availableWidth / 2
+                }
+                return availableWidth * safeRatio
+            }()
+            
+            let previewWidth: CGFloat = {
+                guard availableWidth > (minEditor + minPreview) else {
+                    return availableWidth / 2
+                }
+                return availableWidth - editorWidth
+            }()
+            
+            HStack(spacing: 0) {
+                editorPane
+                    .frame(width: editorWidth)
+                    .clipped()
+                
+                ResizeDividerHandle(
+                    isHovering: $isHoveringDivider,
+                    isDragging: $isDraggingDivider,
+                    onDragChanged: { deltaX in
+                        guard availableWidth > (minEditor + minPreview) else { return }
+                        let start = dragStartRatio ?? safeRatio
+                        if dragStartRatio == nil {
+                            dragStartRatio = start
+                        }
+                        let deltaRatio = deltaX / availableWidth
+                        let newRatio = start + deltaRatio
+                        let minRatio = minEditor / availableWidth
+                        let maxRatio = 1.0 - (minPreview / availableWidth)
+                        splitRatio = Double(min(max(newRatio, minRatio), maxRatio))
+                    },
+                    onDragEnded: {
+                        dragStartRatio = nil
+                    },
+                    onResetSplit: {
+                        withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+                            splitRatio = 0.5
+                        }
+                    }
+                )
+                .frame(width: dividerWidth)
+                
+                previewPane
+                    .frame(width: previewWidth)
+                    .clipped()
+            }
+            .frame(width: totalWidth, height: geometry.size.height)
+        }
+    }
+    
     // MARK: - Editor Pane
     
     private var editorPane: some View {
@@ -85,7 +156,6 @@ public struct MainSplitView: View {
             Divider()
             SourceEditorView(state: state)
         }
-        .frame(minWidth: 320, maxWidth: .infinity)
     }
     
     private var editorSubheader: some View {
@@ -192,7 +262,6 @@ public struct MainSplitView: View {
             Divider()
             previewContent
         }
-        .frame(minWidth: 360, maxWidth: .infinity)
     }
     
     private var previewSubheader: some View {
@@ -403,3 +472,113 @@ private struct EditorNotificationsModifier: ViewModifier {
             }
     }
 }
+
+// MARK: - Draggable Split Divider Handle
+
+public struct ResizeDividerHandle: View {
+    @Binding var isHovering: Bool
+    @Binding var isDragging: Bool
+    let onDragChanged: (CGFloat) -> Void
+    let onDragEnded: () -> Void
+    let onResetSplit: () -> Void
+    
+    public init(
+        isHovering: Binding<Bool>,
+        isDragging: Binding<Bool>,
+        onDragChanged: @escaping (CGFloat) -> Void,
+        onDragEnded: @escaping () -> Void,
+        onResetSplit: @escaping () -> Void
+    ) {
+        self._isHovering = isHovering
+        self._isDragging = isDragging
+        self.onDragChanged = onDragChanged
+        self.onDragEnded = onDragEnded
+        self.onResetSplit = onResetSplit
+    }
+    
+    public var body: some View {
+        ZStack {
+            // Full-height 16pt hit area
+            Color.clear
+                .contentShape(Rectangle())
+            
+            // Centered 1pt separator line
+            Rectangle()
+                .fill(Color(nsColor: .separatorColor))
+                .frame(width: 1)
+            
+            // Visual grab handle pill
+            Capsule()
+                .fill(
+                    (isHovering || isDragging)
+                    ? Color.accentColor
+                    : Color.secondary.opacity(0.35)
+                )
+                .frame(width: (isHovering || isDragging) ? 6 : 5, height: 42)
+                .overlay(
+                    VStack(spacing: 3) {
+                        ForEach(0..<3) { _ in
+                            Circle()
+                                .fill(Color.white.opacity((isHovering || isDragging) ? 0.95 : 0.65))
+                                .frame(width: 2, height: 2)
+                        }
+                    }
+                )
+                .shadow(
+                    color: (isHovering || isDragging) ? Color.accentColor.opacity(0.4) : Color.black.opacity(0.1),
+                    radius: (isHovering || isDragging) ? 3 : 1,
+                    y: 1
+                )
+                .animation(.easeInOut(duration: 0.15), value: isHovering || isDragging)
+        }
+        .frame(width: 16)
+        .overlay(ResizeCursorView().allowsHitTesting(false))
+        .onHover { hovering in
+            isHovering = hovering
+            if hovering {
+                NSCursor.resizeLeftRight.push()
+            } else if !isDragging {
+                NSCursor.pop()
+            }
+        }
+        .gesture(
+            DragGesture(minimumDistance: 1, coordinateSpace: .global)
+                .onChanged { gesture in
+                    if !isDragging {
+                        isDragging = true
+                        NSCursor.resizeLeftRight.set()
+                    }
+                    onDragChanged(gesture.translation.width)
+                }
+                .onEnded { _ in
+                    isDragging = false
+                    onDragEnded()
+                    if !isHovering {
+                        NSCursor.arrow.set()
+                    }
+                }
+        )
+        .simultaneousGesture(
+            TapGesture(count: 2).onEnded {
+                onResetSplit()
+            }
+        )
+        .help(String(localized: "Drag to resize • Double-click to reset (50/50)"))
+    }
+}
+
+private struct ResizeCursorView: NSViewRepresentable {
+    func makeNSView(context: Context) -> CursorHostingNSView {
+        CursorHostingNSView()
+    }
+    
+    func updateNSView(_ nsView: CursorHostingNSView, context: Context) {}
+}
+
+private class CursorHostingNSView: NSView {
+    override func resetCursorRects() {
+        super.resetCursorRects()
+        addCursorRect(bounds, cursor: .resizeLeftRight)
+    }
+}
+

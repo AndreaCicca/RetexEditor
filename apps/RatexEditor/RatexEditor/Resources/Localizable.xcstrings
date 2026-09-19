@@ -4,6 +4,23 @@
     "" : {
 
     },
+    "Drag to resize • Double-click to reset (50/50)" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Drag to resize • Double-click to reset (50/50)"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trascina per ridimensionare • Doppio clic per riequilibrare (50/50)"
+          }
+        }
+      }
+    },
     "(Building: %@)" : {
       "extractionState" : "manual",
       "localizations" : {
