@@ -78,13 +78,29 @@ public final class EditorState {
         let entryFilename = documentURL?.lastPathComponent ?? "main.tex"
         let dir = self.projectDirectory
         
-        let additionalFiles: [String: Data]
+        var additionalFiles: [String: Data]
         if let dir = dir {
             additionalFiles = await Task.detached(priority: .userInitiated) {
                 EditorState.loadProjectFiles(from: dir, excludingEntry: entryFilename)
             }.value
         } else {
             additionalFiles = [:]
+        }
+        
+        // Auto-inject bundled babel italian.ldf for Italian documents
+        if additionalFiles["italian.ldf"] == nil {
+            if let bundleLdf = Bundle.main.url(forResource: "italian", withExtension: "ldf"),
+               let data = try? Data(contentsOf: bundleLdf) {
+                additionalFiles["italian.ldf"] = data
+            } else {
+                let devPath = URL(fileURLWithPath: #filePath)
+                    .deletingLastPathComponent()
+                    .deletingLastPathComponent()
+                    .appendingPathComponent("Resources/italian.ldf")
+                if let data = try? Data(contentsOf: devPath) {
+                    additionalFiles["italian.ldf"] = data
+                }
+            }
         }
         
         let result = await RatexEngine.shared.compile(
@@ -118,19 +134,18 @@ public final class EditorState {
             return files
         }
         
-        let allowedExtensions: Set<String> = [
-            "tex", "cls", "sty", "bib", "bst", "bbl", "def", "clo", "cfg",
-            "png", "jpg", "jpeg", "pdf", "svg", "eps", "txt", "dat", "csv"
+        let ignoredExtensions: Set<String> = [
+            "aux", "log", "out", "toc", "nav", "snm", "vrb", "pyc", "dylib", "so", "lock", "py", "sh"
         ]
         
         let baseStandardized = directoryURL.standardizedFileURL.path
         
         for case let fileURL as URL in enumerator {
             let ext = fileURL.pathExtension.lowercased()
-            guard allowedExtensions.contains(ext) else { continue }
+            if ignoredExtensions.contains(ext) { continue }
             
             let pathComponents = fileURL.pathComponents
-            if pathComponents.contains(".git") || pathComponents.contains("build") || pathComponents.contains("target") {
+            if pathComponents.contains(".git") || pathComponents.contains("build") || pathComponents.contains("target") || pathComponents.contains(".venv") || pathComponents.contains("__pycache__") {
                 continue
             }
             
@@ -146,9 +161,9 @@ public final class EditorState {
                 continue
             }
             
-            // Limit to 20MB per asset to avoid memory exhaustion
+            // Limit to 30MB per asset to avoid memory exhaustion
             if let values = try? fileURL.resourceValues(forKeys: [.fileSizeKey]),
-               let size = values.fileSize, size < 20 * 1024 * 1024 {
+               let size = values.fileSize, size < 30 * 1024 * 1024 {
                 if let data = try? Data(contentsOf: fileURL) {
                     files[relativePath] = data
                 }
