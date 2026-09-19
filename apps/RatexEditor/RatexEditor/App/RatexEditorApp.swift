@@ -4,7 +4,7 @@ import SwiftUI
 struct RatexEditorApp: App {
     var body: some Scene {
         DocumentGroup(newDocument: TeXDocument()) { file in
-            DocumentWindow(document: file.$document)
+            DocumentWindow(document: file.$document, fileURL: file.fileURL)
         }
         .commands {
             CommandMenu("Typeset") {
@@ -65,16 +65,21 @@ struct RatexEditorApp: App {
 
 struct DocumentWindow: View {
     @Binding var document: TeXDocument
+    var fileURL: URL?
     @State private var state: EditorState
     
-    init(document: Binding<TeXDocument>) {
+    init(document: Binding<TeXDocument>, fileURL: URL? = nil) {
         self._document = document
-        self._state = State(initialValue: EditorState(source: document.wrappedValue.text))
+        self.fileURL = fileURL
+        self._state = State(initialValue: EditorState(source: document.wrappedValue.text, documentURL: fileURL))
     }
     
     var body: some View {
         MainSplitView(state: state, document: $document)
             .frame(minWidth: 800, minHeight: 600)
+            .onChange(of: fileURL) { _, newURL in
+                state.documentURL = newURL
+            }
             .onReceive(NotificationCenter.default.publisher(for: .recompileRequested)) { _ in
                 Task { @MainActor in
                     await state.compileImmediate()

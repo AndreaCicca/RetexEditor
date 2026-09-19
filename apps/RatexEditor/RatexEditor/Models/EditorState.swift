@@ -33,12 +33,28 @@ public final class EditorState {
     @ObservationIgnored
     private var compileTask: Task<Void, Never>? = nil
     
+    // Project & File state
+    public var documentURL: URL? = nil {
+        didSet {
+            scheduleCompilation()
+        }
+    }
+    public var customProjectDirectory: URL? = nil {
+        didSet {
+            scheduleCompilation()
+        }
+    }
+    public var projectDirectory: URL? {
+        customProjectDirectory ?? documentURL?.deletingLastPathComponent()
+    }
+    
     // Text mutation closure hook (communicates with NSTextView)
     @ObservationIgnored
     public var textModifier: ((_ insert: String?, _ wrapPrefix: String?, _ wrapSuffix: String?, _ placeholder: String?) -> Void)? = nil
     
-    public init(source: String) {
+    public init(source: String, documentURL: URL? = nil) {
         self.source = source
+        self.documentURL = documentURL
         // Initial compilation
         Task { @MainActor in
             await self.compileImmediate()
@@ -59,8 +75,23 @@ public final class EditorState {
     public func compileImmediate() async {
         isCompiling = true
         let currentSource = self.source
+        let entryFilename = documentURL?.lastPathComponent ?? "main.tex"
+        let dir = self.projectDirectory
         
-        let result = await RatexEngine.shared.compile(source: currentSource)
+        let additionalFiles: [String: Data]
+        if let dir = dir {
+            additionalFiles = await Task.detached(priority: .userInitiated) {
+                EditorState.loadProjectFiles(from: dir, excludingEntry: entryFilename)
+            }.value
+        } else {
+            additionalFiles = [:]
+        }
+        
+        let result = await RatexEngine.shared.compile(
+            source: currentSource,
+            filename: entryFilename,
+            additionalFiles: additionalFiles
+        )
         
         self.isCompiling = false
         self.lastStatus = result.status
@@ -73,6 +104,58 @@ public final class EditorState {
         if result.isSuccess, let newPdf = result.pdfData {
             self.pdfData = newPdf
         }
+    }
+    
+    public static func loadProjectFiles(from directoryURL: URL, excludingEntry: String = "main.tex") -> [String: Data] {
+        var files: [String: Data] = [:]
+        let fileManager = FileManager.default
+        
+        guard let enumerator = fileManager.enumerator(
+            at: directoryURL,
+            includingPropertiesForKeys: [.isRegularFileKey, .fileSizeKey],
+            options: [.skipsHiddenFiles, .skipsPackageDescendants]
+        ) else {
+            return files
+        }
+        
+        let allowedExtensions: Set<String> = [
+            "tex", "cls", "sty", "bib", "bst", "bbl", "def", "clo", "cfg",
+            "png", "jpg", "jpeg", "pdf", "svg", "eps", "txt", "dat", "csv"
+        ]
+        
+        let baseStandardized = directoryURL.standardizedFileURL.path
+        
+        for case let fileURL as URL in enumerator {
+            let ext = fileURL.pathExtension.lowercased()
+            guard allowedExtensions.contains(ext) else { continue }
+            
+            let pathComponents = fileURL.pathComponents
+            if pathComponents.contains(".git") || pathComponents.contains("build") || pathComponents.contains("target") {
+                continue
+            }
+            
+            let fullPath = fileURL.standardizedFileURL.path
+            guard fullPath.hasPrefix(baseStandardized) else { continue }
+            
+            var relativePath = String(fullPath.dropFirst(baseStandardized.count))
+            if relativePath.hasPrefix("/") {
+                relativePath.removeFirst()
+            }
+            
+            if relativePath == excludingEntry || fileURL.lastPathComponent == excludingEntry {
+                continue
+            }
+            
+            // Limit to 20MB per asset to avoid memory exhaustion
+            if let values = try? fileURL.resourceValues(forKeys: [.fileSizeKey]),
+               let size = values.fileSize, size < 20 * 1024 * 1024 {
+                if let data = try? Data(contentsOf: fileURL) {
+                    files[relativePath] = data
+                }
+            }
+        }
+        
+        return files
     }
     
     // MARK: - WYSIWYG Actions

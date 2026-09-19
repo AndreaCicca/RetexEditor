@@ -92,6 +92,36 @@ public struct WYSIWYGToolbar: View {
             }
             .help("Open LaTeX Math Symbol Palette")
             
+            // Project Folder Indicator & Selector
+            Menu {
+                if let dir = state.projectDirectory {
+                    Text("Directory: \(dir.path)")
+                        .font(.caption)
+                    Divider()
+                    Button("Change Project Folder…") {
+                        selectProjectFolder()
+                    }
+                    Button("Clear Project Folder") {
+                        state.customProjectDirectory = nil
+                    }
+                } else {
+                    Button("Select Project Folder…") {
+                        selectProjectFolder()
+                    }
+                }
+            } label: {
+                HStack(spacing: 4) {
+                    Image(systemName: state.projectDirectory != nil ? "folder.fill" : "folder.badge.plus")
+                        .foregroundStyle(state.projectDirectory != nil ? Color.accentColor : Color.secondary)
+                    Text(state.projectDirectory?.lastPathComponent ?? "Project Folder")
+                        .font(.caption)
+                        .lineLimit(1)
+                }
+            }
+            .menuStyle(.borderlessButton)
+            .fixedSize()
+            .help(state.projectDirectory?.path ?? "Link document to a project directory for custom .cls, .sty, bib, and images")
+
             Spacer()
             
             // Status & Performance Pill
@@ -143,6 +173,18 @@ public struct WYSIWYGToolbar: View {
         .padding(.horizontal, 10)
         .padding(.vertical, 6)
         .background(Color(nsColor: .windowBackgroundColor))
+    }
+    
+    private func selectProjectFolder() {
+        let panel = NSOpenPanel()
+        panel.canChooseFiles = false
+        panel.canChooseDirectories = true
+        panel.allowsMultipleSelection = false
+        panel.prompt = "Select Project Folder"
+        panel.message = "Choose the directory containing your LaTeX classes (.cls), styles (.sty), bibliographies, and images"
+        if panel.runModal() == .OK, let url = panel.url {
+            state.customProjectDirectory = url
+        }
     }
 }
 
