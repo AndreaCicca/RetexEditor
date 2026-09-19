@@ -4,7 +4,9 @@
 [![Release](https://github.com/leoliu0/ratex/actions/workflows/release.yml/badge.svg)](https://github.com/leoliu0/ratex/actions/workflows/release.yml)
 [![License](https://img.shields.io/badge/license-MIT%2FApache--2.0-blue.svg)](LICENSE)
 
-**ratex** is an ultra-fast, self-contained, pure-Rust TeX engine and typesetting toolchain. Built from scratch with zero unsafe memory compromises, it provides a high-performance, all-in-one replacement for traditional TeX engines and build tools.
+**ratex** is an ultra-fast, self-contained, pure-Rust TeX engine and typesetting toolchain, created and maintained by **Leo Liu** ([github.com/leoliu0/ratex](https://github.com/leoliu0/ratex)). Built from scratch with zero unsafe memory compromises, it faithfully reimplements Donald Knuth's TeX engine state machine (`tex.web`), e-TeX extensions, and the LaTeX format in 100% safe Rust.
+
+It provides a modern, high-performance, all-in-one replacement for traditional TeX engines and build tools (`pdflatex`, `latexmk`, `bibtex`), as well as an embedded C API (`libtex`) that powers **RatexEditor**, a full-featured native macOS IDE.
 
 
 ## Performance Highlights
@@ -140,18 +142,26 @@ sudo ./install.sh
 For the native C API and browser/Node.js WebAssembly module, see
 [Building and using libtex](docs/libraries.md).
 
-The project is structured as a modular Cargo workspace:
+The project is structured as a modular Cargo workspace and native application ecosystem:
 
 ```
 ratex/
 ├── crates/
 │   ├── tex-core/     # Pure-Rust TeX state machine, math layout, line breaking, and PDF generator
-│   ├── tex-kpse/     # In-memory package resolver, font loader, and kpathsea emulator
+│   ├── tex-kpse/     # In-memory package resolver, font loader, and kpathsea emulator (24,000+ packages)
 │   ├── tex-bibtex/   # Native pure-Rust BibTeX interpreter
-│   └── tex-cli/      # Unified multi-pass driver, CLI aliases, and artifact cache
+│   ├── tex-runtime/  # Multi-pass compilation orchestrator and session management
+│   ├── tex-cli/      # Unified multi-pass driver, CLI aliases, and artifact cache
+│   ├── libtex/       # C FFI static/shared library (tex.h) for embedding in native host apps
+│   └── tex-wasm/     # In-memory WebAssembly module for browser and Node.js runtimes
+├── apps/
+│   └── RatexEditor/  # Native macOS IDE (SwiftUI + AppKit + PDFKit) powered in-memory by libtex.a
 ├── packaging/        # Standalone cross-platform distribution installers (Linux, macOS, Windows)
 └── scripts/          # Corpus testing, benchmark suites, and packaging tools
 ```
+
+### RatexEditor (macOS)
+For details on the native macOS desktop application with sub-second in-memory live preview, WYSIWYG editing, and project management, see the [RatexEditor Documentation](apps/RatexEditor/README.md).
 
 ---
 
