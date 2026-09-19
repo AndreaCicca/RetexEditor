@@ -5,6 +5,8 @@ public struct MainSplitView: View {
     @Bindable var state: EditorState
     @Binding var document: TeXDocument
     
+    @Environment(\.undoManager) private var undoManager
+    
     public init(state: EditorState, document: Binding<TeXDocument>) {
         self.state = state
         self._document = document
@@ -94,8 +96,10 @@ public struct MainSplitView: View {
             }
         }
         .onChange(of: state.source) { _, newValue in
-            // Synchronize back with Document model
+            // Synchronize back with Document model without registering per-character undos
+            undoManager?.disableUndoRegistration()
             document.text = newValue
+            undoManager?.enableUndoRegistration()
         }
         .toolbar {
             ToolbarItemGroup(placement: .automatic) {

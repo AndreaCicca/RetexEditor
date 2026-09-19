@@ -25,6 +25,8 @@ public final class EditorState {
     public var isDiagnosticsDrawerOpen: Bool = false
     public var isMathPaletteOpen: Bool = false
     public var zoomScale: CGFloat = 1.0
+    
+    @ObservationIgnored
     public var selectedRange: NSRange = NSRange(location: 0, length: 0)
     
     // Debouncer Task
@@ -46,8 +48,8 @@ public final class EditorState {
     public func scheduleCompilation() {
         compileTask?.cancel()
         compileTask = Task { @MainActor in
-            // 150ms debounce
-            try? await Task.sleep(nanoseconds: 150_000_000)
+            // 350ms debounce for smooth typing without premature recompilations
+            try? await Task.sleep(nanoseconds: 350_000_000)
             guard !Task.isCancelled else { return }
             await self.compileImmediate()
         }

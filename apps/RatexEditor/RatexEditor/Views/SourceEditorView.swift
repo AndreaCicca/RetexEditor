@@ -52,7 +52,8 @@ public struct SourceEditorView: NSViewRepresentable {
     
     public func updateNSView(_ nsView: NSScrollView, context: Context) {
         guard let textView = nsView.documentView as? NSTextView else { return }
-        if textView.string != state.source && !context.coordinator.isUpdatingFromUI {
+        // Only update if changed externally (e.g. from template picker or external reset)
+        if textView.string != state.source && !context.coordinator.isInternalUpdate {
             let selectedRanges = textView.selectedRanges
             textView.string = state.source
             textView.selectedRanges = selectedRanges
@@ -62,7 +63,7 @@ public struct SourceEditorView: NSViewRepresentable {
     public class Coordinator: NSObject, NSTextViewDelegate {
         var parent: SourceEditorView
         weak var textView: NSTextView?
-        var isUpdatingFromUI = false
+        var isInternalUpdate = false
         
         init(_ parent: SourceEditorView) {
             self.parent = parent
@@ -70,10 +71,12 @@ public struct SourceEditorView: NSViewRepresentable {
         
         public func textDidChange(_ notification: Notification) {
             guard let tv = textView else { return }
-            isUpdatingFromUI = true
+            isInternalUpdate = true
             parent.state.source = tv.string
             parent.state.selectedRange = tv.selectedRange()
-            isUpdatingFromUI = false
+            DispatchQueue.main.async {
+                self.isInternalUpdate = false
+            }
         }
         
         public func textViewDidChangeSelection(_ notification: Notification) {
@@ -83,8 +86,12 @@ public struct SourceEditorView: NSViewRepresentable {
     }
 }
 
-// Custom NSTextView with helper for formatting insertions
+// Custom NSTextView with helper for formatting insertions and shared undo manager
 final class LaTeXNSTextView: NSTextView {
+    override var undoManager: UndoManager? {
+        // Share window undoManager so Cmd+Z routes natively and seamlessly
+        return window?.undoManager ?? super.undoManager
+    }
     func applyWYSIWYG(insert: String?, wrapPrefix: String?, wrapSuffix: String?, placeholder: String?) {
         let range = self.selectedRange()
         

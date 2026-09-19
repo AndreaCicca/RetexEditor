@@ -21,6 +21,8 @@ public struct PDFKitRepresentable: NSViewRepresentable {
         pdfView.displaysPageBreaks = true
         pdfView.autoScales = true
         pdfView.backgroundColor = NSColor.windowBackgroundColor
+        pdfView.wantsLayer = true
+        pdfView.layer?.drawsAsynchronously = true
         
         context.coordinator.pdfView = pdfView
         
@@ -36,24 +38,30 @@ public struct PDFKitRepresentable: NSViewRepresentable {
         if context.coordinator.lastData != pdfData {
             context.coordinator.lastData = pdfData
             
-            let currentPage = pdfView.currentPage
-            let currentDestination = pdfView.currentDestination
-            
             if let data = pdfData, let document = PDFDocument(data: data) {
+                CATransaction.begin()
+                CATransaction.setDisableActions(true)
+                
+                let currentDestination = pdfView.currentDestination
+                let currentPage = pdfView.currentPage
+                
                 pdfView.document = document
                 
-                // Restore destination or page so scroll position is preserved during live typing
+                // Restore destination or page so scroll position is preserved without jumping or flickering
                 if let dest = currentDestination, let page = dest.page {
-                    let pageIndex = pdfView.document?.index(for: page) ?? 0
-                    if pageIndex < (pdfView.document?.pageCount ?? 0), let targetPage = pdfView.document?.page(at: pageIndex) {
+                    let pageIndex = document.index(for: page)
+                    if pageIndex != NSNotFound, let targetPage = document.page(at: pageIndex) {
                         pdfView.go(to: PDFDestination(page: targetPage, at: dest.point))
                     }
                 } else if let page = currentPage {
-                    let pageIndex = pdfView.document?.index(for: page) ?? 0
-                    if pageIndex < (pdfView.document?.pageCount ?? 0), let targetPage = pdfView.document?.page(at: pageIndex) {
+                    let pageIndex = document.index(for: page)
+                    let safeIndex = (pageIndex != NSNotFound && pageIndex < document.pageCount) ? pageIndex : 0
+                    if let targetPage = document.page(at: safeIndex) {
                         pdfView.go(to: targetPage)
                     }
                 }
+                
+                CATransaction.commit()
             } else if pdfData == nil {
                 pdfView.document = nil
             }
