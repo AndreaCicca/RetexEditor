@@ -1,11 +1,12 @@
-# RatexEditor (macOS)
+# RetexEditor (macOS)
 
 [![macOS](https://img.shields.io/badge/macOS-14.0%2B-blue.svg)](https://apple.com/macos)
 [![Swift](https://img.shields.io/badge/Swift-5.9%2B%20%2F%20SwiftUI-orange.svg)](https://swift.org)
 [![Rust Engine](https://img.shields.io/badge/Rust%20Engine-ratex%20v0.3.0-green.svg)](https://github.com/leoliu0/ratex)
+[![Repository](https://img.shields.io/badge/GitHub-AndreaCicca%2FRetexEditor-blue.svg)](https://github.com/AndreaCicca/RetexEditor)
 [![License](https://img.shields.io/badge/license-MIT%2FApache--2.0-blue.svg)](../../LICENSE)
 
-**RatexEditor** è un ambiente di sviluppo integrato (IDE) e editor LaTeX completo, moderno e nativo per macOS, sviluppato in **SwiftUI**, **AppKit** e **PDFKit**, alimentato direttamente in memoria dal motore TeX puro in Rust **`ratex`**.
+**RetexEditor** (sviluppato come target Xcode `RatexEditor`) è un ambiente di sviluppo integrato (IDE) e editor LaTeX completo, moderno e nativo per macOS, sviluppato in **SwiftUI**, **AppKit** e **PDFKit**, alimentato direttamente in memoria dal motore TeX puro in Rust **`ratex`**.
 
 A differenza degli editor LaTeX tradizionali (come TeXShop, TeXstudio o VS Code con LaTeX Workshop) che si limitano a invocare script di shell e processi esterni lenti (`pdflatex`, `latexmk`), **RatexEditor incorpora il motore TeX direttamente nel proprio processo**. La compilazione avviene interamente nella RAM in **meno di 10–50 millisecondi**, consentendo una vera esperienza di **Live Preview in tempo reale** senza latenza, senza flickering e senza alcuna necessità di installare TeX Live o MacTeX.
 

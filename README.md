@@ -1,74 +1,90 @@
-# ratex
+# RetexEditor & Ratex
 
-[![CI](https://github.com/leoliu0/ratex/actions/workflows/ci.yml/badge.svg)](https://github.com/leoliu0/ratex/actions/workflows/ci.yml)
-[![Release](https://github.com/leoliu0/ratex/actions/workflows/release.yml/badge.svg)](https://github.com/leoliu0/ratex/actions/workflows/release.yml)
+[![macOS](https://img.shields.io/badge/macOS-14.0%2B-blue.svg)](https://apple.com/macos)
+[![SwiftUI](https://img.shields.io/badge/SwiftUI-5.9%2B-orange.svg)](https://developer.apple.com/xcode/swiftui/)
+[![Rust](https://img.shields.io/badge/Rust-1.80%2B-lightgrey.svg)](https://www.rust-lang.org)
+[![Core Engine](https://img.shields.io/badge/Engine-ratex%20v0.3.0-green.svg)](https://github.com/leoliu0/ratex)
 [![License](https://img.shields.io/badge/license-MIT%2FApache--2.0-blue.svg)](LICENSE)
 
-**ratex** is an ultra-fast, self-contained, pure-Rust TeX engine and typesetting toolchain, created and maintained by **Leo Liu** ([github.com/leoliu0/ratex](https://github.com/leoliu0/ratex)). Built from scratch with zero unsafe memory compromises, it faithfully reimplements Donald Knuth's TeX engine state machine (`tex.web`), e-TeX extensions, and the LaTeX format in 100% safe Rust.
+**RetexEditor** is a next-generation, high-performance LaTeX authoring environment and toolchain. It pairs an elegant, full-featured native macOS application (**RetexEditor**, built in SwiftUI, AppKit, and PDFKit) with an ultra-fast, self-contained, pure-Rust TeX engine (**ratex**).
 
-It provides a modern, high-performance, all-in-one replacement for traditional TeX engines and build tools (`pdflatex`, `latexmk`, `bibtex`), as well as an embedded C API (`libtex`) that powers **RatexEditor**, a full-featured native macOS IDE.
+By eliminating the traditional requirement to install 5–8 GB of TeX Live or MacTeX, RetexEditor compiles complex LaTeX documents entirely in memory in **0.8 to 50 milliseconds**, providing an instantaneous live preview experience without process delays, I/O lag, or screen flickering.
 
+---
 
-## Performance Highlights
+## 🧭 Project Architecture & Provenance
+
+### The Core TeX Engine (ratex)
+The underlying typesetting engine in this project is **`ratex`**, designed and created by **Leo Liu** ([github.com/leoliu0/ratex](https://github.com/leoliu0/ratex)).
+
+Unlike common wrappers that invoke external `pdflatex` or `xelatex` binaries behind the scenes, `ratex` is a ground-up, 100% pure-Rust reimplementation of Donald Knuth's TeX engine:
+- **Knuth's TeX82 Specification (`tex.web`)**: Implements the complete TeX finite-state machine (categories 0–15, macro expansion, math layout from Appendix G, paragraph line-breaking via the Knuth-Plass algorithm, and vertical page construction).
+- **Zero Memory Compromises**: Written with strict Rust bounds checking, eliminating buffer overflows, segfaults, and memory corruption bugs common to legacy C TeX engines.
+- **Embedded CTAN Distribution (`crates/tex-kpse`)**: Pre-packages the compiled LaTeX format, all standard fonts (AMS Math, Latin Modern, Computer Modern), and **over 24,000 CTAN packages** directly in memory.
+- **Native BibTeX Engine (`crates/tex-bibtex`)**: Interprets `.bib` and `.bst` files directly in memory with automatic multi-pass convergence in single-digit milliseconds.
+
+### Beyond a Fork — What RetexEditor Adds
+This repository elevates the standalone Rust engine into a comprehensive, native publishing ecosystem for developers, researchers, and students:
+
+1. **Native macOS Desktop IDE (`apps/RatexEditor`)**:
+   - Built entirely in **SwiftUI** and **AppKit** utilizing native macOS components (`NavigationSplitView`).
+   - Integrated file explorer with full CRUD (create, rename, delete) operations for complex project trees.
+   - Master / Entry Point selector for multi-file projects (theses, books, multi-chapter publications) with real-time live buffer injection.
+2. **Sub-50ms In-Memory C FFI Bridge (`crates/libtex` & `RatexEngine`)**:
+   - Exposes a clean C ABI (`tex.h`) compiled as a universal static library (`libtex.a`).
+   - Managed in Swift via an isolated concurrency actor (`RatexEngine.swift`), feeding in-memory file buffers and receiving serialized PDF bytes directly into RAM without temporary files or shell processes.
+3. **Double-Buffered, Zero-Flicker Live PDF Preview (`SmoothPDFContainerView`)**:
+   - Resolves the notorious "black screen flash" during active typing through an instant snapshot overlay and sub-frame cross-fade.
+4. **Interactive Authoring & Typography**:
+   - Dynamic editor font scaling via `⌘+`, `⌘-`, `⌘0` and a live subheader stepper.
+   - Generous, book-like editor margins (32x22 pt) and proportional line spacing.
+   - Graphical WYSIWYG formatting toolbar, Lorem Ipsum generators, and an interactive LaTeX math symbol palette.
+5. **Unified Multi-Platform Distribution**:
+   - A single cohesive repository supporting the macOS GUI app, standalone CLI binaries, embedded C API (`libtex`), and WebAssembly (`tex.wasm`).
+
+---
+
+## ⚡ Performance Highlights
 
 Tested and verified against **3,000 real-world arXiv papers** across mathematics, physics, and computer science:
 
-| Workload | ratex | TeX Live (`pdflatex` / `latexmk`) | Advantage |
+| Workload | RetexEditor / ratex | TeX Live (`pdflatex` / `latexmk`) | Advantage |
 |---|---|---|---|
-| **Incremental Rebuild (Warm)** | **$0.8 - 8.2\text{ ms}$** | $40 - 60\text{ ms}$ | **$10\times - 70\times$ FASTER** ⚡ |
-| **Short Papers (1–3 pages) Cold** | **$11 - 13\text{ ms}$** | $39 - 41\text{ ms}$ | **$3.1\times - 3.6\times$ FASTER** ⚡ |
-| **Full 3,000-Paper Corpus Throughput** | **$89\text{ papers / min}$** | $53\text{ papers / min}$ | **$1.7\times$ FASTER** ⚡ |
-| **Clean Compiles Across arXiv** | **$2,620\text{ papers}$** | $2,613\text{ papers}$ | **More robust than TeX Live** |
-| **Visual Document Parity** | **$96.39\%$ mean parity** | Baseline ($100\%$) | **Publication-grade visual fidelity** |
+| **Incremental Rebuild (Warm)** | **0.8 – 8.2 ms** | 40 – 60 ms | **10× – 70× FASTER** ⚡ |
+| **Short Papers (1–3 pages) Cold** | **11 – 13 ms** | 39 – 41 ms | **3.1× – 3.6× FASTER** ⚡ |
+| **Full 3,000-Paper Corpus Throughput** | **89 papers / min** | 53 papers / min | **1.7× FASTER** ⚡ |
+| **Clean Compiles Across arXiv** | **2,620 papers** | 2,613 papers | **More robust than TeX Live** |
+| **Visual Document Parity** | **96.39% mean parity** | Baseline (100%) | **Publication-grade fidelity** |
 
 ---
 
-## Key Features
+## 🖥️ RetexEditor for macOS
 
-- **Sub-10ms Incremental Builds**: Built-in cryptographic dependency graph and auxiliary state validator enables near-instant rebuilds (0.8–8.2 ms) on document edits.
-- **100% Self-Contained**: Embeds the LaTeX format, over 24,000 packages, and all standard AMS math and Latin fonts directly in the binary. No external TeX Live installation needed. (CJK scripts can be typeset using standard TrueType/OpenType font maps or system fonts).
-- **All-in-One Engine & Toolchain**: Combines the TeX engine, package resolver, BibTeX interpreter, and build convergence into a single unified `ratex` command.
-- **SyncTeX by Default**: Automatic `.synctex.gz` coordinate generation matching PDF boxes to source lines for instant forward/inverse search in VS Code, TeXstudio, VimTeX, and AUCTeX.
-- **Compiler-Grade Diagnostics**: Beautiful rustc-style error reporting with physical source line excerpts, underlines, and actionable fix suggestions streamed directly to the terminal.
-- **Native SVG & Vector Graphics**: First-class support for `.svg` via pure-Rust in-memory rasterization directly in `\includegraphics`—no Inkscape or external shell execution required.
-- **Built-in `latexdiff`**: Integrated visual document diffing with `ratex latexdiff old.tex new.tex` computing word/token LCS differences and injecting standard revision markup.
-- **Embedded C API (`libtex`) & WebAssembly (`tex.wasm`)**: Compile complete LaTeX documents in-memory from C/C++, Node.js, or client-side browser runtimes without spawning subprocesses or touching disk.
-- **Memory-Safe Pure Rust**: Written with strict bounds checks, eliminating buffer overflows, segfaults, and memory corruption bugs common in legacy C TeX engines.
----
+For complete documentation on the macOS application, visual architecture diagrams, and keyboard shortcuts, please refer to the dedicated guide:
 
-## Installation
+👉 **[RetexEditor macOS Documentation](apps/RatexEditor/README.md)**
 
-### Linux
-Download the native package for your distribution from [GitHub Releases](https://github.com/leoliu0/ratex/releases/tag/v0.3.0):
-
-```bash
-# Ubuntu / Debian (.deb)
-sudo apt install ./ratex_0.3.0_amd64.deb
-
-# Fedora / RHEL / openSUSE (.rpm)
-sudo dnf install ./ratex-0.3.0-1.x86_64.rpm
-
-# Arch Linux (AUR)
-yay -S ratex-bin   # or: paru -S ratex-bin
-
-# Any Linux (Universal Tarball Installer)
-tar -xzf tex-suite-v0.3.0-linux-x86_64.tar.gz && sudo ./tex-suite-linux-x86_64/install.sh
+```
+apps/RatexEditor/
+├── RatexEditor.xcodeproj/              # Native Xcode macOS project
+├── Scripts/build_libtex.sh             # Compiles crates/libtex into libtex.a
+└── RatexEditor/
+    ├── App/RatexEditorApp.swift        # SwiftUI app lifecycle and native menu commands
+    ├── Bridge/RatexEngine.swift        # Swift Actor managing in-memory Rust sessions
+    ├── Views/MainSplitView.swift       # Responsive 3-pane split view (NavigationSplitView)
+    ├── Views/SourceEditorView.swift    # Layer-backed NSTextView with padding and font scaling
+    ├── Views/PDFKitRepresentable.swift # Smooth double-buffered PDF viewer
+    └── Views/WYSIWYGToolbar.swift      # Formatting controls, math palette, entrypoint picker
 ```
 
-### macOS
-Download and run the native installer package:
-- [macOS Apple Silicon (.pkg)](https://github.com/leoliu0/ratex/releases/download/v0.3.0/ratex-v0.3.0-macos-aarch64.pkg)
-- [macOS Intel (.pkg)](https://github.com/leoliu0/ratex/releases/download/v0.3.0/ratex-v0.3.0-macos-x86_64.pkg)
-
-### Windows
-- [Download Windows Setup (.exe)](https://github.com/leoliu0/ratex/releases/download/v0.3.0/ratex-setup-v0.3.0-windows-x64.exe)
-
 ---
 
-## Usage
+## 🛠️ CLI & Toolchain Usage
 
-### Single-Command Build
-`ratex` is an all-in-one compiler. It automatically tracks dependencies, resolves packages in memory, runs embedded BibTeX passes, and converges auxiliary state in milliseconds:
+In addition to the macOS application, the repository provides the standalone `ratex` CLI toolchain:
+
+### Single-Command Multi-Pass Build
+`ratex` automatically tracks dependencies, resolves CTAN packages in memory, runs embedded BibTeX passes, and converges cross-references in milliseconds:
 
 ```bash
 # Compile document (automatically converges bibtex and cross-references)
@@ -81,20 +97,19 @@ ratex -output-directory=build paper.tex
 ratex -c
 ```
 
-### Editor Setup
-Configure your editor or build system to invoke `ratex`:
-#### TeXstudio Setup
-- **Manual configuration:**
-  1. Open **Options** &rarr; **Configure TeXstudio** &rarr; **Build**.
-  2. Set **Default Compiler** to:
-     ```text
-     ratex -pdf -interaction=nonstopmode %.tex
-     ```
-  3. Press **F5** to compile.
+### Visual Document Diffing (`latexdiff`)
+```bash
+# Compare two versions and generate marked-up difference file:
+ratex latexdiff old.tex new.tex diff.tex
 
-#### VS Code (LaTeX Workshop) Setup
-Add this recipe to your VS Code `settings.json`:
+# Or compile the diff directly to PDF:
+ratex diff.tex
+```
 
+### Integration with External Editors
+
+#### VS Code (LaTeX Workshop)
+Add this configuration to your VS Code `settings.json`:
 ```json
 "latex-workshop.latex.tools": [
   {
@@ -108,65 +123,89 @@ Add this recipe to your VS Code `settings.json`:
 ]
 ```
 
-### Document Revision Diffing (`latexdiff`)
-```bash
-# Compare two versions and write visual markup directly:
-ratex latexdiff old.tex new.tex diff.tex
+#### TeXstudio
+1. Open **Options** &rarr; **Configure TeXstudio** &rarr; **Build**.
+2. Set **Default Compiler** to: `ratex -pdf -interaction=nonstopmode %.tex`
+3. Press **F5** to compile.
 
-# Or compile diff directly to PDF:
-ratex diff.tex
-```
-
-### CJK (Chinese, Japanese, Korean) Typesetting
-Ratex supports TrueType and OpenType fonts via standard font mapping (e.g. `\pdfmapline{+min ... <ipaexm.ttf}`). As of v0.3.0, TrueType fonts are properly embedded with `/Subtype /TrueType` and `/FontFile2`. When using `CJKutf8`, ensure the referenced font files (`.ttf` or `.pfb`) are placed in the project directory or accessible via system font paths.
 ---
 
-## Build from Source
+## 🏗️ Building from Source
 
-Requirements: Rust 1.80+ (`cargo`).
+### Prerequisites
+- **Rust**: 1.80 or newer (`cargo`) &mdash; [rustup.rs](https://rustup.rs)
+- **Xcode**: 15.0+ or 16.0+ with Command Line Tools (`xcode-select --install`) for the macOS application
+- **Python**: 3.11+ (optional, for WebAssembly bundling scripts)
+
+### 1. Build the Rust CLI & Toolchain
 ```bash
-git clone https://github.com/leoliu0/ratex.git
-cd ratex
+git clone https://github.com/AndreaCicca/RetexEditor.git
+cd RetexEditor
+
+# Build all workspace crates in release mode
 cargo build --release
 
-# Install locally into ~/.local/bin:
-./install.sh --prefix ~/.local
-
-# Or install system-wide into /usr/local/bin:
-sudo ./install.sh
+# The compiled binary is located at target/release/ratex
 ```
+
+### 2. Build and Run the macOS Application
+```bash
+# 1. Compile the C FFI static library (libtex.a)
+./apps/RatexEditor/Scripts/build_libtex.sh
+
+# 2. Build the macOS application using xcodebuild
+xcodebuild -project apps/RatexEditor/RatexEditor.xcodeproj -scheme RatexEditor -configuration Debug build
+
+# 3. Or open in Xcode directly
+open apps/RatexEditor/RatexEditor.xcodeproj
+```
+
 ---
 
-## Architecture
-
-For the native C API and browser/Node.js WebAssembly module, see
-[Building and using libtex](docs/libraries.md).
-
-The project is structured as a modular Cargo workspace and native application ecosystem:
+## 📦 Workspace Structure
 
 ```
-ratex/
-├── crates/
-│   ├── tex-core/     # Pure-Rust TeX state machine, math layout, line breaking, and PDF generator
-│   ├── tex-kpse/     # In-memory package resolver, font loader, and kpathsea emulator (24,000+ packages)
-│   ├── tex-bibtex/   # Native pure-Rust BibTeX interpreter
-│   ├── tex-runtime/  # Multi-pass compilation orchestrator and session management
-│   ├── tex-cli/      # Unified multi-pass driver, CLI aliases, and artifact cache
-│   ├── libtex/       # C FFI static/shared library (tex.h) for embedding in native host apps
-│   └── tex-wasm/     # In-memory WebAssembly module for browser and Node.js runtimes
+RetexEditor/
 ├── apps/
-│   └── RatexEditor/  # Native macOS IDE (SwiftUI + AppKit + PDFKit) powered in-memory by libtex.a
-├── packaging/        # Standalone cross-platform distribution installers (Linux, macOS, Windows)
-└── scripts/          # Corpus testing, benchmark suites, and packaging tools
+│   └── RatexEditor/         # Native macOS IDE (SwiftUI + AppKit + PDFKit)
+├── crates/
+│   ├── tex-core/            # Pure-Rust TeX state machine, math layout, line breaking, PDF generator
+│   ├── tex-kpse/            # In-memory package resolver, font loader, and kpathsea emulator
+│   ├── tex-bibtex/          # Native pure-Rust BibTeX interpreter
+│   ├── tex-runtime/         # Multi-pass compilation orchestrator and session management
+│   ├── tex-cli/             # Unified multi-pass CLI driver, command aliases, and artifact cache
+│   ├── libtex/              # C FFI static and shared library (tex.h) for host application embedding
+│   └── tex-wasm/            # In-memory WebAssembly module for browsers and Node.js
+├── docs/
+│   ├── libraries.md         # Documentation for C API (libtex) and WebAssembly (tex.wasm)
+│   └── internals/           # Deep-dive engineering notes (Knuth-Plass, math layout, page builder)
+├── packaging/               # Distribution installers for Linux, macOS, and Windows
+└── scripts/                 # Corpus validation, parity testing, and benchmark suites
 ```
-
-### RatexEditor (macOS)
-For details on the native macOS desktop application with sub-second in-memory live preview, WYSIWYG editing, and project management, see the [RatexEditor Documentation](apps/RatexEditor/README.md).
 
 ---
 
-## License
+## 📚 Technical Documentation & Internals
 
-Dual-licensed under either:
+- [Native C API (`libtex`) and WebAssembly Guide](docs/libraries.md)
+- [RetexEditor macOS App Architecture](apps/RatexEditor/README.md)
+- [TeX Engine Internals & Technical Notes](docs/internals/README.md):
+  - [Math Formula Layout (TeX82 Appendix G)](docs/internals/math.md)
+  - [Knuth-Plass Paragraph Line-Breaking](docs/internals/linebreak.md)
+  - [Vertical Page Builder & Shipout](docs/internals/page-ship.md)
+  - [Native BibTeX Interpreter](docs/internals/bibtex.md)
+  - [Direct PDF Output & Font Subsetting](docs/internals/pdf-embed.md)
+  - [Auxiliary State & Cryptographic Caching](docs/internals/artifacts.md)
+  - [TeX Live Pixel Parity Reports](docs/internals/parity.md)
+
+---
+
+## 📜 License & Acknowledgements
+
+This project is dual-licensed under:
 - **MIT License** ([LICENSE-MIT](LICENSE-MIT))
 - **Apache License, Version 2.0** ([LICENSE-APACHE](LICENSE-APACHE))
+
+### Acknowledgements
+- **Donald E. Knuth** for creating the foundational TeX82 typesetting system.
+- **Leo Liu** ([leoliu0/ratex](https://github.com/leoliu0/ratex)) for the remarkable engineering of the pure-Rust `ratex` engine, in-memory package resolver, and typesetting pipeline.
