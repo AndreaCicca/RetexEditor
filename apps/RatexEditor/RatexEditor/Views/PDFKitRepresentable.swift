@@ -1,4 +1,5 @@
 import SwiftUI
+import AppKit
 import PDFKit
 
 public struct PDFKitRepresentable: NSViewRepresentable {
@@ -14,75 +15,152 @@ public struct PDFKitRepresentable: NSViewRepresentable {
         Coordinator()
     }
     
-    public func makeNSView(context: Context) -> PDFView {
-        let pdfView = PDFView()
-        pdfView.displayMode = .singlePageContinuous
-        pdfView.displayDirection = .vertical
-        pdfView.displaysPageBreaks = true
-        pdfView.autoScales = true
-        pdfView.backgroundColor = NSColor.windowBackgroundColor
-        pdfView.wantsLayer = true
-        pdfView.layer?.drawsAsynchronously = true
-        
-        context.coordinator.pdfView = pdfView
-        
-        if let data = pdfData, let document = PDFDocument(data: data) {
-            pdfView.document = document
-        }
-        
-        return pdfView
+    public func makeNSView(context: Context) -> SmoothPDFContainerView {
+        let container = SmoothPDFContainerView()
+        context.coordinator.containerView = container
+        container.updateDocument(data: pdfData, zoomScale: zoomScale)
+        return container
     }
     
-    public func updateNSView(_ pdfView: PDFView, context: Context) {
-        // Only update document if data actually changed
-        if context.coordinator.lastData != pdfData {
-            context.coordinator.lastData = pdfData
-            
-            if let data = pdfData, let document = PDFDocument(data: data) {
-                CATransaction.begin()
-                CATransaction.setDisableActions(true)
-                
-                let currentDestination = pdfView.currentDestination
-                let currentPage = pdfView.currentPage
-                
-                pdfView.document = document
-                
-                // Restore destination or page so scroll position is preserved without jumping or flickering
-                if let dest = currentDestination, let page = dest.page {
-                    let pageIndex = document.index(for: page)
-                    if pageIndex != NSNotFound, let targetPage = document.page(at: pageIndex) {
-                        pdfView.go(to: PDFDestination(page: targetPage, at: dest.point))
-                    }
-                } else if let page = currentPage {
-                    let pageIndex = document.index(for: page)
-                    let safeIndex = (pageIndex != NSNotFound && pageIndex < document.pageCount) ? pageIndex : 0
-                    if let targetPage = document.page(at: safeIndex) {
-                        pdfView.go(to: targetPage)
-                    }
-                }
-                
-                CATransaction.commit()
-            } else if pdfData == nil {
-                pdfView.document = nil
-            }
-        }
-        
-        // Handle explicit scale changes if not auto-scaling
-        if zoomScale != context.coordinator.lastScale {
-            context.coordinator.lastScale = zoomScale
-            if zoomScale > 0 {
-                pdfView.autoScales = false
-                pdfView.scaleFactor = zoomScale
-            } else {
-                pdfView.autoScales = true
-            }
-        }
+    public func updateNSView(_ container: SmoothPDFContainerView, context: Context) {
+        container.updateDocument(data: pdfData, zoomScale: zoomScale)
     }
     
     public class Coordinator {
-        weak var pdfView: PDFView?
-        var lastData: Data? = nil
-        var lastScale: CGFloat = 1.0
+        weak var containerView: SmoothPDFContainerView?
     }
 }
 
+/// Custom container view that hosts PDFView and an overlay snapshot view to eliminate any black flash or flickering on recompile.
+public final class SmoothPDFContainerView: NSView {
+    public let pdfView = PDFView()
+    private let overlayView = NSImageView()
+    private var lastData: Data? = nil
+    private var lastScale: CGFloat = 1.0
+    
+    override init(frame frameRect: NSRect) {
+        super.init(frame: frameRect)
+        setup()
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        setup()
+    }
+    
+    private func setup() {
+        wantsLayer = true
+        layer?.backgroundColor = NSColor.windowBackgroundColor.cgColor
+        
+        pdfView.displayMode = .singlePageContinuous
+        pdfView.displayDirection = .vertical
+        pdfView.displaysPageBreaks = true
+        pdfView.backgroundColor = NSColor.windowBackgroundColor
+        pdfView.wantsLayer = true
+        pdfView.layer?.drawsAsynchronously = false
+        
+        overlayView.imageScaling = .scaleAxesIndependently
+        overlayView.isHidden = true
+        overlayView.wantsLayer = true
+        
+        addSubview(pdfView)
+        addSubview(overlayView)
+    }
+    
+    public override func layout() {
+        super.layout()
+        pdfView.frame = bounds
+        if overlayView.isHidden {
+            overlayView.frame = bounds
+        }
+    }
+    
+    public func updateDocument(data: Data?, zoomScale: CGFloat) {
+        guard let data = data, !data.isEmpty else {
+            pdfView.document = nil
+            overlayView.isHidden = true
+            lastData = nil
+            return
+        }
+        
+        // If data hasn't changed, only update zoom scale if necessary
+        if lastData == data {
+            applyScale(zoomScale)
+            return
+        }
+        
+        // 1. Take snapshot of current view before swapping document to prevent any black frame
+        if pdfView.document != nil && bounds.width > 0 && bounds.height > 0 {
+            if let rep = pdfView.bitmapImageRepForCachingDisplay(in: bounds) {
+                pdfView.cacheDisplay(in: bounds, to: rep)
+                let snapshot = NSImage(size: bounds.size)
+                snapshot.addRepresentation(rep)
+                overlayView.image = snapshot
+                overlayView.frame = bounds
+                overlayView.alphaValue = 1.0
+                overlayView.isHidden = false
+            }
+        }
+        
+        lastData = data
+        
+        guard let newDoc = PDFDocument(data: data) else {
+            overlayView.isHidden = true
+            return
+        }
+        
+        CATransaction.begin()
+        CATransaction.setDisableActions(true)
+        
+        // Save destination & page index
+        let currentDest = pdfView.currentDestination
+        let currentPage = pdfView.currentPage
+        let pageIndex = currentPage != nil ? (pdfView.document?.index(for: currentPage!) ?? 0) : 0
+        
+        // Swap document in-place
+        pdfView.document = newDoc
+        applyScale(zoomScale)
+        
+        // Restore destination or page so scroll position stays locked
+        if let dest = currentDest, let page = dest.page {
+            let idx = newDoc.index(for: page)
+            let safeIdx = (idx != NSNotFound && idx < newDoc.pageCount) ? idx : 0
+            if let targetPage = newDoc.page(at: safeIdx) {
+                pdfView.go(to: PDFDestination(page: targetPage, at: dest.point))
+            }
+        } else if let targetPage = newDoc.page(at: min(pageIndex, newDoc.pageCount - 1)) {
+            pdfView.go(to: targetPage)
+        }
+        
+        CATransaction.commit()
+        
+        // 2. Smoothly fade out overlay once the new document has drawn its pages
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) { [weak self] in
+            guard let self = self else { return }
+            NSAnimationContext.runAnimationGroup({ context in
+                context.duration = 0.06
+                self.overlayView.animator().alphaValue = 0.0
+            }, completionHandler: {
+                self.overlayView.isHidden = true
+                self.overlayView.alphaValue = 1.0
+                self.overlayView.image = nil
+            })
+        }
+    }
+    
+    private func applyScale(_ scale: CGFloat) {
+        guard scale != lastScale else { return }
+        lastScale = scale
+        
+        if scale > 0 {
+            if pdfView.autoScales {
+                pdfView.autoScales = false
+            }
+            if abs(pdfView.scaleFactor - scale) > 0.001 {
+                pdfView.scaleFactor = scale
+            }
+        } else {
+            pdfView.autoScales = true
+        }
+    }
+}

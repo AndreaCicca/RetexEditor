@@ -38,6 +38,13 @@ struct RatexEditorApp: App {
                 .disabled(workspace.rootDirectory == nil)
             }
             
+            CommandGroup(after: .sidebar) {
+                Button("Toggle Sidebar") {
+                    NotificationCenter.default.post(name: .toggleSidebarRequested, object: nil)
+                }
+                .keyboardShortcut("s", modifiers: [.control, .command])
+            }
+            
             CommandMenu("Typeset") {
                 Button("Recompile Document") {
                     NotificationCenter.default.post(name: .recompileRequested, object: nil)
@@ -155,6 +162,7 @@ struct WorkspaceRootView: View {
 
 extension Notification.Name {
     static let newProjectRequested = Notification.Name("ratex.newProjectRequested")
+    static let toggleSidebarRequested = Notification.Name("ratex.toggleSidebarRequested")
     static let recompileRequested = Notification.Name("ratex.recompileRequested")
     static let toggleMathPaletteRequested = Notification.Name("ratex.toggleMathPaletteRequested")
     static let toggleDiagnosticsRequested = Notification.Name("ratex.toggleDiagnosticsRequested")
