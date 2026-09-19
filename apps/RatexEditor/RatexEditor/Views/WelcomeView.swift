@@ -353,3 +353,4 @@ struct NewProjectSheetView: View {
         .frame(width: 440)
     }
 }
+

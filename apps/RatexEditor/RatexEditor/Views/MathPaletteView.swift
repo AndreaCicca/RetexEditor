@@ -92,13 +92,14 @@ public struct MathPaletteView: View {
             .padding(.bottom, 2)
             
             // Category Tabs
-            Picker("Category", selection: $selectedTab) {
+            Picker("", selection: $selectedTab) {
                 Text("Greek").tag(0)
                 Text("Operators").tag(1)
                 Text("Calculus").tag(2)
                 Text("Structures").tag(3)
             }
             .pickerStyle(.segmented)
+            .labelsHidden()
             
             // Content Container
             ScrollView(.vertical, showsIndicators: true) {

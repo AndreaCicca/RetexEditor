@@ -1,21 +1,48 @@
 import SwiftUI
+import AppKit
 
 public struct DiagnosticsView: View {
     @Bindable var state: EditorState
     @State private var selectedTab = 0
+    
+    public init(state: EditorState) {
+        self.state = state
+    }
     
     public var body: some View {
         VStack(spacing: 0) {
             Divider()
             
             // Header bar
-            HStack {
-                Picker("View", selection: $selectedTab) {
+            HStack(spacing: 12) {
+                Picker("", selection: $selectedTab) {
                     Text("Diagnostics").tag(0)
                     Text("TeX Log").tag(1)
                 }
                 .pickerStyle(.segmented)
-                .frame(width: 200)
+                .labelsHidden()
+                .frame(width: 220)
+                
+                // Status indicator
+                if selectedTab == 0 {
+                    if state.diagnostics.isEmpty {
+                        HStack(spacing: 4) {
+                            Image(systemName: "checkmark.circle.fill")
+                                .foregroundStyle(.green)
+                            Text("No errors")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    } else {
+                        HStack(spacing: 4) {
+                            Image(systemName: "exclamationmark.triangle.fill")
+                                .foregroundStyle(.orange)
+                            Text("Issues detected")
+                                .font(.caption)
+                                .foregroundStyle(.orange)
+                        }
+                    }
+                }
                 
                 Spacer()
                 
@@ -25,13 +52,18 @@ public struct DiagnosticsView: View {
                     NSPasteboard.general.setString(content, forType: .string)
                 }) {
                     Label("Copy", systemImage: "doc.on.doc")
+                        .font(.caption)
                 }
                 .buttonStyle(.borderless)
+                .help("Copy content to clipboard")
                 
                 Button(action: { state.isDiagnosticsDrawerOpen = false }) {
-                    Image(systemName: "xmark")
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.system(size: 14))
+                        .foregroundStyle(.secondary)
                 }
                 .buttonStyle(.borderless)
+                .help("Close Diagnostics Drawer")
             }
             .padding(.horizontal, 10)
             .padding(.vertical, 6)
@@ -40,7 +72,7 @@ public struct DiagnosticsView: View {
             // Content
             ScrollView(.vertical) {
                 let content = selectedTab == 0 ? state.diagnostics : state.log
-                Text(content.isEmpty ? "No diagnostics or errors reported." : content)
+                Text(content.isEmpty ? (selectedTab == 0 ? "No diagnostics or errors reported." : "TeX log is empty.") : content)
                     .font(.system(size: 11, weight: .regular, design: .monospaced))
                     .foregroundStyle(selectedTab == 0 && state.lastStatus != .success ? Color.red : Color.primary)
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -49,7 +81,6 @@ public struct DiagnosticsView: View {
             }
             .background(Color(nsColor: .textBackgroundColor))
         }
-        .frame(height: 160)
+        .frame(height: 180)
     }
 }
-
