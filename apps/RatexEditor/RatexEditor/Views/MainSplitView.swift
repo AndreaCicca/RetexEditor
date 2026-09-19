@@ -78,22 +78,6 @@ public struct MainSplitView: View {
                         
                         Spacer()
                         
-                        // Template Insert Menu
-                        Menu {
-                            ForEach(TeXTemplate.all) { template in
-                                Button(action: {
-                                    state.source = template.source
-                                }) {
-                                    Label(template.name, systemImage: template.icon)
-                                }
-                            }
-                        } label: {
-                            Image(systemName: "sparkles")
-                                .font(.caption)
-                        }
-                        .menuStyle(.borderlessButton)
-                        .help("Insert LaTeX Template")
-                        
                         Text("\(state.source.count) chars")
                             .font(.system(size: 11))
                             .foregroundStyle(.tertiary)

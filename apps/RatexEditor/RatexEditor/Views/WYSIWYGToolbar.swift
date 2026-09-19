@@ -74,6 +74,44 @@ public struct WYSIWYGToolbar: View {
             .menuStyle(.borderlessButton)
             .fixedSize()
             
+            // Lorem Ipsum & Templates Menu
+            Menu {
+                Section("Document Templates") {
+                    ForEach(TeXTemplate.all) { template in
+                        Button(action: {
+                            state.source = template.source
+                        }) {
+                            Label(template.name, systemImage: template.icon)
+                        }
+                    }
+                }
+                
+                Divider()
+                
+                Section("Lorem Ipsum Text") {
+                    Button("Insert Paragraph") {
+                        state.insertText("""
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+""")
+                    }
+                    Button("Insert Short Sample") {
+                        state.insertText("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.")
+                    }
+                    Button("Insert Multi-paragraph") {
+                        state.insertText("""
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur vel hendrerit libero, vitae dapibus nisi. Mauris posuere, velit vel suscipit tincidunt, turpis odio auctor risus, ut dignissim lectus nisl vitae diam.
+
+Nullam ac urna eu felis dapibus condimentum sit amet a augue. Sed non neque elit. Sed ut imperdiet nisi. Proin condimentum fermentum nunc. Etiam pharetra, erat sed fermentum feugiat, velit mauris egestas quam.
+""")
+                    }
+                }
+            } label: {
+                Label("Lorem Ipsum", systemImage: "doc.plaintext")
+            }
+            .menuStyle(.borderlessButton)
+            .fixedSize()
+            .help("Insert default templates and Lorem Ipsum dummy text")
+            
             Divider()
                 .frame(height: 18)
             
