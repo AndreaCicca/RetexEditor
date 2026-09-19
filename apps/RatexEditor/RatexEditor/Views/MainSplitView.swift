@@ -81,9 +81,11 @@ public struct MainSplitView: View {
                                 .font(.system(size: 11))
                                 .foregroundStyle(.tertiary)
                         }
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 5)
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 7)
                         .background(Color(nsColor: .controlBackgroundColor).opacity(0.5))
+                        
+                        Divider()
                         
                         SourceEditorView(state: state)
                     }
@@ -140,9 +142,11 @@ public struct MainSplitView: View {
                                 .help("Export Master PDF to Disk")
                             }
                         }
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 5)
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 7)
                         .background(Color(nsColor: .controlBackgroundColor).opacity(0.5))
+                        
+                        Divider()
                         
                         if let pdfData = state.pdfData {
                             PDFKitRepresentable(pdfData: pdfData, zoomScale: state.zoomScale)

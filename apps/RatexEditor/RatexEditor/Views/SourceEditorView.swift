@@ -9,7 +9,7 @@ public struct SourceEditorView: NSViewRepresentable {
     }
     
     public func makeCoordinator() -> Coordinator {
-        Coordinator(self)
+        Coordinator(self, initialSource: state.source)
     }
     
     public func makeNSView(context: Context) -> NSScrollView {
@@ -18,6 +18,11 @@ public struct SourceEditorView: NSViewRepresentable {
         scrollView.hasHorizontalScroller = false
         scrollView.autohidesScrollers = true
         scrollView.borderType = .noBorder
+        scrollView.drawsBackground = true
+        scrollView.backgroundColor = NSColor.textBackgroundColor
+        scrollView.wantsLayer = true
+        scrollView.layer?.backgroundColor = NSColor.textBackgroundColor.cgColor
+        scrollView.layerContentsRedrawPolicy = .onSetNeedsDisplay
         
         let textView = LaTeXNSTextView()
         textView.isRichText = false
@@ -26,13 +31,40 @@ public struct SourceEditorView: NSViewRepresentable {
         textView.isAutomaticDashSubstitutionEnabled = false
         textView.isAutomaticTextReplacementEnabled = false
         textView.isAutomaticSpellingCorrectionEnabled = false
-        textView.font = NSFont.monospacedSystemFont(ofSize: 13, weight: .regular)
+        
+        // Typography & readable styling
+        let font = NSFont.monospacedSystemFont(ofSize: 13.5, weight: .regular)
+        textView.font = font
         textView.textColor = NSColor.labelColor
         textView.backgroundColor = NSColor.textBackgroundColor
+        textView.drawsBackground = true
+        textView.insertionPointColor = NSColor.controlAccentColor
+        textView.wantsLayer = true
+        textView.layer?.backgroundColor = NSColor.textBackgroundColor.cgColor
+        textView.layerContentsRedrawPolicy = .onSetNeedsDisplay
+        
+        // Generous, beautiful padding for optimal readability
+        textView.textContainerInset = NSSize(width: 32, height: 22)
+        textView.textContainer?.lineFragmentPadding = 4
+        
+        // Balanced line height
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineSpacing = 4.5
+        textView.defaultParagraphStyle = paragraphStyle
+        textView.typingAttributes = [
+            .font: font,
+            .foregroundColor: NSColor.labelColor,
+            .paragraphStyle: paragraphStyle
+        ]
+        
+        // Responsive width layout
         textView.autoresizingMask = [.width]
         textView.isVerticallyResizable = true
         textView.isHorizontallyResizable = false
-        textView.textContainer?.containerSize = NSSize(width: scrollView.contentSize.width, height: CGFloat.greatestFiniteMagnitude)
+        textView.textContainer?.containerSize = NSSize(
+            width: scrollView.contentSize.width,
+            height: CGFloat.greatestFiniteMagnitude
+        )
         textView.textContainer?.widthTracksTextView = true
         
         textView.string = state.source
@@ -51,9 +83,11 @@ public struct SourceEditorView: NSViewRepresentable {
     }
     
     public func updateNSView(_ nsView: NSScrollView, context: Context) {
-        guard let textView = nsView.documentView as? NSTextView else { return }
-        // Only update if changed externally (e.g. from template picker or external reset)
-        if textView.string != state.source && !context.coordinator.isInternalUpdate {
+        guard let textView = nsView.documentView as? LaTeXNSTextView else { return }
+        
+        // Only update if source changed externally (NOT during resize or user typing)
+        if context.coordinator.lastSource != state.source && !context.coordinator.isInternalUpdate {
+            context.coordinator.lastSource = state.source
             let selectedRanges = textView.selectedRanges
             textView.string = state.source
             textView.selectedRanges = selectedRanges
@@ -62,17 +96,21 @@ public struct SourceEditorView: NSViewRepresentable {
     
     public class Coordinator: NSObject, NSTextViewDelegate {
         var parent: SourceEditorView
-        weak var textView: NSTextView?
+        weak var textView: LaTeXNSTextView?
         var isInternalUpdate = false
+        var lastSource: String
         
-        init(_ parent: SourceEditorView) {
+        init(_ parent: SourceEditorView, initialSource: String) {
             self.parent = parent
+            self.lastSource = initialSource
         }
         
         public func textDidChange(_ notification: Notification) {
             guard let tv = textView else { return }
             isInternalUpdate = true
-            parent.state.source = tv.string
+            let newText = tv.string
+            lastSource = newText
+            parent.state.source = newText
             parent.state.selectedRange = tv.selectedRange()
             DispatchQueue.main.async {
                 self.isInternalUpdate = false
@@ -92,6 +130,7 @@ final class LaTeXNSTextView: NSTextView {
         // Share window undoManager so Cmd+Z routes natively and seamlessly
         return window?.undoManager ?? super.undoManager
     }
+    
     func applyWYSIWYG(insert: String?, wrapPrefix: String?, wrapSuffix: String?, placeholder: String?) {
         let range = self.selectedRange()
         
@@ -115,4 +154,3 @@ final class LaTeXNSTextView: NSTextView {
         }
     }
 }
-
