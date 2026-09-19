@@ -1,10 +1,30 @@
 import SwiftUI
+import AppKit
 
 public struct WYSIWYGToolbar: View {
     @Bindable var state: EditorState
+    var workspace: WorkspaceModel? = nil
+    var onToggleSidebar: (() -> Void)? = nil
+    
+    public init(state: EditorState, workspace: WorkspaceModel? = nil, onToggleSidebar: (() -> Void)? = nil) {
+        self.state = state
+        self.workspace = workspace
+        self.onToggleSidebar = onToggleSidebar
+    }
     
     public var body: some View {
         HStack(spacing: 8) {
+            // Sidebar Toggle Button
+            if let toggle = onToggleSidebar {
+                Button(action: toggle) {
+                    Image(systemName: "sidebar.left")
+                }
+                .help("Toggle File Explorer Sidebar")
+                
+                Divider()
+                    .frame(height: 18)
+            }
+            
             // Text Formatting Group
             ControlGroup {
                 Button(action: { state.applyBold() }) {
@@ -85,42 +105,49 @@ public struct WYSIWYGToolbar: View {
             
             // Math Palette Popover Button
             Button(action: { state.isMathPaletteOpen.toggle() }) {
-                Label("Math Palette", systemImage: "function")
+                Label("Math", systemImage: "function")
             }
             .popover(isPresented: $state.isMathPaletteOpen, arrowEdge: .bottom) {
                 MathPaletteView(state: state)
             }
             .help("Open LaTeX Math Symbol Palette")
             
-            // Project Folder Indicator & Selector
-            Menu {
-                if let dir = state.projectDirectory {
-                    Text("Directory: \(dir.path)")
+            Divider()
+                .frame(height: 18)
+            
+            // Project Entrypoint Selector
+            if let ws = workspace, !ws.allTexFiles.isEmpty {
+                Menu {
+                    Text("Project Entrypoint (Master TeX file):")
                         .font(.caption)
                     Divider()
-                    Button("Change Project Folder…") {
-                        selectProjectFolder()
+                    ForEach(ws.allTexFiles, id: \.self) { texURL in
+                        Button(action: {
+                            ws.entryPointURL = texURL
+                            state.entryPointURL = texURL
+                            state.scheduleCompilation()
+                        }) {
+                            HStack {
+                                Text(ws.relativePath(for: texURL))
+                                if texURL == ws.entryPointURL {
+                                    Image(systemName: "checkmark")
+                                }
+                            }
+                        }
                     }
-                    Button("Clear Project Folder") {
-                        state.customProjectDirectory = nil
-                    }
-                } else {
-                    Button("Select Project Folder…") {
-                        selectProjectFolder()
+                } label: {
+                    HStack(spacing: 5) {
+                        Image(systemName: "play.circle.fill")
+                            .foregroundStyle(.blue)
+                        Text("Entry: \(ws.entryPointURL?.lastPathComponent ?? "Select…")")
+                            .font(.system(size: 12, weight: .medium))
+                            .lineLimit(1)
                     }
                 }
-            } label: {
-                HStack(spacing: 4) {
-                    Image(systemName: state.projectDirectory != nil ? "folder.fill" : "folder.badge.plus")
-                        .foregroundStyle(state.projectDirectory != nil ? Color.accentColor : Color.secondary)
-                    Text(state.projectDirectory?.lastPathComponent ?? "Project Folder")
-                        .font(.caption)
-                        .lineLimit(1)
-                }
+                .menuStyle(.borderlessButton)
+                .fixedSize()
+                .help("Select LaTeX Project Entry Point (Master File to Compile)")
             }
-            .menuStyle(.borderlessButton)
-            .fixedSize()
-            .help(state.projectDirectory?.path ?? "Link document to a project directory for custom .cls, .sty, bib, and images")
 
             Spacer()
             
@@ -174,17 +201,4 @@ public struct WYSIWYGToolbar: View {
         .padding(.vertical, 6)
         .background(Color(nsColor: .windowBackgroundColor))
     }
-    
-    private func selectProjectFolder() {
-        let panel = NSOpenPanel()
-        panel.canChooseFiles = false
-        panel.canChooseDirectories = true
-        panel.allowsMultipleSelection = false
-        panel.prompt = "Select Project Folder"
-        panel.message = "Choose the directory containing your LaTeX classes (.cls), styles (.sty), bibliographies, and images"
-        if panel.runModal() == .OK, let url = panel.url {
-            state.customProjectDirectory = url
-        }
-    }
 }
-

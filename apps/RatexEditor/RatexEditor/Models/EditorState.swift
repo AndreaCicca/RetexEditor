@@ -39,6 +39,11 @@ public final class EditorState {
             scheduleCompilation()
         }
     }
+    public var entryPointURL: URL? = nil {
+        didSet {
+            scheduleCompilation()
+        }
+    }
     public var customProjectDirectory: URL? = nil {
         didSet {
             scheduleCompilation()
@@ -52,9 +57,10 @@ public final class EditorState {
     @ObservationIgnored
     public var textModifier: ((_ insert: String?, _ wrapPrefix: String?, _ wrapSuffix: String?, _ placeholder: String?) -> Void)? = nil
     
-    public init(source: String, documentURL: URL? = nil) {
+    public init(source: String, documentURL: URL? = nil, entryPointURL: URL? = nil) {
         self.source = source
         self.documentURL = documentURL
+        self.entryPointURL = entryPointURL
         // Initial compilation
         Task { @MainActor in
             await self.compileImmediate()
@@ -74,9 +80,22 @@ public final class EditorState {
     @MainActor
     public func compileImmediate() async {
         isCompiling = true
-        let currentSource = self.source
-        let entryFilename = documentURL?.lastPathComponent ?? "main.tex"
         let dir = self.projectDirectory
+        
+        let targetEntryURL = entryPointURL ?? documentURL
+        let entryFilename = targetEntryURL?.lastPathComponent ?? "main.tex"
+        
+        // Determine what source text to compile as entrypoint
+        let entrySource: String
+        let isEditingEntry = (documentURL == nil || targetEntryURL == nil || documentURL?.standardizedFileURL == targetEntryURL?.standardizedFileURL)
+        
+        if isEditingEntry {
+            entrySource = self.source
+        } else if let targetURL = targetEntryURL, let diskSource = try? String(contentsOf: targetURL, encoding: .utf8) {
+            entrySource = diskSource
+        } else {
+            entrySource = self.source
+        }
         
         var additionalFiles: [String: Data]
         if let dir = dir {
@@ -85,6 +104,20 @@ public final class EditorState {
             }.value
         } else {
             additionalFiles = [:]
+        }
+        
+        // If editing a sub-file (not the entrypoint), inject the active editor buffer into additionalFiles
+        if !isEditingEntry, let docURL = documentURL, let dir = dir {
+            let docPath = docURL.standardizedFileURL.path
+            let dirPath = dir.standardizedFileURL.path
+            if docPath.hasPrefix(dirPath) {
+                var rel = String(docPath.dropFirst(dirPath.count))
+                if rel.hasPrefix("/") { rel.removeFirst() }
+                if let utf8Data = self.source.data(using: .utf8) {
+                    additionalFiles[rel] = utf8Data
+                    additionalFiles[docURL.lastPathComponent] = utf8Data
+                }
+            }
         }
         
         // Auto-inject bundled babel italian.ldf for Italian documents
@@ -104,7 +137,7 @@ public final class EditorState {
         }
         
         let result = await RatexEngine.shared.compile(
-            source: currentSource,
+            source: entrySource,
             filename: entryFilename,
             additionalFiles: additionalFiles
         )

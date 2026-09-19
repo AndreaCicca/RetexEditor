@@ -1,11 +1,13 @@
 import Foundation
 
-public struct TeXTemplate: Identifiable, Sendable {
+public struct TeXTemplate: Identifiable, Sendable, Hashable {
     public let id: String
     public let name: String
     public let icon: String
     public let description: String
     public let source: String
+    
+    public static var article: TeXTemplate { defaultArticle }
     
     public static let defaultArticle = TeXTemplate(
         id: "article",
