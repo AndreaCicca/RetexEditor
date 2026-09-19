@@ -24,8 +24,6 @@
     <string>NSApplication</string>
     <key>CFBundleIconFile</key>
     <string>AppIcon</string>
-    <key>CFBundleIconName</key>
-    <string>AppIcon</string>
     <key>CFBundleDocumentTypes</key>
     <array>
         <dict>

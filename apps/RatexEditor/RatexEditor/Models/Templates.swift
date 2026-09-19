@@ -2,18 +2,36 @@ import Foundation
 
 public struct TeXTemplate: Identifiable, Sendable, Hashable {
     public let id: String
-    public let name: String
+    public var name: String {
+        switch id {
+        case "article": return String(localized: "Academic Article")
+        case "math": return String(localized: "Mathematics & Physics")
+        case "blank": return String(localized: "Minimal Document")
+        default: return id
+        }
+    }
     public let icon: String
-    public let description: String
+    public var description: String {
+        switch id {
+        case "article": return String(localized: "Standard LaTeX article with title, abstract, math equations, and tables.")
+        case "math": return String(localized: "Template rich in calculus, linear algebra, and physics formulas.")
+        case "blank": return String(localized: "A clean, minimal LaTeX starter.")
+        default: return ""
+        }
+    }
     public let source: String
+    
+    public init(id: String, icon: String, source: String) {
+        self.id = id
+        self.icon = icon
+        self.source = source
+    }
     
     public static var article: TeXTemplate { defaultArticle }
     
     public static let defaultArticle = TeXTemplate(
         id: "article",
-        name: "Academic Article",
         icon: "doc.richtext",
-        description: "Standard LaTeX article with title, abstract, math equations, and tables.",
         source: """
 \\documentclass[11pt]{article}
 \\usepackage{amsmath}
@@ -82,9 +100,7 @@ Real-time feedback loops enable true WYSIWYG productivity while retaining the ty
     
     public static let mathCheatSheet = TeXTemplate(
         id: "math",
-        name: "Mathematics & Physics",
         icon: "function",
-        description: "Template rich in calculus, linear algebra, and physics formulas.",
         source: """
 \\documentclass[12pt]{article}
 \\usepackage{amsmath}
@@ -129,9 +145,7 @@ i\\hbar \\frac{\\partial}{\\partial t} \\Psi(\\mathbf{r}, t) = \\left( -\\frac{\
     
     public static let blank = TeXTemplate(
         id: "blank",
-        name: "Minimal Document",
         icon: "doc.text",
-        description: "A clean, minimal LaTeX starter.",
         source: """
 \\documentclass{article}
 

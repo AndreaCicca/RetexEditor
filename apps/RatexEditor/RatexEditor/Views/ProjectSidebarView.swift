@@ -84,7 +84,7 @@ public struct ProjectSidebarView: View {
                         .padding(3)
                 }
                 .menuStyle(.borderlessButton)
-                .liquidGlass(cornerRadius: 8, isInteractive: true)
+                .menuIndicator(.hidden)
                 .fixedSize()
             }
             .padding(.horizontal, 12)
@@ -160,11 +160,11 @@ public struct ProjectSidebarView: View {
                     showingNewFileSheet = true
                 }) {
                     Image(systemName: "plus")
-                        .font(.system(size: 10, weight: .semibold))
+                        .font(.system(size: 11, weight: .semibold))
+                        .foregroundStyle(.secondary)
                         .padding(4)
                 }
-                .buttonStyle(.plain)
-                .liquidGlass(cornerRadius: 6, isInteractive: true)
+                .buttonStyle(.borderless)
                 .help("New File in Project Root")
             }
             .padding(.horizontal, 10)

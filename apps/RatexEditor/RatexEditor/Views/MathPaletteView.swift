@@ -4,13 +4,17 @@ public struct MathSymbol: Identifiable, Sendable {
     public let id: String
     public let label: String
     public let latex: String
-    public let description: String
+    private let rawDescription: String
+    
+    public var description: String {
+        rawDescription.isEmpty ? latex : String(localized: String.LocalizationValue(rawDescription))
+    }
     
     public init(_ label: String, _ latex: String, _ desc: String = "") {
         self.id = latex
         self.label = label
         self.latex = latex
-        self.description = desc.isEmpty ? latex : desc
+        self.rawDescription = desc
     }
 }
 
@@ -214,7 +218,7 @@ struct StructureButton: View {
                     .liquidGlass(cornerRadius: 6, isInteractive: true)
                 
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(title)
+                    Text(LocalizedStringKey(title))
                         .font(.system(size: 12, weight: .semibold))
                     Text(latex)
                         .font(.system(size: 11, design: .monospaced))

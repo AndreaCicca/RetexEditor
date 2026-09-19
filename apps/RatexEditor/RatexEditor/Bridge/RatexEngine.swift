@@ -10,11 +10,11 @@ public enum RatexStatus: UInt32, Sendable {
     
     public var description: String {
         switch self {
-        case .success: return "Success"
-        case .compilationError: return "Compilation Error"
-        case .invalidInput: return "Invalid Input"
-        case .noConvergence: return "Did Not Converge"
-        case .internalError: return "Internal Engine Error"
+        case .success: return String(localized: "Success")
+        case .compilationError: return String(localized: "Compilation Error")
+        case .invalidInput: return String(localized: "Invalid Input")
+        case .noConvergence: return String(localized: "Did Not Converge")
+        case .internalError: return String(localized: "Internal Engine Error")
         }
     }
 }
@@ -62,7 +62,7 @@ public actor RatexEngine {
                 status: .internalError,
                 pdfData: nil,
                 log: "",
-                diagnostics: "Failed to initialize ratex compiler session.",
+                diagnostics: String(localized: "Failed to initialize ratex compiler session."),
                 passes: 0,
                 durationMs: 0,
                 timestamp: Date()
@@ -95,7 +95,7 @@ public actor RatexEngine {
                 status: RatexStatus(rawValue: addStatus) ?? .invalidInput,
                 pdfData: nil,
                 log: "",
-                diagnostics: errString.isEmpty ? "Failed to load input file." : errString,
+                diagnostics: errString.isEmpty ? String(localized: "Failed to load input file.") : errString,
                 passes: 0,
                 durationMs: 0,
                 timestamp: Date()

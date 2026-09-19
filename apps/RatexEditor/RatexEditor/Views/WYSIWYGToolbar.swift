@@ -4,37 +4,17 @@ import AppKit
 public struct WYSIWYGToolbar: View {
     @Bindable var state: EditorState
     var workspace: WorkspaceModel? = nil
-    var onToggleSidebar: (() -> Void)? = nil
     
-    @State private var isCompileHovered = false
-    @State private var isDiagHovered = false
     @State private var isStatusHovered = false
     
-    public init(state: EditorState, workspace: WorkspaceModel? = nil, onToggleSidebar: (() -> Void)? = nil) {
+    public init(state: EditorState, workspace: WorkspaceModel? = nil) {
         self.state = state
         self.workspace = workspace
-        self.onToggleSidebar = onToggleSidebar
     }
     
     public var body: some View {
         HStack(spacing: 8) {
-            // Sidebar Toggle Button
-            if let toggle = onToggleSidebar {
-                Button(action: toggle) {
-                    Image(systemName: "sidebar.left")
-                        .font(.system(size: 12, weight: .medium))
-                        .padding(5)
-                }
-                .buttonStyle(.plain)
-                .liquidGlass(cornerRadius: 6, isInteractive: true)
-                .help("Toggle File Explorer Sidebar (⌘⌃S)")
-                
-                Divider()
-                    .frame(height: 16)
-                    .opacity(0.4)
-            }
-            
-            // Text Formatting Group
+            // Text Formatting Group (native macOS ControlGroup)
             ControlGroup {
                 Button(action: { state.applyBold() }) {
                     Image(systemName: "bold")
@@ -56,9 +36,9 @@ public struct WYSIWYGToolbar: View {
                 }
                 .help("Monospace Code (\\texttt)")
             }
-            .liquidGlass(cornerRadius: 7)
+            .controlSize(.small)
             
-            // Section Headings Menu
+            // Section Headings Menu (native macOS bordered menu)
             Menu {
                 Button("Section (\\section)") { state.insertHeading(level: 1) }
                 Button("Subsection (\\subsection)") { state.insertHeading(level: 2) }
@@ -66,15 +46,12 @@ public struct WYSIWYGToolbar: View {
                 Button("Paragraph (\\paragraph)") { state.insertHeading(level: 4) }
             } label: {
                 Label("Heading", systemImage: "text.quote")
-                    .font(.system(size: 11, weight: .medium))
-                    .padding(.horizontal, 4)
-                    .padding(.vertical, 3)
             }
-            .menuStyle(.borderlessButton)
-            .liquidGlass(cornerRadius: 6, isInteractive: true)
+            .menuStyle(.button)
+            .controlSize(.small)
             .fixedSize()
             
-            // Insert Elements Menu
+            // Insert Elements Menu (native macOS bordered menu)
             Menu {
                 Button("Bullet List (itemize)") { state.insertBulletList() }
                 Button("Numbered List (enumerate)") { state.insertNumberedList() }
@@ -84,15 +61,12 @@ public struct WYSIWYGToolbar: View {
                 Button("Matrix (pmatrix)") { state.insertMatrix() }
             } label: {
                 Label("Insert", systemImage: "plus.app")
-                    .font(.system(size: 11, weight: .medium))
-                    .padding(.horizontal, 4)
-                    .padding(.vertical, 3)
             }
-            .menuStyle(.borderlessButton)
-            .liquidGlass(cornerRadius: 6, isInteractive: true)
+            .menuStyle(.button)
+            .controlSize(.small)
             .fixedSize()
             
-            // Lorem Ipsum & Templates Menu
+            // Lorem Ipsum & Templates Menu (native macOS bordered menu)
             Menu {
                 Section("Document Templates") {
                     ForEach(TeXTemplate.all) { template in
@@ -125,12 +99,9 @@ Nullam ac urna eu felis dapibus condimentum sit amet a augue. Sed non neque elit
                 }
             } label: {
                 Label("Lorem Ipsum", systemImage: "doc.plaintext")
-                    .font(.system(size: 11, weight: .medium))
-                    .padding(.horizontal, 4)
-                    .padding(.vertical, 3)
             }
-            .menuStyle(.borderlessButton)
-            .liquidGlass(cornerRadius: 6, isInteractive: true)
+            .menuStyle(.button)
+            .controlSize(.small)
             .fixedSize()
             .help("Insert default templates and Lorem Ipsum dummy text")
             
@@ -138,7 +109,7 @@ Nullam ac urna eu felis dapibus condimentum sit amet a augue. Sed non neque elit
                 .frame(height: 16)
                 .opacity(0.4)
             
-            // Math Group
+            // Math Group (native macOS ControlGroup)
             ControlGroup {
                 Button(action: { state.insertInlineMath() }) {
                     Text("$…$")
@@ -163,27 +134,20 @@ Nullam ac urna eu felis dapibus condimentum sit amet a augue. Sed non neque elit
                 }
                 .help("Square Root (\\sqrt{x})")
             }
-            .liquidGlass(cornerRadius: 7)
+            .controlSize(.small)
             
             // Math Palette Popover Button
             Button(action: { state.isMathPaletteOpen.toggle() }) {
                 Label("Math", systemImage: "function")
-                    .font(.system(size: 11, weight: .medium))
-                    .padding(.horizontal, 6)
-                    .padding(.vertical, 4)
             }
-            .buttonStyle(.plain)
-            .liquidGlass(cornerRadius: 6, isInteractive: true, tint: state.isMathPaletteOpen ? .blue : nil)
+            .buttonStyle(.bordered)
+            .controlSize(.small)
             .popover(isPresented: $state.isMathPaletteOpen, arrowEdge: .bottom) {
                 MathPaletteView(state: state)
             }
             .help("Open LaTeX Math Symbol Palette (⇧⌘M)")
             
-            Divider()
-                .frame(height: 16)
-                .opacity(0.4)
-            
-            // Project Entrypoint Selector
+            // Project Entrypoint Selector (native macOS bordered menu)
             if let ws = workspace, !ws.allTexFiles.isEmpty {
                 Menu {
                     Text("Project Entrypoint (Master TeX file):")
@@ -207,22 +171,19 @@ Nullam ac urna eu felis dapibus condimentum sit amet a augue. Sed non neque elit
                     HStack(spacing: 5) {
                         Image(systemName: "play.circle.fill")
                             .foregroundStyle(.blue)
-                        Text("Entry: \(ws.entryPointURL?.lastPathComponent ?? "Select…")")
-                            .font(.system(size: 11, weight: .medium))
+                        Text("Entry: \(ws.entryPointURL?.lastPathComponent ?? String(localized: "Select…"))")
                             .lineLimit(1)
                     }
-                    .padding(.horizontal, 6)
-                    .padding(.vertical, 3)
                 }
-                .menuStyle(.borderlessButton)
-                .liquidGlass(cornerRadius: 6, isInteractive: true, tint: .blue)
+                .menuStyle(.button)
+                .controlSize(.small)
                 .fixedSize()
                 .help("Select LaTeX Project Entry Point (Master File to Compile)")
             }
 
             Spacer()
             
-            // Status & Performance Liquid Glass Capsule
+            // Status & Performance Capsule
             HStack(spacing: 6) {
                 if state.isCompiling {
                     ProgressView()
@@ -239,7 +200,11 @@ Nullam ac urna eu felis dapibus condimentum sit amet a augue. Sed non neque elit
                             .fill(Color.green)
                             .frame(width: 6, height: 6)
                     }
-                    Text(String(format: "%.1f ms (%d pass%@)", state.lastDurationMs, state.lastPasses, state.lastPasses == 1 ? "" : "es"))
+                    Text(String.localizedStringWithFormat(
+                        NSLocalizedString("%1$.1f ms (%2$lld passes)", comment: ""),
+                        state.lastDurationMs,
+                        Int64(state.lastPasses)
+                    ))
                         .font(.system(size: 10, weight: .medium, design: .monospaced))
                         .foregroundStyle(.secondary)
                 } else {
@@ -259,37 +224,26 @@ Nullam ac urna eu felis dapibus condimentum sit amet a augue. Sed non neque elit
             )
             .onHover { isStatusHovered = $0 }
             
-            // Manual Compile Button (Liquid Glass lens)
+            // Manual Compile Button (native macOS bordered button)
             Button(action: {
                 Task { @MainActor in
                     await state.compileImmediate()
                 }
             }) {
                 Image(systemName: "bolt.fill")
-                    .font(.system(size: 11, weight: .semibold))
                     .foregroundStyle(.orange)
-                    .padding(5)
             }
-            .buttonStyle(.plain)
-            .liquidGlass(cornerRadius: 14, isInteractive: true, isHovered: isCompileHovered, tint: .orange)
-            .onHover { isCompileHovered = $0 }
+            .buttonStyle(.bordered)
+            .controlSize(.small)
             .help("Recompile Document (⌘R)")
             
-            // Diagnostics Drawer Toggle Button (Liquid Glass lens)
+            // Diagnostics Drawer Toggle Button (native macOS bordered button)
             Button(action: { state.isDiagnosticsDrawerOpen.toggle() }) {
                 Image(systemName: state.diagnostics.isEmpty ? "terminal" : "exclamationmark.bubble.fill")
-                    .font(.system(size: 11, weight: .semibold))
                     .foregroundStyle(state.diagnostics.isEmpty ? (state.isDiagnosticsDrawerOpen ? Color.accentColor : Color.primary) : Color.orange)
-                    .padding(5)
             }
-            .buttonStyle(.plain)
-            .liquidGlass(
-                cornerRadius: 14,
-                isInteractive: true,
-                isHovered: isDiagHovered,
-                tint: state.isDiagnosticsDrawerOpen ? Color.accentColor : nil
-            )
-            .onHover { isDiagHovered = $0 }
+            .buttonStyle(.bordered)
+            .controlSize(.small)
             .help("Toggle Compiler Log & Diagnostics (⇧⌘D)")
         }
         .padding(.horizontal, 12)

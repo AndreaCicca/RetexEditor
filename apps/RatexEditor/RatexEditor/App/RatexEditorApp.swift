@@ -127,8 +127,8 @@ struct RatexEditorApp: App {
         panel.canChooseFiles = false
         panel.canChooseDirectories = true
         panel.allowsMultipleSelection = false
-        panel.prompt = "Open Project Folder"
-        panel.message = "Choose a project directory to open in Ratex Editor"
+        panel.prompt = String(localized: "Open Project Folder")
+        panel.message = String(localized: "Choose a project directory to open in Ratex Editor")
         if panel.runModal() == .OK, let url = panel.url {
             workspace.openFolder(url: url)
         }
@@ -143,7 +143,7 @@ struct RatexEditorApp: App {
             UTType("org.tug.tex") ?? .plainText,
             UTType.plainText
         ]
-        panel.prompt = "Open Document"
+        panel.prompt = String(localized: "Open Document")
         if panel.runModal() == .OK, let url = panel.url {
             workspace.openSingleDocument(url: url)
         }
@@ -178,7 +178,7 @@ struct WorkspaceRootView: View {
             }
             return root.lastPathComponent
         }
-        return "Ratex Editor"
+        return String(localized: "Ratex Editor")
     }
 }
 

@@ -210,31 +210,31 @@ public final class EditorState {
     // MARK: - WYSIWYG Actions
     
     public func applyBold() {
-        wrapSelection(prefix: "\\textbf{", suffix: "}", placeholder: "bold text")
+        wrapSelection(prefix: "\\textbf{", suffix: "}", placeholder: String(localized: "bold text"))
     }
     
     public func applyItalic() {
-        wrapSelection(prefix: "\\textit{", suffix: "}", placeholder: "italic text")
+        wrapSelection(prefix: "\\textit{", suffix: "}", placeholder: String(localized: "italic text"))
     }
     
     public func applyCode() {
-        wrapSelection(prefix: "\\texttt{", suffix: "}", placeholder: "code")
+        wrapSelection(prefix: "\\texttt{", suffix: "}", placeholder: String(localized: "code"))
     }
     
     public func applyUnderline() {
-        wrapSelection(prefix: "\\underline{", suffix: "}", placeholder: "underlined text")
+        wrapSelection(prefix: "\\underline{", suffix: "}", placeholder: String(localized: "underlined text"))
     }
     
     public func insertHeading(level: Int) {
         switch level {
         case 1:
-            wrapSelection(prefix: "\\section{", suffix: "}", placeholder: "Section Title")
+            wrapSelection(prefix: "\\section{", suffix: "}", placeholder: String(localized: "Section Title"))
         case 2:
-            wrapSelection(prefix: "\\subsection{", suffix: "}", placeholder: "Subsection Title")
+            wrapSelection(prefix: "\\subsection{", suffix: "}", placeholder: String(localized: "Subsection Title"))
         case 3:
-            wrapSelection(prefix: "\\subsubsection{", suffix: "}", placeholder: "Subsubsection Title")
+            wrapSelection(prefix: "\\subsubsection{", suffix: "}", placeholder: String(localized: "Subsubsection Title"))
         default:
-            wrapSelection(prefix: "\\paragraph{", suffix: "}", placeholder: "Paragraph Title")
+            wrapSelection(prefix: "\\paragraph{", suffix: "}", placeholder: String(localized: "Paragraph Title"))
         }
     }
     
@@ -247,7 +247,7 @@ public final class EditorState {
     }
     
     public func insertFraction() {
-        wrapSelection(prefix: "\\frac{", suffix: "}{denominator}", placeholder: "numerator")
+        wrapSelection(prefix: "\\frac{", suffix: "}{\(String(localized: "denominator"))}", placeholder: String(localized: "numerator"))
     }
     
     public func insertSqrt() {

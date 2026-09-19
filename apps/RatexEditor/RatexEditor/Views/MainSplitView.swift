@@ -36,12 +36,7 @@ public struct MainSplitView: View {
             VStack(spacing: 0) {
                 WYSIWYGToolbar(
                     state: state,
-                    workspace: workspace,
-                    onToggleSidebar: {
-                        withAnimation(.easeInOut(duration: 0.2)) {
-                            columnVisibility = (columnVisibility == .detailOnly) ? .all : .detailOnly
-                        }
-                    }
+                    workspace: workspace
                 )
                 
                 Divider()
@@ -78,8 +73,7 @@ public struct MainSplitView: View {
             }
         }
         .modifier(EditorNotificationsModifier(
-            state: state,
-            columnVisibility: $columnVisibility
+            state: state
         ))
     }
     
@@ -216,12 +210,9 @@ public struct MainSplitView: View {
             if state.pdfData != nil {
                 Button(action: exportPDF) {
                     Label("Export…", systemImage: "arrow.down.doc")
-                        .font(.system(size: 11, weight: .medium))
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
                 }
-                .buttonStyle(.plain)
-                .liquidGlass(cornerRadius: 6, isInteractive: true, tint: .blue)
+                .buttonStyle(.borderedProminent)
+                .controlSize(.small)
                 .help("Export Master PDF to Disk")
             }
         }
@@ -318,7 +309,6 @@ public struct MainSplitView: View {
 
 private struct EditorNotificationsModifier: ViewModifier {
     @Bindable var state: EditorState
-    @Binding var columnVisibility: NavigationSplitViewVisibility
     
     func body(content: Content) -> some View {
         content
@@ -328,9 +318,7 @@ private struct EditorNotificationsModifier: ViewModifier {
                 }
             }
             .onReceive(NotificationCenter.default.publisher(for: .toggleSidebarRequested)) { _ in
-                withAnimation(.easeInOut(duration: 0.2)) {
-                    columnVisibility = (columnVisibility == .detailOnly) ? .all : .detailOnly
-                }
+                NSApp.sendAction(#selector(NSSplitViewController.toggleSidebar(_:)), to: nil, from: nil)
             }
             .onReceive(NotificationCenter.default.publisher(for: .toggleMathPaletteRequested)) { _ in
                 state.isMathPaletteOpen.toggle()

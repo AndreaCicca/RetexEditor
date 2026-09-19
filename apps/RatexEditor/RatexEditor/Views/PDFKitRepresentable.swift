@@ -50,6 +50,7 @@ public final class SmoothPDFContainerView: NSView {
     
     private func setup() {
         wantsLayer = true
+        layerContentsRedrawPolicy = .onSetNeedsDisplay
         layer?.backgroundColor = NSColor.windowBackgroundColor.cgColor
         
         pdfView.displayMode = .singlePageContinuous
@@ -57,7 +58,8 @@ public final class SmoothPDFContainerView: NSView {
         pdfView.displaysPageBreaks = true
         pdfView.backgroundColor = NSColor.windowBackgroundColor
         pdfView.wantsLayer = true
-        pdfView.layer?.drawsAsynchronously = false
+        pdfView.layerContentsRedrawPolicy = .onSetNeedsDisplay
+        pdfView.layer?.drawsAsynchronously = true
         
         overlayView.imageScaling = .scaleAxesIndependently
         overlayView.isHidden = true
@@ -69,8 +71,10 @@ public final class SmoothPDFContainerView: NSView {
     
     public override func layout() {
         super.layout()
-        pdfView.frame = bounds
-        if overlayView.isHidden {
+        if pdfView.frame != bounds {
+            pdfView.frame = bounds
+        }
+        if overlayView.isHidden && overlayView.frame != bounds {
             overlayView.frame = bounds
         }
     }

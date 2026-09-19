@@ -57,9 +57,10 @@ public struct LiquidGlassModifier: ViewModifier {
                             )
                         )
                 }
+                .allowsHitTesting(false)
             }
             .overlay {
-                // Specular Light Rim (Border)
+                // Specular Light Rim (Border) - explicitly non-blocking for hit testing
                 RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
                     .strokeBorder(
                         LinearGradient(
@@ -69,6 +70,7 @@ public struct LiquidGlassModifier: ViewModifier {
                         ),
                         lineWidth: specularBorderWidth
                     )
+                    .allowsHitTesting(false)
             }
             .shadow(
                 color: Color.black.opacity(colorScheme == .dark ? (isHovered ? 0.25 : 0.15) : (isHovered ? 0.10 : 0.05)),
@@ -110,36 +112,21 @@ public struct LiquidGlassBarModifier: ViewModifier {
     
     public func body(content: Content) -> some View {
         content
-            .background {
-                ZStack(alignment: .top) {
+            .background(.ultraThinMaterial)
+            .overlay(alignment: .top) {
+                if hasTopHighlight {
                     Rectangle()
-                        .fill(.ultraThinMaterial)
-                    
-                    // Ambient Gloss Sheen
-                    LinearGradient(
-                        colors: [
-                            Color.white.opacity(colorScheme == .dark ? 0.06 : 0.18),
-                            Color.clear
-                        ],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                    
-                    // Top Specular Highlight Line
-                    if hasTopHighlight {
-                        Rectangle()
-                            .fill(Color.white.opacity(colorScheme == .dark ? 0.15 : 0.40))
-                            .frame(height: 0.75)
-                            .frame(maxHeight: .infinity, alignment: .top)
-                    }
-                    
-                    // Bottom Separation Edge
-                    if hasBottomBorder {
-                        Rectangle()
-                            .fill(colorScheme == .dark ? Color.white.opacity(0.08) : Color.black.opacity(0.08))
-                            .frame(height: 0.75)
-                            .frame(maxHeight: .infinity, alignment: .bottom)
-                    }
+                        .fill(Color.white.opacity(colorScheme == .dark ? 0.15 : 0.40))
+                        .frame(height: 0.75)
+                        .allowsHitTesting(false)
+                }
+            }
+            .overlay(alignment: .bottom) {
+                if hasBottomBorder {
+                    Rectangle()
+                        .fill(colorScheme == .dark ? Color.white.opacity(0.08) : Color.black.opacity(0.08))
+                        .frame(height: 0.75)
+                        .allowsHitTesting(false)
                 }
             }
     }

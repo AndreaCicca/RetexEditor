@@ -31,6 +31,20 @@
 			<key>isa</key>
 			<string>PBXBuildFile</string>
 		</dict>
+		<key>A1C01C01C01C01C01C01C020</key>
+		<dict>
+			<key>fileRef</key>
+			<string>A1C01C01C01C01C01C01C021</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>A1C01C01C01C01C01C01C030</key>
+		<dict>
+			<key>fileRef</key>
+			<string>A1C01C01C01C01C01C01C031</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
 		<key>01CC597ABAD15DB9D2376BE0</key>
 		<dict>
 			<key>buildActionMask</key>
@@ -38,6 +52,8 @@
 			<key>files</key>
 			<array>
 				<string>A1C01C01C01C01C01C01C002</string>
+				<string>A1C01C01C01C01C01C01C020</string>
+				<string>A1C01C01C01C01C01C01C030</string>
 			</array>
 			<key>isa</key>
 			<string>PBXResourcesBuildPhase</string>
@@ -108,6 +124,7 @@
 			<array>
 				<string>en</string>
 				<string>Base</string>
+				<string>it</string>
 			</array>
 			<key>mainGroup</key>
 			<string>B9B8DBC97B2054281802674F</string>
@@ -495,6 +512,28 @@
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
+		<key>A1C01C01C01C01C01C01C021</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>text.json.xcstrings</string>
+			<key>path</key>
+			<string>Localizable.xcstrings</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>A1C01C01C01C01C01C01C031</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>text.json.xcstrings</string>
+			<key>path</key>
+			<string>InfoPlist.xcstrings</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
 		<key>8BB8ABC24AB723F99D4DD920</key>
 		<dict>
 			<key>buildActionMask</key>
@@ -812,6 +851,8 @@
 				<string>A1C01C01C01C01C01C01C001</string>
 				<string>76E3C28BAF4A20419EC58432</string>
 				<string>A280A0119C40070B9437C1C3</string>
+				<string>A1C01C01C01C01C01C01C021</string>
+				<string>A1C01C01C01C01C01C01C031</string>
 			</array>
 			<key>isa</key>
 			<string>PBXGroup</string>

@@ -20,7 +20,7 @@ public struct WelcomeView: View {
             VStack(alignment: .leading, spacing: 24) {
                 // App Branding
                 HStack(spacing: 16) {
-                    if let iconImage = NSImage(named: "AppIcon") ?? NSApp.applicationIconImage {
+                    if let iconImage = NSApp.applicationIconImage {
                         Image(nsImage: iconImage)
                             .resizable()
                             .frame(width: 64, height: 64)
@@ -164,7 +164,7 @@ public struct WelcomeView: View {
             }
             .padding(24)
             .frame(width: 320)
-            .liquidGlassBar(hasBottomBorder: false, hasTopHighlight: false)
+            .background(.ultraThinMaterial)
         }
         .frame(minWidth: 760, minHeight: 460)
         .overlay(
@@ -184,8 +184,8 @@ public struct WelcomeView: View {
         panel.canChooseFiles = false
         panel.canChooseDirectories = true
         panel.allowsMultipleSelection = false
-        panel.prompt = "Open Folder"
-        panel.message = "Choose a project directory to open in Ratex Editor"
+        panel.prompt = String(localized: "Open Folder")
+        panel.message = String(localized: "Choose a project directory to open in Ratex Editor")
         
         if panel.runModal() == .OK, let url = panel.url {
             workspace.openFolder(url: url)
@@ -201,7 +201,7 @@ public struct WelcomeView: View {
             UTType("org.tug.tex") ?? .plainText,
             UTType.plainText
         ]
-        panel.prompt = "Open Document"
+        panel.prompt = String(localized: "Open Document")
         
         if panel.runModal() == .OK, let url = panel.url {
             workspace.openSingleDocument(url: url)
@@ -231,8 +231,8 @@ public struct WelcomeView: View {
 struct WelcomeActionButton: View {
     let icon: String
     let iconColor: Color
-    let title: String
-    let subtitle: String
+    let title: LocalizedStringKey
+    let subtitle: LocalizedStringKey
     let shortcut: String
     let action: () -> Void
     
@@ -296,7 +296,7 @@ struct NewProjectSheetView: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
                 HStack {
-                    Text(selectedParentDir?.path ?? "Choose Location…")
+                    Text(selectedParentDir?.path ?? String(localized: "Choose Location…"))
                         .font(.caption)
                         .lineLimit(1)
                         .truncationMode(.middle)
