@@ -47,6 +47,7 @@ public struct WelcomeView: View {
                 VStack(spacing: 12) {
                     WelcomeActionButton(
                         icon: "folder.badge.gearshape.fill",
+                        icon: "folder.fill.badge.gearshape",
                         iconColor: .blue,
                         title: "Open Project Folder…",
                         subtitle: "Open an existing folder with classes, styles, and chapters",
