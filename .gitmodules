@@ -1,0 +1,3 @@
+[submodule "vendor/ratex"]
+	path = vendor/ratex
+	url = https://github.com/leoliu0/ratex.git

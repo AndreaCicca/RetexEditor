@@ -1,0 +1,29 @@
+# Xcode
+xcuserdata/
+*.xcuserdatad
+*.xcuserstate
+*.xcworkspace/xcuserdata/
+build/
+DerivedData/
+
+# Rust / Submodule build artifacts
+target/
+*.a
+*.dylib
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# LaTeX transient files
+*.pdf
+*.log
+*.aux
+*.bbl
+*.blg
+*.out
+*.toc
+output/
+tmp/
+dist/
