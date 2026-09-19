@@ -28,14 +28,12 @@ public struct MainSplitView: View {
     
     public var body: some View {
         NavigationSplitView(columnVisibility: $columnVisibility) {
-            // Native macOS Collapsible Sidebar
             ProjectSidebarView(workspace: workspace) { clickedURL in
                 switchToFile(clickedURL)
             }
             .navigationSplitViewColumnWidth(min: 200, ideal: 240, max: 320)
         } detail: {
             VStack(spacing: 0) {
-                // Top WYSIWYG Toolbar
                 WYSIWYGToolbar(
                     state: state,
                     workspace: workspace,
@@ -48,137 +46,11 @@ public struct MainSplitView: View {
                 
                 Divider()
                 
-                // 2-Pane Split View: [Source Editor] | [PDF Preview]
                 HSplitView {
-                    // Center: LaTeX Source Editor
-                    VStack(spacing: 0) {
-                        HStack(spacing: 6) {
-                            Image(systemName: activeFileIcon)
-                                .foregroundStyle(.blue)
-                                .font(.caption)
-                            
-                            Text(activeFileName)
-                                .font(.system(size: 12, weight: .semibold))
-                                .lineLimit(1)
-                            
-                            if isCurrentFileEntryPoint {
-                                Text("Entry Point")
-                                    .font(.system(size: 9, weight: .bold))
-                                    .padding(.horizontal, 5)
-                                    .padding(.vertical, 1.5)
-                                    .background(Color.blue.opacity(0.2))
-                                    .foregroundStyle(.blue)
-                                    .cornerRadius(4)
-                            } else if let entry = workspace.entryPointURL {
-                                Text("(Building: \(entry.lastPathComponent))")
-                                    .font(.system(size: 10))
-                                    .foregroundStyle(.secondary)
-                            }
-                            
-                            Spacer()
-                            
-                            Text("\(state.source.count) chars")
-                                .font(.system(size: 11))
-                                .foregroundStyle(.tertiary)
-                        }
-                        .padding(.horizontal, 14)
-                        .padding(.vertical, 7)
-                        .background(Color(nsColor: .controlBackgroundColor).opacity(0.5))
-                        
-                        Divider()
-                        
-                        SourceEditorView(state: state)
-                    }
-                    .frame(minWidth: 320, maxWidth: .infinity)
-                    
-                    // Right: Live PDFKit Preview
-                    VStack(spacing: 0) {
-                        HStack(spacing: 8) {
-                            Text("Live PDF Preview")
-                                .font(.system(size: 12, weight: .semibold))
-                                .foregroundStyle(.secondary)
-                            
-                            Spacer()
-                            
-                            // Zoom controls
-                            ControlGroup {
-                                Button(action: {
-                                    if state.zoomScale <= 0 { state.zoomScale = 1.0 }
-                                    state.zoomScale = max(0.5, state.zoomScale - 0.15)
-                                }) {
-                                    Image(systemName: "minus.magnifyingglass")
-                                }
-                                .help("Zoom Out")
-                                
-                                Button(action: { state.zoomScale = 1.0 }) {
-                                    Text(state.zoomScale <= 0 ? "Fit" : "\(Int(state.zoomScale * 100))%")
-                                        .font(.system(size: 10, weight: .medium))
-                                }
-                                .help("Reset Zoom (100%)")
-                                
-                                Button(action: {
-                                    if state.zoomScale <= 0 { state.zoomScale = 1.0 }
-                                    state.zoomScale = min(3.0, state.zoomScale + 0.15)
-                                }) {
-                                    Image(systemName: "plus.magnifyingglass")
-                                }
-                                .help("Zoom In")
-                                
-                                Button(action: {
-                                    state.zoomScale = (state.zoomScale == 0 ? 1.0 : 0)
-                                }) {
-                                    Image(systemName: "arrow.left.and.right")
-                                        .foregroundStyle(state.zoomScale == 0 ? Color.accentColor : Color.primary)
-                                }
-                                .help("Fit to Width")
-                            }
-                            
-                            if state.pdfData != nil {
-                                Button(action: exportPDF) {
-                                    Label("Export…", systemImage: "arrow.down.doc")
-                                        .font(.system(size: 11))
-                                }
-                                .buttonStyle(.borderless)
-                                .help("Export Master PDF to Disk")
-                            }
-                        }
-                        .padding(.horizontal, 14)
-                        .padding(.vertical, 7)
-                        .background(Color(nsColor: .controlBackgroundColor).opacity(0.5))
-                        
-                        Divider()
-                        
-                        if let pdfData = state.pdfData {
-                            PDFKitRepresentable(pdfData: pdfData, zoomScale: state.zoomScale)
-                        } else if state.isCompiling {
-                            VStack(spacing: 12) {
-                                ProgressView()
-                                Text("Compiling LaTeX document…")
-                                    .font(.headline)
-                                    .foregroundStyle(.secondary)
-                            }
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        } else {
-                            VStack(spacing: 12) {
-                                Image(systemName: "doc.text.magnifyingglass")
-                                    .font(.system(size: 48))
-                                    .foregroundStyle(.secondary)
-                                Text("No Preview Available")
-                                    .font(.headline)
-                                Text("Check diagnostics for compilation issues.")
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                                Button("Show Diagnostics") {
-                                    state.isDiagnosticsDrawerOpen = true
-                                }
-                            }
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        }
-                    }
-                    .frame(minWidth: 360, maxWidth: .infinity)
+                    editorPane
+                    previewPane
                 }
                 
-                // Bottom Drawer: Diagnostics & TeX Log
                 if state.isDiagnosticsDrawerOpen {
                     DiagnosticsView(state: state)
                         .transition(.move(edge: .bottom).combined(with: .opacity))
@@ -186,7 +58,6 @@ public struct MainSplitView: View {
             }
         }
         .navigationSplitViewStyle(.balanced)
-        // Sync active changes to disk and workspace
         .onChange(of: state.source) { _, newValue in
             workspace.saveActiveFile(content: newValue)
         }
@@ -206,41 +77,179 @@ public struct MainSplitView: View {
                 switchToFile(sel)
             }
         }
-        .onReceive(NotificationCenter.default.publisher(for: .recompileRequested)) { _ in
-            Task { @MainActor in
-                await state.compileImmediate()
+        .modifier(EditorNotificationsModifier(
+            state: state,
+            columnVisibility: $columnVisibility
+        ))
+    }
+    
+    // MARK: - Editor Pane
+    
+    private var editorPane: some View {
+        VStack(spacing: 0) {
+            editorSubheader
+            Divider()
+            SourceEditorView(state: state)
+        }
+        .frame(minWidth: 320, maxWidth: .infinity)
+    }
+    
+    private var editorSubheader: some View {
+        HStack(spacing: 6) {
+            Image(systemName: activeFileIcon)
+                .foregroundStyle(.blue)
+                .font(.caption)
+            
+            Text(activeFileName)
+                .font(.system(size: 12, weight: .semibold))
+                .lineLimit(1)
+            
+            if isCurrentFileEntryPoint {
+                Text("Entry Point")
+                    .font(.system(size: 9, weight: .bold))
+                    .padding(.horizontal, 5)
+                    .padding(.vertical, 1.5)
+                    .background(Color.blue.opacity(0.2))
+                    .foregroundStyle(.blue)
+                    .cornerRadius(4)
+            } else if let entry = workspace.entryPointURL {
+                Text("(Building: \(entry.lastPathComponent))")
+                    .font(.system(size: 10))
+                    .foregroundStyle(.secondary)
+            }
+            
+            Spacer()
+            
+            HStack(spacing: 5) {
+                Button(action: { state.decreaseFontSize() }) {
+                    Image(systemName: "minus")
+                        .font(.system(size: 9, weight: .semibold))
+                }
+                .buttonStyle(.plain)
+                .help("Decrease Font Size (⌘-)")
+                
+                Text(String(format: "%.1f pt", state.editorFontSize))
+                    .font(.system(size: 11, weight: .medium, design: .monospaced))
+                    .foregroundStyle(.secondary)
+                    .frame(minWidth: 44, alignment: .center)
+                
+                Button(action: { state.increaseFontSize() }) {
+                    Image(systemName: "plus")
+                        .font(.system(size: 9, weight: .semibold))
+                }
+                .buttonStyle(.plain)
+                .help("Increase Font Size (⌘+)")
+                
+                Text("•")
+                    .font(.system(size: 10))
+                    .foregroundStyle(.quaternary)
+                
+                Text("\(state.source.count) chars")
+                    .font(.system(size: 11))
+                    .foregroundStyle(.tertiary)
             }
         }
-        .onReceive(NotificationCenter.default.publisher(for: .toggleSidebarRequested)) { _ in
-            withAnimation(.easeInOut(duration: 0.2)) {
-                columnVisibility = (columnVisibility == .detailOnly) ? .all : .detailOnly
+        .padding(.horizontal, 14)
+        .padding(.vertical, 7)
+        .background(Color(nsColor: .controlBackgroundColor).opacity(0.5))
+    }
+    
+    // MARK: - Preview Pane
+    
+    private var previewPane: some View {
+        VStack(spacing: 0) {
+            previewSubheader
+            Divider()
+            previewContent
+        }
+        .frame(minWidth: 360, maxWidth: .infinity)
+    }
+    
+    private var previewSubheader: some View {
+        HStack(spacing: 8) {
+            Text("Live PDF Preview")
+                .font(.system(size: 12, weight: .semibold))
+                .foregroundStyle(.secondary)
+            
+            Spacer()
+            
+            ControlGroup {
+                Button(action: {
+                    if state.zoomScale <= 0 { state.zoomScale = 1.0 }
+                    state.zoomScale = max(0.5, state.zoomScale - 0.15)
+                }) {
+                    Image(systemName: "minus.magnifyingglass")
+                }
+                .help("Zoom Out")
+                
+                Button(action: { state.zoomScale = 1.0 }) {
+                    Text(state.zoomScale <= 0 ? "Fit" : "\(Int(state.zoomScale * 100))%")
+                        .font(.system(size: 10, weight: .medium))
+                }
+                .help("Reset Zoom (100%)")
+                
+                Button(action: {
+                    if state.zoomScale <= 0 { state.zoomScale = 1.0 }
+                    state.zoomScale = min(3.0, state.zoomScale + 0.15)
+                }) {
+                    Image(systemName: "plus.magnifyingglass")
+                }
+                .help("Zoom In")
+                
+                Button(action: {
+                    state.zoomScale = (state.zoomScale == 0 ? 1.0 : 0)
+                }) {
+                    Image(systemName: "arrow.left.and.right")
+                        .foregroundStyle(state.zoomScale == 0 ? Color.accentColor : Color.primary)
+                }
+                .help("Fit to Width")
+            }
+            
+            if state.pdfData != nil {
+                Button(action: exportPDF) {
+                    Label("Export…", systemImage: "arrow.down.doc")
+                        .font(.system(size: 11))
+                }
+                .buttonStyle(.borderless)
+                .help("Export Master PDF to Disk")
             }
         }
-        .onReceive(NotificationCenter.default.publisher(for: .toggleMathPaletteRequested)) { _ in
-            state.isMathPaletteOpen.toggle()
-        }
-        .onReceive(NotificationCenter.default.publisher(for: .toggleDiagnosticsRequested)) { _ in
-            state.isDiagnosticsDrawerOpen.toggle()
-        }
-        .onReceive(NotificationCenter.default.publisher(for: .formatBoldRequested)) { _ in
-            state.applyBold()
-        }
-        .onReceive(NotificationCenter.default.publisher(for: .formatItalicRequested)) { _ in
-            state.applyItalic()
-        }
-        .onReceive(NotificationCenter.default.publisher(for: .formatUnderlineRequested)) { _ in
-            state.applyUnderline()
-        }
-        .onReceive(NotificationCenter.default.publisher(for: .formatCodeRequested)) { _ in
-            state.applyCode()
-        }
-        .onReceive(NotificationCenter.default.publisher(for: .formatInlineMathRequested)) { _ in
-            state.insertInlineMath()
-        }
-        .onReceive(NotificationCenter.default.publisher(for: .formatDisplayMathRequested)) { _ in
-            state.insertDisplayMath()
+        .padding(.horizontal, 14)
+        .padding(.vertical, 7)
+        .background(Color(nsColor: .controlBackgroundColor).opacity(0.5))
+    }
+    
+    @ViewBuilder
+    private var previewContent: some View {
+        if let pdfData = state.pdfData {
+            PDFKitRepresentable(pdfData: pdfData, zoomScale: state.zoomScale)
+        } else if state.isCompiling {
+            VStack(spacing: 12) {
+                ProgressView()
+                Text("Compiling LaTeX document…")
+                    .font(.headline)
+                    .foregroundStyle(.secondary)
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        } else {
+            VStack(spacing: 12) {
+                Image(systemName: "doc.text.magnifyingglass")
+                    .font(.system(size: 48))
+                    .foregroundStyle(.secondary)
+                Text("No Preview Available")
+                    .font(.headline)
+                Text("Check diagnostics for compilation issues.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                Button("Show Diagnostics") {
+                    state.isDiagnosticsDrawerOpen = true
+                }
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
     }
+    
+    // MARK: - Helpers
     
     private var activeFileName: String {
         if let doc = state.documentURL {
@@ -264,12 +273,10 @@ public struct MainSplitView: View {
     }
     
     private func switchToFile(_ newURL: URL) {
-        // 1. Flush changes in current editor buffer to disk
         if let currentURL = state.documentURL {
             workspace.flushSaveNow(content: state.source, for: currentURL)
         }
         
-        // 2. Load the content of the clicked file
         guard let newContent = try? String(contentsOf: newURL, encoding: .utf8) else {
             return
         }
@@ -293,5 +300,59 @@ public struct MainSplitView: View {
         if panel.runModal() == .OK, let url = panel.url {
             try? data.write(to: url)
         }
+    }
+}
+
+// MARK: - Dedicated Notification Handler ViewModifier
+
+private struct EditorNotificationsModifier: ViewModifier {
+    @Bindable var state: EditorState
+    @Binding var columnVisibility: NavigationSplitViewVisibility
+    
+    func body(content: Content) -> some View {
+        content
+            .onReceive(NotificationCenter.default.publisher(for: .recompileRequested)) { _ in
+                Task { @MainActor in
+                    await state.compileImmediate()
+                }
+            }
+            .onReceive(NotificationCenter.default.publisher(for: .toggleSidebarRequested)) { _ in
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    columnVisibility = (columnVisibility == .detailOnly) ? .all : .detailOnly
+                }
+            }
+            .onReceive(NotificationCenter.default.publisher(for: .toggleMathPaletteRequested)) { _ in
+                state.isMathPaletteOpen.toggle()
+            }
+            .onReceive(NotificationCenter.default.publisher(for: .toggleDiagnosticsRequested)) { _ in
+                state.isDiagnosticsDrawerOpen.toggle()
+            }
+            .onReceive(NotificationCenter.default.publisher(for: .formatBoldRequested)) { _ in
+                state.applyBold()
+            }
+            .onReceive(NotificationCenter.default.publisher(for: .formatItalicRequested)) { _ in
+                state.applyItalic()
+            }
+            .onReceive(NotificationCenter.default.publisher(for: .formatUnderlineRequested)) { _ in
+                state.applyUnderline()
+            }
+            .onReceive(NotificationCenter.default.publisher(for: .formatCodeRequested)) { _ in
+                state.applyCode()
+            }
+            .onReceive(NotificationCenter.default.publisher(for: .formatInlineMathRequested)) { _ in
+                state.insertInlineMath()
+            }
+            .onReceive(NotificationCenter.default.publisher(for: .formatDisplayMathRequested)) { _ in
+                state.insertDisplayMath()
+            }
+            .onReceive(NotificationCenter.default.publisher(for: .zoomInTextRequested)) { _ in
+                state.increaseFontSize()
+            }
+            .onReceive(NotificationCenter.default.publisher(for: .zoomOutTextRequested)) { _ in
+                state.decreaseFontSize()
+            }
+            .onReceive(NotificationCenter.default.publisher(for: .resetTextZoomRequested)) { _ in
+                state.resetFontSize()
+            }
     }
 }

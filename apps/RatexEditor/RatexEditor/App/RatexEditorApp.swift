@@ -43,6 +43,28 @@ struct RatexEditorApp: App {
                     NotificationCenter.default.post(name: .toggleSidebarRequested, object: nil)
                 }
                 .keyboardShortcut("s", modifiers: [.control, .command])
+                
+                Divider()
+                
+                Button("Zoom In Text") {
+                    NotificationCenter.default.post(name: .zoomInTextRequested, object: nil)
+                }
+                .keyboardShortcut("+", modifiers: [.command])
+                
+                Button("Zoom In Text (Keypad)") {
+                    NotificationCenter.default.post(name: .zoomInTextRequested, object: nil)
+                }
+                .keyboardShortcut("=", modifiers: [.command])
+                
+                Button("Zoom Out Text") {
+                    NotificationCenter.default.post(name: .zoomOutTextRequested, object: nil)
+                }
+                .keyboardShortcut("-", modifiers: [.command])
+                
+                Button("Actual Size Text") {
+                    NotificationCenter.default.post(name: .resetTextZoomRequested, object: nil)
+                }
+                .keyboardShortcut("0", modifiers: [.command])
             }
             
             CommandMenu("Typeset") {
@@ -172,4 +194,7 @@ extension Notification.Name {
     static let formatCodeRequested = Notification.Name("ratex.formatCodeRequested")
     static let formatInlineMathRequested = Notification.Name("ratex.formatInlineMathRequested")
     static let formatDisplayMathRequested = Notification.Name("ratex.formatDisplayMathRequested")
+    static let zoomInTextRequested = Notification.Name("ratex.zoomInTextRequested")
+    static let zoomOutTextRequested = Notification.Name("ratex.zoomOutTextRequested")
+    static let resetTextZoomRequested = Notification.Name("ratex.resetTextZoomRequested")
 }

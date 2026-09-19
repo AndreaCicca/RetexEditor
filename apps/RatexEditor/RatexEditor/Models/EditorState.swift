@@ -25,6 +25,7 @@ public final class EditorState {
     public var isDiagnosticsDrawerOpen: Bool = false
     public var isMathPaletteOpen: Bool = false
     public var zoomScale: CGFloat = 1.0
+    public var editorFontSize: CGFloat = 13.5
     
     @ObservationIgnored
     public var selectedRange: NSRange = NSRange(location: 0, length: 0)
@@ -328,6 +329,20 @@ c & d
         } else {
             self.source.append("\n\(prefix)\(placeholder)\(suffix)")
         }
+    }
+    
+    // MARK: - Text Zoom Helpers
+    
+    public func increaseFontSize() {
+        editorFontSize = min(36.0, editorFontSize + 1.5)
+    }
+    
+    public func decreaseFontSize() {
+        editorFontSize = max(9.0, editorFontSize - 1.5)
+    }
+    
+    public func resetFontSize() {
+        editorFontSize = 13.5
     }
 }
 

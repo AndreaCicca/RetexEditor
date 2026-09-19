@@ -3,13 +3,15 @@ import AppKit
 
 public struct SourceEditorView: NSViewRepresentable {
     @Bindable var state: EditorState
+    var fontSize: CGFloat
     
     public init(state: EditorState) {
         self.state = state
+        self.fontSize = state.editorFontSize
     }
     
     public func makeCoordinator() -> Coordinator {
-        Coordinator(self, initialSource: state.source)
+        Coordinator(self, initialSource: state.source, initialFontSize: state.editorFontSize)
     }
     
     public func makeNSView(context: Context) -> NSScrollView {
@@ -32,8 +34,8 @@ public struct SourceEditorView: NSViewRepresentable {
         textView.isAutomaticTextReplacementEnabled = false
         textView.isAutomaticSpellingCorrectionEnabled = false
         
-        // Typography & readable styling
-        let font = NSFont.monospacedSystemFont(ofSize: 13.5, weight: .regular)
+        // Typography & readable styling with scalable font size
+        let font = NSFont.monospacedSystemFont(ofSize: state.editorFontSize, weight: .regular)
         textView.font = font
         textView.textColor = NSColor.labelColor
         textView.backgroundColor = NSColor.textBackgroundColor
@@ -49,7 +51,7 @@ public struct SourceEditorView: NSViewRepresentable {
         
         // Balanced line height
         let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.lineSpacing = 4.5
+        paragraphStyle.lineSpacing = max(3.0, state.editorFontSize * 0.33)
         textView.defaultParagraphStyle = paragraphStyle
         textView.typingAttributes = [
             .font: font,
@@ -70,6 +72,12 @@ public struct SourceEditorView: NSViewRepresentable {
         textView.string = state.source
         textView.delegate = context.coordinator
         
+        // Apply initial attributes
+        if let storage = textView.textStorage, storage.length > 0 {
+            storage.addAttribute(.font, value: font, range: NSRange(location: 0, length: storage.length))
+            storage.addAttribute(.paragraphStyle, value: paragraphStyle, range: NSRange(location: 0, length: storage.length))
+        }
+        
         scrollView.documentView = textView
         context.coordinator.textView = textView
         
@@ -86,11 +94,46 @@ public struct SourceEditorView: NSViewRepresentable {
         guard let textView = nsView.documentView as? LaTeXNSTextView else { return }
         
         // Only update if source changed externally (NOT during resize or user typing)
+        // 1. Update font size if changed via Cmd+ / Cmd-
+        if context.coordinator.lastFontSize != state.editorFontSize {
+            context.coordinator.lastFontSize = state.editorFontSize
+            let newFont = NSFont.monospacedSystemFont(ofSize: state.editorFontSize, weight: .regular)
+            textView.font = newFont
+            
+            let paragraphStyle = NSMutableParagraphStyle()
+            paragraphStyle.lineSpacing = max(3.0, state.editorFontSize * 0.33)
+            textView.defaultParagraphStyle = paragraphStyle
+            textView.typingAttributes = [
+                .font: newFont,
+                .foregroundColor: NSColor.labelColor,
+                .paragraphStyle: paragraphStyle
+            ]
+            
+            if let storage = textView.textStorage, storage.length > 0 {
+                storage.beginEditing()
+                storage.addAttribute(.font, value: newFont, range: NSRange(location: 0, length: storage.length))
+                storage.addAttribute(.paragraphStyle, value: paragraphStyle, range: NSRange(location: 0, length: storage.length))
+                storage.endEditing()
+            }
+        }
+        
+        // 2. Only update if source changed externally (NOT during resize or user typing)
         if context.coordinator.lastSource != state.source && !context.coordinator.isInternalUpdate {
             context.coordinator.lastSource = state.source
             let selectedRanges = textView.selectedRanges
             textView.string = state.source
             textView.selectedRanges = selectedRanges
+            
+            // Re-apply font attributes to new string
+            let currentFont = NSFont.monospacedSystemFont(ofSize: state.editorFontSize, weight: .regular)
+            let paragraphStyle = NSMutableParagraphStyle()
+            paragraphStyle.lineSpacing = max(3.0, state.editorFontSize * 0.33)
+            if let storage = textView.textStorage, storage.length > 0 {
+                storage.beginEditing()
+                storage.addAttribute(.font, value: currentFont, range: NSRange(location: 0, length: storage.length))
+                storage.addAttribute(.paragraphStyle, value: paragraphStyle, range: NSRange(location: 0, length: storage.length))
+                storage.endEditing()
+            }
         }
     }
     
@@ -99,10 +142,12 @@ public struct SourceEditorView: NSViewRepresentable {
         weak var textView: LaTeXNSTextView?
         var isInternalUpdate = false
         var lastSource: String
+        var lastFontSize: CGFloat
         
-        init(_ parent: SourceEditorView, initialSource: String) {
+        init(_ parent: SourceEditorView, initialSource: String, initialFontSize: CGFloat) {
             self.parent = parent
             self.lastSource = initialSource
+            self.lastFontSize = initialFontSize
         }
         
         public func textDidChange(_ notification: Notification) {
@@ -129,6 +174,23 @@ final class LaTeXNSTextView: NSTextView {
     override var undoManager: UndoManager? {
         // Share window undoManager so Cmd+Z routes natively and seamlessly
         return window?.undoManager ?? super.undoManager
+    }
+    
+    override func performKeyEquivalent(with event: NSEvent) -> Bool {
+        if event.modifierFlags.contains(.command) {
+            let chars = event.charactersIgnoringModifiers ?? ""
+            if chars == "+" || chars == "=" {
+                NotificationCenter.default.post(name: .zoomInTextRequested, object: nil)
+                return true
+            } else if chars == "-" {
+                NotificationCenter.default.post(name: .zoomOutTextRequested, object: nil)
+                return true
+            } else if chars == "0" {
+                NotificationCenter.default.post(name: .resetTextZoomRequested, object: nil)
+                return true
+            }
+        }
+        return super.performKeyEquivalent(with: event)
     }
     
     func applyWYSIWYG(insert: String?, wrapPrefix: String?, wrapSuffix: String?, placeholder: String?) {
