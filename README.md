@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="apps/RatexEditor/RatexEditor/Resources/AppIcon.png" width="128" height="128" alt="RetexEditor Icon" />
+</p>
+
 # RetexEditor & Ratex
 
 [![macOS](https://img.shields.io/badge/macOS-14.0%2B-blue.svg)](https://apple.com/macos)

@@ -17,12 +17,21 @@
 			<key>isa</key>
 			<string>PBXBuildFile</string>
 		</dict>
+		<key>A1C01C01C01C01C01C01C002</key>
+		<dict>
+			<key>fileRef</key>
+			<string>A1C01C01C01C01C01C01C001</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
 		<key>01CC597ABAD15DB9D2376BE0</key>
 		<dict>
 			<key>buildActionMask</key>
 			<integer>2147483647</integer>
 			<key>files</key>
-			<array/>
+			<array>
+				<string>A1C01C01C01C01C01C01C002</string>
+			</array>
 			<key>isa</key>
 			<string>PBXResourcesBuildPhase</string>
 			<key>runOnlyForDeploymentPostprocessing</key>
@@ -457,6 +466,17 @@
 			<key>sourceTree</key>
 			<string>BUILT_PRODUCTS_DIR</string>
 		</dict>
+		<key>A1C01C01C01C01C01C01C001</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>image.icns</string>
+			<key>path</key>
+			<string>AppIcon.icns</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
 		<key>76E3C28BAF4A20419EC58432</key>
 		<dict>
 			<key>isa</key>
@@ -769,6 +789,7 @@
 		<dict>
 			<key>children</key>
 			<array>
+				<string>A1C01C01C01C01C01C01C001</string>
 				<string>76E3C28BAF4A20419EC58432</string>
 				<string>A280A0119C40070B9437C1C3</string>
 			</array>
