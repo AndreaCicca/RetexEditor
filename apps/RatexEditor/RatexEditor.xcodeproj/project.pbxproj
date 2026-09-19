@@ -1,917 +1,403 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-	<key>archiveVersion</key>
-	<string>1</string>
-	<key>classes</key>
-	<dict/>
-	<key>objectVersion</key>
-	<string>56</string>
-	<key>objects</key>
-	<dict>
-		<key>00317EF7895D2DB3E87935FF</key>
-		<dict>
-			<key>fileRef</key>
-			<string>E34EFE8821485D62E7C7752F</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>A1C01C01C01C01C01C01C002</key>
-		<dict>
-			<key>fileRef</key>
-			<string>A1C01C01C01C01C01C01C001</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>A1C01C01C01C01C01C01C011</key>
-		<dict>
-			<key>fileRef</key>
-			<string>A1C01C01C01C01C01C01C010</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>A1C01C01C01C01C01C01C020</key>
-		<dict>
-			<key>fileRef</key>
-			<string>A1C01C01C01C01C01C01C021</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>A1C01C01C01C01C01C01C030</key>
-		<dict>
-			<key>fileRef</key>
-			<string>A1C01C01C01C01C01C01C031</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>01CC597ABAD15DB9D2376BE0</key>
-		<dict>
-			<key>buildActionMask</key>
-			<integer>2147483647</integer>
-			<key>files</key>
-			<array>
-				<string>A1C01C01C01C01C01C01C002</string>
-				<string>A1C01C01C01C01C01C01C020</string>
-				<string>A1C01C01C01C01C01C01C030</string>
-			</array>
-			<key>isa</key>
-			<string>PBXResourcesBuildPhase</string>
-			<key>runOnlyForDeploymentPostprocessing</key>
-			<integer>0</integer>
-		</dict>
-		<key>030A63D11EB29D7B0C05ED76</key>
-		<dict>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.swift</string>
-			<key>path</key>
-			<string>DiagnosticsView.swift</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>07F93E64C5DBAC310348DBCC</key>
-		<dict>
-			<key>fileRef</key>
-			<string>030A63D11EB29D7B0C05ED76</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>C01C01C01C01C01C01C00010</key>
-		<dict>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.swift</string>
-			<key>path</key>
-			<string>ConsoleLogTextView.swift</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>C01C01C01C01C01C01C00011</key>
-		<dict>
-			<key>fileRef</key>
-			<string>C01C01C01C01C01C01C00010</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>0E5EA55B00962DCEB3E1F3C6</key>
-		<dict>
-			<key>children</key>
-			<array>
-				<string>C7C98C73A6BCC373E9310188</string>
-			</array>
-			<key>isa</key>
-			<string>PBXGroup</string>
-			<key>path</key>
-			<string>App</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>1781F676DEDF5767F3243DB0</key>
-		<dict>
-			<key>attributes</key>
-			<dict>
-				<key>BuildIndependentTargetsInParallel</key>
-				<integer>1</integer>
-				<key>LastSwiftUpdateCheck</key>
-				<string>1600</string>
-				<key>LastUpgradeCheck</key>
-				<string>1600</string>
-				<key>TargetAttributes</key>
-				<dict>
-					<key>3AE6B15BEA674341CF335134</key>
-					<dict>
-						<key>CreatedOnToolsVersion</key>
-						<string>16.0</string>
-					</dict>
-				</dict>
-			</dict>
-			<key>buildConfigurationList</key>
-			<string>312AEC4A30A709044C1B251A</string>
-			<key>compatibilityVersion</key>
-			<string>Xcode 14.0</string>
-			<key>developmentRegion</key>
-			<string>en</string>
-			<key>hasScannedForEncodings</key>
-			<integer>0</integer>
-			<key>isa</key>
-			<string>PBXProject</string>
-			<key>knownRegions</key>
-			<array>
-				<string>en</string>
-				<string>Base</string>
-				<string>it</string>
-			</array>
-			<key>mainGroup</key>
-			<string>B9B8DBC97B2054281802674F</string>
-			<key>productRefGroup</key>
-			<string>5C3301D8292DBACEA69EE035</string>
-			<key>projectDirPath</key>
-			<string></string>
-			<key>projectRoot</key>
-			<string></string>
-			<key>targets</key>
-			<array>
-				<string>3AE6B15BEA674341CF335134</string>
-			</array>
-		</dict>
-		<key>19B10A18077FDE1B282CB480</key>
-		<dict>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.c.h</string>
-			<key>path</key>
-			<string>RatexBridge.h</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>1A0A3A18C5B0B1F8E342101B</key>
-		<dict>
-			<key>fileRef</key>
-			<string>6E1BDBF0E8FEA2E92F80AEAE</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>1BD8AF6241EA4D2BCB89A821</key>
-		<dict>
-			<key>buildConfigurations</key>
-			<array>
-				<string>56B95898396FDC89456F149A</string>
-				<string>D3D3DED13946D2F1D3C88225</string>
-			</array>
-			<key>defaultConfigurationIsVisible</key>
-			<integer>0</integer>
-			<key>defaultConfigurationName</key>
-			<string>Release</string>
-			<key>isa</key>
-			<string>XCConfigurationList</string>
-		</dict>
-		<key>1EA5FE75E2352406DC9F4345</key>
-		<dict>
-			<key>children</key>
-			<array>
-				<string>5A5EDAD871E93C6D259B8AE1</string>
-				<string>E34EFE8821485D62E7C7752F</string>
-				<string>2EC0209DB06113C27A831BE3</string>
-				<string>60296D6062E5C4F4F919738E</string>
-			</array>
-			<key>isa</key>
-			<string>PBXGroup</string>
-			<key>path</key>
-			<string>Models</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>1ED671438D343D57EAB98652</key>
-		<dict>
-			<key>fileRef</key>
-			<string>C7C98C73A6BCC373E9310188</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>2D6C5FF3F0A4792E53002240</key>
-		<dict>
-			<key>fileRef</key>
-			<string>30C352BAFB4F0292A9033C84</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>2E736DC4E22966F765AB4C91</key>
-		<dict>
-			<key>buildActionMask</key>
-			<integer>2147483647</integer>
-			<key>files</key>
-			<array>
-				<string>DB18FF58F4EF21A89EEC8FC5</string>
-			</array>
-			<key>isa</key>
-			<string>PBXFrameworksBuildPhase</string>
-			<key>runOnlyForDeploymentPostprocessing</key>
-			<integer>0</integer>
-		</dict>
-		<key>2EC0209DB06113C27A831BE3</key>
-		<dict>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.swift</string>
-			<key>path</key>
-			<string>Templates.swift</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>30C352BAFB4F0292A9033C84</key>
-		<dict>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.swift</string>
-			<key>path</key>
-			<string>WelcomeView.swift</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>312AEC4A30A709044C1B251A</key>
-		<dict>
-			<key>buildConfigurations</key>
-			<array>
-				<string>6E78E6E5C5E1391B668FE9E0</string>
-				<string>D13E8D5B790666F2F9A8DB87</string>
-			</array>
-			<key>defaultConfigurationIsVisible</key>
-			<integer>0</integer>
-			<key>defaultConfigurationName</key>
-			<string>Release</string>
-			<key>isa</key>
-			<string>XCConfigurationList</string>
-		</dict>
-		<key>3AE6B15BEA674341CF335134</key>
-		<dict>
-			<key>buildConfigurationList</key>
-			<string>1BD8AF6241EA4D2BCB89A821</string>
-			<key>buildPhases</key>
-			<array>
-				<string>8BB8ABC24AB723F99D4DD920</string>
-				<string>2E736DC4E22966F765AB4C91</string>
-				<string>01CC597ABAD15DB9D2376BE0</string>
-			</array>
-			<key>buildRules</key>
-			<array/>
-			<key>dependencies</key>
-			<array/>
-			<key>isa</key>
-			<string>PBXNativeTarget</string>
-			<key>name</key>
-			<string>RatexEditor</string>
-			<key>productName</key>
-			<string>RatexEditor</string>
-			<key>productReference</key>
-			<string>73AD16181FDDB7427288C6BD</string>
-			<key>productType</key>
-			<string>com.apple.product-type.application</string>
-		</dict>
-		<key>3D4AFC07CF3C59CB23B78A75</key>
-		<dict>
-			<key>fileRef</key>
-			<string>60296D6062E5C4F4F919738E</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>4FC14F8A02513B851E18EE78</key>
-		<dict>
-			<key>children</key>
-			<array>
-				<string>0E5EA55B00962DCEB3E1F3C6</string>
-				<string>CDF57256D2DD49D3CDB1380E</string>
-				<string>1EA5FE75E2352406DC9F4345</string>
-				<string>D778815D691A486EF850AB00</string>
-				<string>EE70B022B802CA5D60D152A8</string>
-			</array>
-			<key>isa</key>
-			<string>PBXGroup</string>
-			<key>path</key>
-			<string>RatexEditor</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>51B31CCA98C14F284664B733</key>
-		<dict>
-			<key>fileRef</key>
-			<string>C79AC86B21DA893C1FE8EDC0</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>56B95898396FDC89456F149A</key>
-		<dict>
-			<key>buildSettings</key>
-			<dict>
-				<key>CODE_SIGN_ENTITLEMENTS</key>
-				<string>RatexEditor/Resources/RatexEditor.entitlements</string>
-				<key>CODE_SIGN_IDENTITY</key>
-				<string>-</string>
-				<key>CODE_SIGN_STYLE</key>
-				<string>Automatic</string>
-				<key>COMBINE_HIDPI_IMAGES</key>
-				<string>YES</string>
-				<key>CURRENT_PROJECT_VERSION</key>
-				<string>1</string>
-				<key>GENERATE_INFOPLIST_FILE</key>
-				<string>NO</string>
-				<key>HEADER_SEARCH_PATHS</key>
-				<array>
-					<string>$(inherited)</string>
-					<string>$(SRCROOT)/../../crates/libtex/include</string>
-				</array>
-				<key>INFOPLIST_FILE</key>
-				<string>RatexEditor/Resources/Info.plist</string>
-				<key>INFOPLIST_KEY_CFBundleDisplayName</key>
-				<string>RatexEditor</string>
-				<key>LD_RUNPATH_SEARCH_PATHS</key>
-				<array>
-					<string>$(inherited)</string>
-					<string>@executable_path/../Frameworks</string>
-				</array>
-				<key>LIBRARY_SEARCH_PATHS</key>
-				<array>
-					<string>$(inherited)</string>
-					<string>$(SRCROOT)/../../target/ffi-release</string>
-				</array>
-				<key>MARKETING_VERSION</key>
-				<string>0.3.0</string>
-				<key>OTHER_LDFLAGS</key>
-				<array>
-					<string>$(inherited)</string>
-					<string>$(SRCROOT)/../../target/ffi-release/libtex.a</string>
-				</array>
-				<key>PRODUCT_BUNDLE_IDENTIFIER</key>
-				<string>com.ratex.RatexEditor</string>
-				<key>PRODUCT_NAME</key>
-				<string>$(TARGET_NAME)</string>
-				<key>SWIFT_EMIT_LOC_STRINGS</key>
-				<string>YES</string>
-				<key>SWIFT_OBJC_BRIDGING_HEADER</key>
-				<string>RatexEditor/Bridge/RatexBridge.h</string>
-				<key>SWIFT_VERSION</key>
-				<string>5.0</string>
-			</dict>
-			<key>isa</key>
-			<string>XCBuildConfiguration</string>
-			<key>name</key>
-			<string>Debug</string>
-		</dict>
-		<key>58575D004FBF483B95C7B70F</key>
-		<dict>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.swift</string>
-			<key>path</key>
-			<string>MathPaletteView.swift</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>5A5EDAD871E93C6D259B8AE1</key>
-		<dict>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.swift</string>
-			<key>path</key>
-			<string>TeXDocument.swift</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>5C3301D8292DBACEA69EE035</key>
-		<dict>
-			<key>children</key>
-			<array>
-				<string>73AD16181FDDB7427288C6BD</string>
-			</array>
-			<key>isa</key>
-			<string>PBXGroup</string>
-			<key>name</key>
-			<string>Products</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>60296D6062E5C4F4F919738E</key>
-		<dict>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.swift</string>
-			<key>path</key>
-			<string>WorkspaceModel.swift</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>6E1BDBF0E8FEA2E92F80AEAE</key>
-		<dict>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.swift</string>
-			<key>path</key>
-			<string>PDFKitRepresentable.swift</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>6E78E6E5C5E1391B668FE9E0</key>
-		<dict>
-			<key>buildSettings</key>
-			<dict>
-				<key>ALWAYS_SEARCH_USER_PATHS</key>
-				<string>NO</string>
-				<key>CLANG_ANALYZER_NONNULL</key>
-				<string>YES</string>
-				<key>CLANG_CXX_LANGUAGE_STANDARD</key>
-				<string>gnu++20</string>
-				<key>CLANG_ENABLE_MODULES</key>
-				<string>YES</string>
-				<key>CLANG_ENABLE_OBJC_ARC</key>
-				<string>YES</string>
-				<key>COPY_PHASE_STRIP</key>
-				<string>NO</string>
-				<key>DEBUG_INFORMATION_FORMAT</key>
-				<string>dwarf</string>
-				<key>ENABLE_TESTABILITY</key>
-				<string>YES</string>
-				<key>GCC_OPTIMIZATION_LEVEL</key>
-				<string>0</string>
-				<key>GCC_PREPROCESSOR_DEFINITIONS</key>
-				<array>
-					<string>DEBUG=1</string>
-					<string>$(inherited)</string>
-				</array>
-				<key>MACOSX_DEPLOYMENT_TARGET</key>
-				<string>14.0</string>
-				<key>ONLY_ACTIVE_ARCH</key>
-				<string>YES</string>
-				<key>SDKROOT</key>
-				<string>macosx</string>
-				<key>SWIFT_ACTIVE_COMPILATION_CONDITIONS</key>
-				<string>DEBUG</string>
-				<key>SWIFT_OPTIMIZATION_LEVEL</key>
-				<string>-Onone</string>
-			</dict>
-			<key>isa</key>
-			<string>XCBuildConfiguration</string>
-			<key>name</key>
-			<string>Debug</string>
-		</dict>
-		<key>6FF00E145772C9B23EF172E6</key>
-		<dict>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>archive.ar</string>
-			<key>name</key>
-			<string>libtex.a</string>
-			<key>path</key>
-			<string>../../target/ffi-release/libtex.a</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>73AD16181FDDB7427288C6BD</key>
-		<dict>
-			<key>explicitFileType</key>
-			<string>wrapper.application</string>
-			<key>includeInIndex</key>
-			<integer>0</integer>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>path</key>
-			<string>RatexEditor.app</string>
-			<key>sourceTree</key>
-			<string>BUILT_PRODUCTS_DIR</string>
-		</dict>
-		<key>A1C01C01C01C01C01C01C001</key>
-		<dict>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>image.icns</string>
-			<key>path</key>
-			<string>AppIcon.icns</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>76E3C28BAF4A20419EC58432</key>
-		<dict>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>text.plist.xml</string>
-			<key>path</key>
-			<string>Info.plist</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>A1C01C01C01C01C01C01C021</key>
-		<dict>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>text.json.xcstrings</string>
-			<key>path</key>
-			<string>Localizable.xcstrings</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>A1C01C01C01C01C01C01C031</key>
-		<dict>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>text.json.xcstrings</string>
-			<key>path</key>
-			<string>InfoPlist.xcstrings</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>8BB8ABC24AB723F99D4DD920</key>
-		<dict>
-			<key>buildActionMask</key>
-			<integer>2147483647</integer>
-			<key>files</key>
-			<array>
-				<string>1ED671438D343D57EAB98652</string>
-				<string>51B31CCA98C14F284664B733</string>
-				<string>90945AFCCB876E942014ABA4</string>
-				<string>00317EF7895D2DB3E87935FF</string>
-				<string>A17A4D928FE8E0151E51901C</string>
-				<string>F52F151697094F7BE5519D91</string>
-				<string>1A0A3A18C5B0B1F8E342101B</string>
-				<string>97E9DEDDB05B441171B7D999</string>
-				<string>B50DB72C49E2CA29024FBDC9</string>
-				<string>07F93E64C5DBAC310348DBCC</string>
-				<string>D6ADEC0A7CC0A442931F6433</string>
-				<string>3D4AFC07CF3C59CB23B78A75</string>
-				<string>C90AE133133FDDE6B931F5D9</string>
-				<string>2D6C5FF3F0A4792E53002240</string>
-				<string>A1C01C01C01C01C01C01C011</string>
-				<string>C01C01C01C01C01C01C00011</string>
-			</array>
-			<key>isa</key>
-			<string>PBXSourcesBuildPhase</string>
-			<key>runOnlyForDeploymentPostprocessing</key>
-			<integer>0</integer>
-		</dict>
-		<key>90945AFCCB876E942014ABA4</key>
-		<dict>
-			<key>fileRef</key>
-			<string>5A5EDAD871E93C6D259B8AE1</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>97E9DEDDB05B441171B7D999</key>
-		<dict>
-			<key>fileRef</key>
-			<string>D1612EA3F45DF5BA2BE63FF7</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>A17A4D928FE8E0151E51901C</key>
-		<dict>
-			<key>fileRef</key>
-			<string>2EC0209DB06113C27A831BE3</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>A280A0119C40070B9437C1C3</key>
-		<dict>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>text.plist.entitlements</string>
-			<key>path</key>
-			<string>RatexEditor.entitlements</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>B50DB72C49E2CA29024FBDC9</key>
-		<dict>
-			<key>fileRef</key>
-			<string>58575D004FBF483B95C7B70F</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>B9B8DBC97B2054281802674F</key>
-		<dict>
-			<key>children</key>
-			<array>
-				<string>4FC14F8A02513B851E18EE78</string>
-				<string>E872BE2E4E13E186DFDAAE9B</string>
-				<string>5C3301D8292DBACEA69EE035</string>
-			</array>
-			<key>isa</key>
-			<string>PBXGroup</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>C79AC86B21DA893C1FE8EDC0</key>
-		<dict>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.swift</string>
-			<key>path</key>
-			<string>RatexEngine.swift</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>C7C98C73A6BCC373E9310188</key>
-		<dict>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.swift</string>
-			<key>path</key>
-			<string>RatexEditorApp.swift</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>C90AE133133FDDE6B931F5D9</key>
-		<dict>
-			<key>fileRef</key>
-			<string>F07FED15374212B79C09FBA7</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>CDF57256D2DD49D3CDB1380E</key>
-		<dict>
-			<key>children</key>
-			<array>
-				<string>19B10A18077FDE1B282CB480</string>
-				<string>C79AC86B21DA893C1FE8EDC0</string>
-			</array>
-			<key>isa</key>
-			<string>PBXGroup</string>
-			<key>path</key>
-			<string>Bridge</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>D13E8D5B790666F2F9A8DB87</key>
-		<dict>
-			<key>buildSettings</key>
-			<dict>
-				<key>ALWAYS_SEARCH_USER_PATHS</key>
-				<string>NO</string>
-				<key>CLANG_ANALYZER_NONNULL</key>
-				<string>YES</string>
-				<key>CLANG_CXX_LANGUAGE_STANDARD</key>
-				<string>gnu++20</string>
-				<key>CLANG_ENABLE_MODULES</key>
-				<string>YES</string>
-				<key>CLANG_ENABLE_OBJC_ARC</key>
-				<string>YES</string>
-				<key>COPY_PHASE_STRIP</key>
-				<string>NO</string>
-				<key>DEBUG_INFORMATION_FORMAT</key>
-				<string>dwarf-with-dsym</string>
-				<key>ENABLE_NS_ASSERTIONS</key>
-				<string>NO</string>
-				<key>GCC_OPTIMIZATION_LEVEL</key>
-				<string>s</string>
-				<key>MACOSX_DEPLOYMENT_TARGET</key>
-				<string>14.0</string>
-				<key>ONLY_ACTIVE_ARCH</key>
-				<string>YES</string>
-				<key>SDKROOT</key>
-				<string>macosx</string>
-				<key>SWIFT_COMPILATION_MODE</key>
-				<string>wholemodule</string>
-				<key>SWIFT_OPTIMIZATION_LEVEL</key>
-				<string>-O</string>
-			</dict>
-			<key>isa</key>
-			<string>XCBuildConfiguration</string>
-			<key>name</key>
-			<string>Release</string>
-		</dict>
-		<key>A1C01C01C01C01C01C01C010</key>
-		<dict>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.swift</string>
-			<key>path</key>
-			<string>LiquidGlass.swift</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>D1612EA3F45DF5BA2BE63FF7</key>
-		<dict>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.swift</string>
-			<key>path</key>
-			<string>WYSIWYGToolbar.swift</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>D3D3DED13946D2F1D3C88225</key>
-		<dict>
-			<key>buildSettings</key>
-			<dict>
-				<key>CODE_SIGN_ENTITLEMENTS</key>
-				<string>RatexEditor/Resources/RatexEditor.entitlements</string>
-				<key>CODE_SIGN_IDENTITY</key>
-				<string>-</string>
-				<key>CODE_SIGN_STYLE</key>
-				<string>Automatic</string>
-				<key>COMBINE_HIDPI_IMAGES</key>
-				<string>YES</string>
-				<key>CURRENT_PROJECT_VERSION</key>
-				<string>1</string>
-				<key>GENERATE_INFOPLIST_FILE</key>
-				<string>NO</string>
-				<key>HEADER_SEARCH_PATHS</key>
-				<array>
-					<string>$(inherited)</string>
-					<string>$(SRCROOT)/../../crates/libtex/include</string>
-				</array>
-				<key>INFOPLIST_FILE</key>
-				<string>RatexEditor/Resources/Info.plist</string>
-				<key>INFOPLIST_KEY_CFBundleDisplayName</key>
-				<string>RatexEditor</string>
-				<key>LD_RUNPATH_SEARCH_PATHS</key>
-				<array>
-					<string>$(inherited)</string>
-					<string>@executable_path/../Frameworks</string>
-				</array>
-				<key>LIBRARY_SEARCH_PATHS</key>
-				<array>
-					<string>$(inherited)</string>
-					<string>$(SRCROOT)/../../target/ffi-release</string>
-				</array>
-				<key>MARKETING_VERSION</key>
-				<string>0.3.0</string>
-				<key>OTHER_LDFLAGS</key>
-				<array>
-					<string>$(inherited)</string>
-					<string>$(SRCROOT)/../../target/ffi-release/libtex.a</string>
-				</array>
-				<key>PRODUCT_BUNDLE_IDENTIFIER</key>
-				<string>com.ratex.RatexEditor</string>
-				<key>PRODUCT_NAME</key>
-				<string>$(TARGET_NAME)</string>
-				<key>SWIFT_EMIT_LOC_STRINGS</key>
-				<string>YES</string>
-				<key>SWIFT_OBJC_BRIDGING_HEADER</key>
-				<string>RatexEditor/Bridge/RatexBridge.h</string>
-				<key>SWIFT_VERSION</key>
-				<string>5.0</string>
-			</dict>
-			<key>isa</key>
-			<string>XCBuildConfiguration</string>
-			<key>name</key>
-			<string>Release</string>
-		</dict>
-		<key>D6ADEC0A7CC0A442931F6433</key>
-		<dict>
-			<key>fileRef</key>
-			<string>E93DD05592F907E7861685B7</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>D778815D691A486EF850AB00</key>
-		<dict>
-			<key>children</key>
-			<array>
-				<string>A1C01C01C01C01C01C01C010</string>
-				<string>F4529BBBC6942CA1D0E54F30</string>
-				<string>6E1BDBF0E8FEA2E92F80AEAE</string>
-				<string>D1612EA3F45DF5BA2BE63FF7</string>
-				<string>58575D004FBF483B95C7B70F</string>
-				<string>030A63D11EB29D7B0C05ED76</string>
-				<string>E93DD05592F907E7861685B7</string>
-				<string>F07FED15374212B79C09FBA7</string>
-				<string>30C352BAFB4F0292A9033C84</string>
-				<string>C01C01C01C01C01C01C00010</string>
-			</array>
-			<key>isa</key>
-			<string>PBXGroup</string>
-			<key>path</key>
-			<string>Views</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>DB18FF58F4EF21A89EEC8FC5</key>
-		<dict>
-			<key>fileRef</key>
-			<string>6FF00E145772C9B23EF172E6</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>E34EFE8821485D62E7C7752F</key>
-		<dict>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.swift</string>
-			<key>path</key>
-			<string>EditorState.swift</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>E872BE2E4E13E186DFDAAE9B</key>
-		<dict>
-			<key>children</key>
-			<array>
-				<string>6FF00E145772C9B23EF172E6</string>
-			</array>
-			<key>isa</key>
-			<string>PBXGroup</string>
-			<key>name</key>
-			<string>Frameworks</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>E93DD05592F907E7861685B7</key>
-		<dict>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.swift</string>
-			<key>path</key>
-			<string>MainSplitView.swift</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>EE70B022B802CA5D60D152A8</key>
-		<dict>
-			<key>children</key>
-			<array>
-				<string>A1C01C01C01C01C01C01C001</string>
-				<string>76E3C28BAF4A20419EC58432</string>
-				<string>A280A0119C40070B9437C1C3</string>
-				<string>A1C01C01C01C01C01C01C021</string>
-				<string>A1C01C01C01C01C01C01C031</string>
-			</array>
-			<key>isa</key>
-			<string>PBXGroup</string>
-			<key>path</key>
-			<string>Resources</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>F07FED15374212B79C09FBA7</key>
-		<dict>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.swift</string>
-			<key>path</key>
-			<string>ProjectSidebarView.swift</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>F4529BBBC6942CA1D0E54F30</key>
-		<dict>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.swift</string>
-			<key>path</key>
-			<string>SourceEditorView.swift</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>F52F151697094F7BE5519D91</key>
-		<dict>
-			<key>fileRef</key>
-			<string>F4529BBBC6942CA1D0E54F30</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-	</dict>
-	<key>rootObject</key>
-	<string>1781F676DEDF5767F3243DB0</string>
-</dict>
-</plist>
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		00317EF7895D2DB3E87935FF /* EditorState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E34EFE8821485D62E7C7752F /* EditorState.swift */; };
+		07F93E64C5DBAC310348DBCC /* DiagnosticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 030A63D11EB29D7B0C05ED76 /* DiagnosticsView.swift */; };
+		1A0A3A18C5B0B1F8E342101B /* PDFKitRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1BDBF0E8FEA2E92F80AEAE /* PDFKitRepresentable.swift */; };
+		1ED671438D343D57EAB98652 /* RatexEditorApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7C98C73A6BCC373E9310188 /* RatexEditorApp.swift */; };
+		2D6C5FF3F0A4792E53002240 /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30C352BAFB4F0292A9033C84 /* WelcomeView.swift */; };
+		3D4AFC07CF3C59CB23B78A75 /* WorkspaceModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60296D6062E5C4F4F919738E /* WorkspaceModel.swift */; };
+		51B31CCA98C14F284664B733 /* RatexEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = C79AC86B21DA893C1FE8EDC0 /* RatexEngine.swift */; };
+		65735538305F55D4007477E9 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65735537305F55D4007477E9 /* SettingsView.swift */; };
+		90945AFCCB876E942014ABA4 /* TeXDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A5EDAD871E93C6D259B8AE1 /* TeXDocument.swift */; };
+		97E9DEDDB05B441171B7D999 /* WYSIWYGToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1612EA3F45DF5BA2BE63FF7 /* WYSIWYGToolbar.swift */; };
+		A17A4D928FE8E0151E51901C /* Templates.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EC0209DB06113C27A831BE3 /* Templates.swift */; };
+		A1C01C01C01C01C01C01C002 /* AppIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = A1C01C01C01C01C01C01C001 /* AppIcon.icns */; };
+		A1C01C01C01C01C01C01C011 /* LiquidGlass.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C01C01C01C01C01C01C010 /* LiquidGlass.swift */; };
+		A1C01C01C01C01C01C01C020 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = A1C01C01C01C01C01C01C021 /* Localizable.xcstrings */; };
+		A1C01C01C01C01C01C01C030 /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = A1C01C01C01C01C01C01C031 /* InfoPlist.xcstrings */; };
+		B50DB72C49E2CA29024FBDC9 /* MathPaletteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58575D004FBF483B95C7B70F /* MathPaletteView.swift */; };
+		C01C01C01C01C01C01C00011 /* ConsoleLogTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C01C01C01C01C01C01C00010 /* ConsoleLogTextView.swift */; };
+		C90AE133133FDDE6B931F5D9 /* ProjectSidebarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F07FED15374212B79C09FBA7 /* ProjectSidebarView.swift */; };
+		D6ADEC0A7CC0A442931F6433 /* MainSplitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E93DD05592F907E7861685B7 /* MainSplitView.swift */; };
+		DB18FF58F4EF21A89EEC8FC5 /* libtex.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6FF00E145772C9B23EF172E6 /* libtex.a */; };
+		F52F151697094F7BE5519D91 /* SourceEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4529BBBC6942CA1D0E54F30 /* SourceEditorView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		030A63D11EB29D7B0C05ED76 /* DiagnosticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiagnosticsView.swift; sourceTree = "<group>"; };
+		19B10A18077FDE1B282CB480 /* RatexBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RatexBridge.h; sourceTree = "<group>"; };
+		2EC0209DB06113C27A831BE3 /* Templates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Templates.swift; sourceTree = "<group>"; };
+		30C352BAFB4F0292A9033C84 /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
+		58575D004FBF483B95C7B70F /* MathPaletteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MathPaletteView.swift; sourceTree = "<group>"; };
+		5A5EDAD871E93C6D259B8AE1 /* TeXDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeXDocument.swift; sourceTree = "<group>"; };
+		60296D6062E5C4F4F919738E /* WorkspaceModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceModel.swift; sourceTree = "<group>"; };
+		65735537305F55D4007477E9 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		6E1BDBF0E8FEA2E92F80AEAE /* PDFKitRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFKitRepresentable.swift; sourceTree = "<group>"; };
+		6FF00E145772C9B23EF172E6 /* libtex.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libtex.a; path = "../../target/ffi-release/libtex.a"; sourceTree = "<group>"; };
+		73AD16181FDDB7427288C6BD /* RatexEditor.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RatexEditor.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		76E3C28BAF4A20419EC58432 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A1C01C01C01C01C01C01C001 /* AppIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = AppIcon.icns; sourceTree = "<group>"; };
+		A1C01C01C01C01C01C01C010 /* LiquidGlass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiquidGlass.swift; sourceTree = "<group>"; };
+		A1C01C01C01C01C01C01C021 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
+		A1C01C01C01C01C01C01C031 /* InfoPlist.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = InfoPlist.xcstrings; sourceTree = "<group>"; };
+		A280A0119C40070B9437C1C3 /* RatexEditor.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = RatexEditor.entitlements; sourceTree = "<group>"; };
+		C01C01C01C01C01C01C00010 /* ConsoleLogTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsoleLogTextView.swift; sourceTree = "<group>"; };
+		C79AC86B21DA893C1FE8EDC0 /* RatexEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RatexEngine.swift; sourceTree = "<group>"; };
+		C7C98C73A6BCC373E9310188 /* RatexEditorApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RatexEditorApp.swift; sourceTree = "<group>"; };
+		D1612EA3F45DF5BA2BE63FF7 /* WYSIWYGToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WYSIWYGToolbar.swift; sourceTree = "<group>"; };
+		E34EFE8821485D62E7C7752F /* EditorState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorState.swift; sourceTree = "<group>"; };
+		E93DD05592F907E7861685B7 /* MainSplitView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainSplitView.swift; sourceTree = "<group>"; };
+		F07FED15374212B79C09FBA7 /* ProjectSidebarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectSidebarView.swift; sourceTree = "<group>"; };
+		F4529BBBC6942CA1D0E54F30 /* SourceEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceEditorView.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		2E736DC4E22966F765AB4C91 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DB18FF58F4EF21A89EEC8FC5 /* libtex.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0E5EA55B00962DCEB3E1F3C6 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				C7C98C73A6BCC373E9310188 /* RatexEditorApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		1EA5FE75E2352406DC9F4345 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				5A5EDAD871E93C6D259B8AE1 /* TeXDocument.swift */,
+				E34EFE8821485D62E7C7752F /* EditorState.swift */,
+				2EC0209DB06113C27A831BE3 /* Templates.swift */,
+				60296D6062E5C4F4F919738E /* WorkspaceModel.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		4FC14F8A02513B851E18EE78 /* RatexEditor */ = {
+			isa = PBXGroup;
+			children = (
+				0E5EA55B00962DCEB3E1F3C6 /* App */,
+				CDF57256D2DD49D3CDB1380E /* Bridge */,
+				1EA5FE75E2352406DC9F4345 /* Models */,
+				D778815D691A486EF850AB00 /* Views */,
+				EE70B022B802CA5D60D152A8 /* Resources */,
+			);
+			path = RatexEditor;
+			sourceTree = "<group>";
+		};
+		5C3301D8292DBACEA69EE035 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				73AD16181FDDB7427288C6BD /* RatexEditor.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B9B8DBC97B2054281802674F = {
+			isa = PBXGroup;
+			children = (
+				4FC14F8A02513B851E18EE78 /* RatexEditor */,
+				E872BE2E4E13E186DFDAAE9B /* Frameworks */,
+				5C3301D8292DBACEA69EE035 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		CDF57256D2DD49D3CDB1380E /* Bridge */ = {
+			isa = PBXGroup;
+			children = (
+				19B10A18077FDE1B282CB480 /* RatexBridge.h */,
+				C79AC86B21DA893C1FE8EDC0 /* RatexEngine.swift */,
+			);
+			path = Bridge;
+			sourceTree = "<group>";
+		};
+		D778815D691A486EF850AB00 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				A1C01C01C01C01C01C01C010 /* LiquidGlass.swift */,
+				F4529BBBC6942CA1D0E54F30 /* SourceEditorView.swift */,
+				6E1BDBF0E8FEA2E92F80AEAE /* PDFKitRepresentable.swift */,
+				D1612EA3F45DF5BA2BE63FF7 /* WYSIWYGToolbar.swift */,
+				58575D004FBF483B95C7B70F /* MathPaletteView.swift */,
+				030A63D11EB29D7B0C05ED76 /* DiagnosticsView.swift */,
+				E93DD05592F907E7861685B7 /* MainSplitView.swift */,
+				F07FED15374212B79C09FBA7 /* ProjectSidebarView.swift */,
+				30C352BAFB4F0292A9033C84 /* WelcomeView.swift */,
+				C01C01C01C01C01C01C00010 /* ConsoleLogTextView.swift */,
+				65735537305F55D4007477E9 /* SettingsView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		E872BE2E4E13E186DFDAAE9B /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				6FF00E145772C9B23EF172E6 /* libtex.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		EE70B022B802CA5D60D152A8 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				A1C01C01C01C01C01C01C001 /* AppIcon.icns */,
+				76E3C28BAF4A20419EC58432 /* Info.plist */,
+				A280A0119C40070B9437C1C3 /* RatexEditor.entitlements */,
+				A1C01C01C01C01C01C01C021 /* Localizable.xcstrings */,
+				A1C01C01C01C01C01C01C031 /* InfoPlist.xcstrings */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		3AE6B15BEA674341CF335134 /* RatexEditor */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1BD8AF6241EA4D2BCB89A821 /* Build configuration list for PBXNativeTarget "RatexEditor" */;
+			buildPhases = (
+				8BB8ABC24AB723F99D4DD920 /* Sources */,
+				2E736DC4E22966F765AB4C91 /* Frameworks */,
+				01CC597ABAD15DB9D2376BE0 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = RatexEditor;
+			productName = RatexEditor;
+			productReference = 73AD16181FDDB7427288C6BD /* RatexEditor.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		1781F676DEDF5767F3243DB0 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1600;
+				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+					3AE6B15BEA674341CF335134 = {
+						CreatedOnToolsVersion = 16.0;
+					};
+				};
+			};
+			buildConfigurationList = 312AEC4A30A709044C1B251A /* Build configuration list for PBXProject "RatexEditor" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+				it,
+			);
+			mainGroup = B9B8DBC97B2054281802674F;
+			productRefGroup = 5C3301D8292DBACEA69EE035 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				3AE6B15BEA674341CF335134 /* RatexEditor */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		01CC597ABAD15DB9D2376BE0 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1C01C01C01C01C01C01C002 /* AppIcon.icns in Resources */,
+				A1C01C01C01C01C01C01C020 /* Localizable.xcstrings in Resources */,
+				A1C01C01C01C01C01C01C030 /* InfoPlist.xcstrings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		8BB8ABC24AB723F99D4DD920 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1ED671438D343D57EAB98652 /* RatexEditorApp.swift in Sources */,
+				51B31CCA98C14F284664B733 /* RatexEngine.swift in Sources */,
+				90945AFCCB876E942014ABA4 /* TeXDocument.swift in Sources */,
+				00317EF7895D2DB3E87935FF /* EditorState.swift in Sources */,
+				A17A4D928FE8E0151E51901C /* Templates.swift in Sources */,
+				65735538305F55D4007477E9 /* SettingsView.swift in Sources */,
+				F52F151697094F7BE5519D91 /* SourceEditorView.swift in Sources */,
+				1A0A3A18C5B0B1F8E342101B /* PDFKitRepresentable.swift in Sources */,
+				97E9DEDDB05B441171B7D999 /* WYSIWYGToolbar.swift in Sources */,
+				B50DB72C49E2CA29024FBDC9 /* MathPaletteView.swift in Sources */,
+				07F93E64C5DBAC310348DBCC /* DiagnosticsView.swift in Sources */,
+				D6ADEC0A7CC0A442931F6433 /* MainSplitView.swift in Sources */,
+				3D4AFC07CF3C59CB23B78A75 /* WorkspaceModel.swift in Sources */,
+				C90AE133133FDDE6B931F5D9 /* ProjectSidebarView.swift in Sources */,
+				2D6C5FF3F0A4792E53002240 /* WelcomeView.swift in Sources */,
+				A1C01C01C01C01C01C01C011 /* LiquidGlass.swift in Sources */,
+				C01C01C01C01C01C01C00011 /* ConsoleLogTextView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		56B95898396FDC89456F149A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = RatexEditor/Resources/RatexEditor.entitlements;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/../../crates/libtex/include",
+				);
+				INFOPLIST_FILE = RatexEditor/Resources/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = RatexEditor;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/../../target/ffi-release",
+				);
+				MARKETING_VERSION = 0.3.0;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"$(SRCROOT)/../../target/ffi-release/libtex.a",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.ratex.RatexEditor;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = RatexEditor/Bridge/RatexBridge.h;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		6E78E6E5C5E1391B668FE9E0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_TESTABILITY = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		D13E8D5B790666F2F9A8DB87 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+			};
+			name = Release;
+		};
+		D3D3DED13946D2F1D3C88225 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = RatexEditor/Resources/RatexEditor.entitlements;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/../../crates/libtex/include",
+				);
+				INFOPLIST_FILE = RatexEditor/Resources/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = RatexEditor;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/../../target/ffi-release",
+				);
+				MARKETING_VERSION = 0.3.0;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"$(SRCROOT)/../../target/ffi-release/libtex.a",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.ratex.RatexEditor;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = RatexEditor/Bridge/RatexBridge.h;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1BD8AF6241EA4D2BCB89A821 /* Build configuration list for PBXNativeTarget "RatexEditor" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				56B95898396FDC89456F149A /* Debug */,
+				D3D3DED13946D2F1D3C88225 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		312AEC4A30A709044C1B251A /* Build configuration list for PBXProject "RatexEditor" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6E78E6E5C5E1391B668FE9E0 /* Debug */,
+				D13E8D5B790666F2F9A8DB87 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 1781F676DEDF5767F3243DB0 /* Project object */;
+}

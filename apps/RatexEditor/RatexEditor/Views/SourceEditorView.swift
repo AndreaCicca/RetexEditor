@@ -29,6 +29,8 @@ public struct SourceEditorView: NSViewRepresentable {
         let textView = LaTeXNSTextView()
         textView.isRichText = false
         textView.allowsUndo = true
+        textView.usesFindBar = true
+        textView.isIncrementalSearchingEnabled = true
         textView.isAutomaticQuoteSubstitutionEnabled = false
         textView.isAutomaticDashSubstitutionEnabled = false
         textView.isAutomaticTextReplacementEnabled = false

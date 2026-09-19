@@ -76,16 +76,6 @@ public struct DiagnosticsView: View {
             .liquidGlassBar(hasBottomBorder: true, hasTopHighlight: true)
             
             // Content
-            ScrollView(.vertical) {
-                let content = selectedTab == 0 ? state.diagnostics : state.log
-                Text(content.isEmpty ? (selectedTab == 0 ? String(localized: "No diagnostics or errors reported.") : String(localized: "TeX log is empty.")) : content)
-                    .font(.system(size: 11, weight: .regular, design: .monospaced))
-                    .foregroundStyle(selectedTab == 0 && state.lastStatus != .success ? Color.red : Color.primary)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(10)
-                    .textSelection(.enabled)
-            }
-            .background(Color(nsColor: .textBackgroundColor).opacity(0.85))
             let contentText = selectedTab == 0
                 ? (state.diagnostics.isEmpty ? String(localized: "No diagnostics or errors reported.") : state.diagnostics)
                 : (state.log.isEmpty ? String(localized: "TeX log is empty.") : state.log)

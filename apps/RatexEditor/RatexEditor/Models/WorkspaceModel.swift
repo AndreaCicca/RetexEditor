@@ -1,4 +1,5 @@
 import SwiftUI
+import AppKit
 import Observation
 
 public struct FileNode: Identifiable, Hashable, Sendable {
@@ -347,6 +348,7 @@ public final class WorkspaceModel {
     public func clearRecents() {
         recentProjects = []
         UserDefaults.standard.removeObject(forKey: "RatexRecentProjects")
+        NSDocumentController.shared.clearRecentDocuments(nil)
     }
     
     private func loadRecents() {
@@ -356,6 +358,7 @@ public final class WorkspaceModel {
     }
     
     private func addToRecent(url: URL) {
+        NSDocumentController.shared.noteNewRecentDocumentURL(url)
         var recents = recentProjects.filter { $0.path != url.path }
         recents.insert(url, at: 0)
         if recents.count > 10 {

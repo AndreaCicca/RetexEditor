@@ -1,5 +1,6 @@
 import SwiftUI
 import AppKit
+import QuickLook
 
 public struct ProjectSidebarView: View {
     @Bindable var workspace: WorkspaceModel
@@ -10,6 +11,7 @@ public struct ProjectSidebarView: View {
     @State private var showingNewFolderSheet = false
     @State private var showingRenameSheet = false
     @State private var showingDeleteAlert = false
+    @State private var quickLookURL: URL? = nil
     
     @State private var targetParentDirectory: URL? = nil
     @State private var targetItemToRename: URL? = nil
@@ -135,6 +137,9 @@ public struct ProjectSidebarView: View {
                             onDelete: { url in
                                 targetItemToDelete = url
                                 showingDeleteAlert = true
+                            },
+                            onQuickLook: { url in
+                                quickLookURL = url
                             }
                         )
                     }
@@ -260,6 +265,7 @@ public struct ProjectSidebarView: View {
         } message: {
             Text("Are you sure you want to move \"\(targetItemToDelete?.lastPathComponent ?? String(localized: "this item"))\" to the Trash?")
         }
+        .quickLookPreview($quickLookURL)
     }
     
     private func createNewFileAction() {
@@ -298,6 +304,7 @@ struct FileTreeNodeRow: View {
     let onNewFolder: (URL) -> Void
     let onRename: (URL) -> Void
     let onDelete: (URL) -> Void
+    let onQuickLook: (URL) -> Void
     
     var isSelected: Bool {
         workspace.selectedFileURL == node.url
@@ -320,7 +327,8 @@ struct FileTreeNodeRow: View {
                             onNewFile: onNewFile,
                             onNewFolder: onNewFolder,
                             onRename: onRename,
-                            onDelete: onDelete
+                            onDelete: onDelete,
+                            onQuickLook: onQuickLook
                         )
                     }
                 }
@@ -334,6 +342,8 @@ struct FileTreeNodeRow: View {
             Button(action: {
                 if workspace.isTextEditable(url: node.url) {
                     onSelectFile(node.url)
+                } else {
+                    onQuickLook(node.url)
                 }
             }) {
                 rowLabel
@@ -438,6 +448,10 @@ struct FileTreeNodeRow: View {
         }
         
         Divider()
+        
+        Button(action: { onQuickLook(node.url) }) {
+            Label("Quick Look…", systemImage: "eye")
+        }
         
         Button(action: {
             NSWorkspace.shared.activateFileViewerSelecting([node.url])

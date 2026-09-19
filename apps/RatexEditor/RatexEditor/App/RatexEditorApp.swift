@@ -12,6 +12,10 @@ struct RatexEditorApp: App {
         }
         .windowStyle(.titleBar)
         .windowToolbarStyle(.unified)
+        
+        Settings {
+            SettingsView()
+        }
         .commands {
             CommandGroup(replacing: .newItem) {
                 Button("New Project…") {
@@ -164,6 +168,8 @@ struct WorkspaceRootView: View {
             }
         }
         .navigationTitle(windowTitle)
+        .navigationSubtitle(windowSubtitle)
+        .modifier(NavigationDocumentModifier(url: activeDocumentURL))
         .onReceive(NotificationCenter.default.publisher(for: .newProjectRequested)) { _ in
             showingNewProjectSheet = true
         }
@@ -172,16 +178,38 @@ struct WorkspaceRootView: View {
         }
     }
     
+    private var activeDocumentURL: URL? {
+        workspace.selectedFileURL ?? workspace.entryPointURL ?? workspace.rootDirectory
+    }
+    
     private var windowTitle: String {
-        if let root = workspace.rootDirectory {
-            if let entry = workspace.entryPointURL {
-                return "\(root.lastPathComponent) — \(entry.lastPathComponent)"
-            } else if let sel = workspace.selectedFileURL {
-                return "\(root.lastPathComponent) — \(sel.lastPathComponent)"
-            }
+        if let doc = workspace.selectedFileURL ?? workspace.entryPointURL {
+            return doc.lastPathComponent
+        } else if let root = workspace.rootDirectory {
             return root.lastPathComponent
         }
         return String(localized: "Ratex Editor")
+    }
+    
+    private var windowSubtitle: String {
+        guard let root = workspace.rootDirectory else { return "" }
+        if let doc = workspace.selectedFileURL {
+            let rel = workspace.relativePath(for: doc)
+            return "\(root.lastPathComponent) — \(rel)"
+        }
+        return root.lastPathComponent
+    }
+}
+
+private struct NavigationDocumentModifier: ViewModifier {
+    let url: URL?
+    
+    func body(content: Content) -> some View {
+        if let url = url {
+            content.navigationDocument(url)
+        } else {
+            content
+        }
     }
 }
 

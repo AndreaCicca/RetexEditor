@@ -4,23 +4,6 @@
     "" : {
 
     },
-    "Drag to resize • Double-click to reset (50/50)" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Drag to resize • Double-click to reset (50/50)"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Trascina per ridimensionare • Doppio clic per riequilibrare (50/50)"
-          }
-        }
-      }
-    },
     "(Building: %@)" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -197,6 +180,18 @@
         }
       }
     },
+    "10pt" : {
+
+    },
+    "24pt" : {
+
+    },
+    "150ms" : {
+
+    },
+    "1000ms" : {
+
+    },
     "A clean, minimal LaTeX starter." : {
       "extractionState" : "manual",
       "localizations" : {
@@ -280,6 +275,9 @@
         }
       }
     },
+    "amsmath, amssymb, graphicx, babel (IT)" : {
+
+    },
     "Apply a starter LaTeX document template" : {
 
     },
@@ -326,6 +324,9 @@
           }
         }
       }
+    },
+    "Auto-compile on file changes" : {
+
     },
     "beta" : {
       "extractionState" : "manual",
@@ -633,6 +634,9 @@
         }
       }
     },
+    "Compile debounce:" : {
+
+    },
     "Compile This File" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -649,6 +653,9 @@
           }
         }
       }
+    },
+    "Compiler" : {
+
     },
     "Compiling LaTeX document…" : {
       "extractionState" : "manual",
@@ -888,6 +895,12 @@
         }
       }
     },
+    "Default editor font size: %@ pt" : {
+
+    },
+    "Default Packages" : {
+
+    },
     "definite integral" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -904,6 +917,9 @@
           }
         }
       }
+    },
+    "Delay before compiling LaTeX while typing: %lld ms" : {
+
     },
     "Delete" : {
       "extractionState" : "manual",
@@ -1143,6 +1159,26 @@
         }
       }
     },
+    "Drag to resize • Double-click to reset (50/50)" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Drag to resize • Double-click to reset (50/50)"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trascina per ridimensionare • Doppio clic per riequilibrare (50/50)"
+          }
+        }
+      }
+    },
+    "Editor" : {
+
+    },
     "element of" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1160,6 +1196,9 @@
         }
       }
     },
+    "Embedded Rust TeX (libtex.a)" : {
+
+    },
     "Empty Directory" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1176,6 +1215,9 @@
           }
         }
       }
+    },
+    "Engine" : {
+
     },
     "Entry" : {
       "extractionState" : "manual",
@@ -1469,6 +1511,9 @@
     "Follow Active Document (Auto)" : {
 
     },
+    "Font size:" : {
+
+    },
     "for all" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1570,6 +1615,9 @@
           }
         }
       }
+    },
+    "General" : {
+
     },
     "greater or equal" : {
       "extractionState" : "manual",
@@ -2049,6 +2097,9 @@
           }
         }
       }
+    },
+    "LaTeX 2e, Plain TeX" : {
+
     },
     "LaTeX Math Symbols" : {
       "extractionState" : "manual",
@@ -3260,6 +3311,9 @@
         }
       }
     },
+    "Quick Look…" : {
+
+    },
     "R" : {
 
     },
@@ -3643,6 +3697,12 @@
     "Set this file as project entry point and compile it" : {
 
     },
+    "Share Compiled PDF via AirDrop, Mail, Messages…" : {
+
+    },
+    "Share…" : {
+
+    },
     "Show Diagnostics" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -3659,6 +3719,9 @@
           }
         }
       }
+    },
+    "Show line numbers" : {
+
     },
     "sigma" : {
       "extractionState" : "manual",
@@ -3948,6 +4011,9 @@
           }
         }
       }
+    },
+    "Supported Dialects" : {
+
     },
     "Table (tabular)" : {
       "extractionState" : "manual",

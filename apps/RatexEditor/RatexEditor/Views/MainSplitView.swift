@@ -1,5 +1,6 @@
 import SwiftUI
 import AppKit
+import UniformTypeIdentifiers
 
 public struct MainSplitView: View {
     @Bindable var workspace: WorkspaceModel
@@ -305,7 +306,23 @@ public struct MainSplitView: View {
             }
             .liquidGlass(cornerRadius: 7)
             
-            if state.pdfData != nil {
+            if let pdfData = state.pdfData {
+                ShareLink(
+                    item: DocumentPDFExport(
+                        data: pdfData,
+                        title: (workspace.entryPointURL ?? state.documentURL)?.deletingPathExtension().lastPathComponent ?? "document"
+                    ),
+                    preview: SharePreview(
+                        (workspace.entryPointURL ?? state.documentURL)?.deletingPathExtension().lastPathComponent ?? "document",
+                        image: Image(systemName: "doc.text.fill")
+                    )
+                ) {
+                    Label("Share…", systemImage: "square.and.arrow.up")
+                }
+                .buttonStyle(.bordered)
+                .controlSize(.small)
+                .help("Share Compiled PDF via AirDrop, Mail, Messages…")
+                
                 Button(action: exportPDF) {
                     Label("Export…", systemImage: "arrow.down.doc")
                 }
@@ -579,6 +596,22 @@ private class CursorHostingNSView: NSView {
     override func resetCursorRects() {
         super.resetCursorRects()
         addCursorRect(bounds, cursor: .resizeLeftRight)
+    }
+}
+
+// MARK: - Native macOS Transferable for PDF Sharing
+
+private struct DocumentPDFExport: Transferable {
+    let data: Data
+    let title: String
+    
+    static var transferRepresentation: some TransferRepresentation {
+        DataRepresentation(exportedContentType: .pdf) { export in
+            export.data
+        }
+        .suggestedFileName { export in
+            "\(export.title).pdf"
+        }
     }
 }
 
