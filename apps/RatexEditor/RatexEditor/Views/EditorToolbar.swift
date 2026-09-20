@@ -1,7 +1,7 @@
 import SwiftUI
 import AppKit
 
-public struct WYSIWYGToolbar: View {
+public struct EditorToolbar: View {
     @Bindable var state: EditorState
     var workspace: WorkspaceModel? = nil
     

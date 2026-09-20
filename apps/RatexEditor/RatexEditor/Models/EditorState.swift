@@ -223,7 +223,7 @@ public final class EditorState {
         return files
     }
     
-    // MARK: - WYSIWYG Actions
+    // MARK: - Formatting & Markup Actions
     
     public func applyBold() {
         wrapSelection(prefix: "\\textbf{", suffix: "}", placeholder: String(localized: "bold text"))

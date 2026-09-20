@@ -47,7 +47,7 @@ public struct TeXTemplate: Identifiable, Sendable, Hashable {
 \\maketitle
 
 \\begin{abstract}
-Ratex is an ultra-fast, self-contained pure-Rust TeX typesetting engine. This document demonstrates real-time WYSIWYG editing directly within macOS SwiftUI with sub-10ms compilation speeds.
+Ratex is an ultra-fast, self-contained pure-Rust TeX typesetting engine. This document demonstrates real-time live preview editing directly within macOS SwiftUI with sub-10ms compilation speeds.
 \\end{abstract}
 
 \\section{Introduction}
@@ -92,7 +92,7 @@ Ratex Native  & 2 & 12 ms \\\\
 \\end{center}
 
 \\section{Conclusion}
-Real-time feedback loops enable true WYSIWYG productivity while retaining the typesetting perfection of LaTeX.
+Real-time feedback loops enable instant preview productivity while retaining the typesetting perfection of LaTeX.
 
 \\end{document}
 """

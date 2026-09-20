@@ -87,7 +87,7 @@ public struct SourceEditorView: NSViewRepresentable {
         // Connect the state modifier closures
         state.textModifier = { [weak textView] insert, wrapPrefix, wrapSuffix, placeholder in
             guard let textView = textView else { return }
-            textView.applyWYSIWYG(insert: insert, wrapPrefix: wrapPrefix, wrapSuffix: wrapSuffix, placeholder: placeholder)
+            textView.applyFormatting(insert: insert, wrapPrefix: wrapPrefix, wrapSuffix: wrapSuffix, placeholder: placeholder)
         }
         state.textReplacer = { [weak textView] newText in
             guard let textView = textView else { return }
@@ -212,7 +212,7 @@ final class LaTeXNSTextView: NSTextView {
         return super.performKeyEquivalent(with: event)
     }
     
-    func applyWYSIWYG(insert: String?, wrapPrefix: String?, wrapSuffix: String?, placeholder: String?) {
+    func applyFormatting(insert: String?, wrapPrefix: String?, wrapSuffix: String?, placeholder: String?) {
         let range = self.selectedRange()
         
         if let insert = insert {

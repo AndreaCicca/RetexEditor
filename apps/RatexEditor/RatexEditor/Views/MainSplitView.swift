@@ -39,7 +39,7 @@ public struct MainSplitView: View {
             .navigationSplitViewColumnWidth(min: 200, ideal: 240, max: 320)
         } detail: {
             VStack(spacing: 0) {
-                WYSIWYGToolbar(
+                EditorToolbar(
                     state: state,
                     workspace: workspace
                 )

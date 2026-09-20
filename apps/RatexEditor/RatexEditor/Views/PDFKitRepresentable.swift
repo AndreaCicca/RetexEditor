@@ -154,9 +154,19 @@ public final class ClickablePDFView: PDFView {
         
         for pageIndex in 0..<doc.pageCount {
             guard let page = doc.page(at: pageIndex) else { continue }
+            let pageBounds = page.bounds(for: displayBox)
             for annotation in page.annotations {
                 guard isLink(annotation) else { continue }
-                let viewRect = convert(annotation.bounds, from: page)
+                var bounds = annotation.bounds
+                if annotation.destination != nil || annotation.action is PDFActionGoTo {
+                    // Extend cursor rect across TOC row to cover dots and page numbers
+                    let minX = max(pageBounds.minX, bounds.minX - 25)
+                    let maxX = max(bounds.maxX, pageBounds.maxX - 50)
+                    let minY = bounds.minY - 3
+                    let maxY = bounds.maxY + 3
+                    bounds = CGRect(x: minX, y: minY, width: maxX - minX, height: maxY - minY)
+                }
+                let viewRect = convert(bounds, from: page)
                 let visibleTarget = viewRect.intersection(currentVisible)
                 if !visibleTarget.isEmpty {
                     addCursorRect(visibleTarget, cursor: .pointingHand)
@@ -208,15 +218,39 @@ public final class ClickablePDFView: PDFView {
             return annot
         }
         
-        // 2. Tolerance hit-test with slight margin (4 points)
+        // 2. Tolerance hit-test with margin (6 points)
         for annot in page.annotations.reversed() {
             guard isLink(annot) else { continue }
-            if annot.bounds.insetBy(dx: -4, dy: -4).contains(pagePoint) {
+            if annot.bounds.insetBy(dx: -6, dy: -6).contains(pagePoint) {
                 return annot
             }
         }
         
-        return nil
+        // 3. Row extension for TOC / index links (internal GoTo or destination):
+        // In LaTeX, table of contents entries typically only have annotations around the title text,
+        // leaving the leader dots and page numbers without link annotations.
+        // We expand the hit area across the entire row so clicking the page number or dots navigates correctly.
+        let pageBounds = page.bounds(for: displayBox)
+        var bestAnnot: PDFAnnotation? = nil
+        var minDistanceY: CGFloat = .infinity
+        
+        for annot in page.annotations {
+            guard annot.destination != nil || annot.action is PDFActionGoTo else { continue }
+            let halfHeight = max(annot.bounds.height / 2 + 5, 9)
+            let distY = abs(pagePoint.y - annot.bounds.midY)
+            if distY <= halfHeight {
+                let minX = max(pageBounds.minX, annot.bounds.minX - 30)
+                let maxX = max(annot.bounds.maxX, pageBounds.maxX - 50)
+                if pagePoint.x >= minX && pagePoint.x <= maxX {
+                    if distY < minDistanceY {
+                        minDistanceY = distY
+                        bestAnnot = annot
+                    }
+                }
+            }
+        }
+        
+        return bestAnnot
     }
     
     public func isLink(_ annotation: PDFAnnotation) -> Bool {
@@ -291,6 +325,10 @@ public final class ClickablePDFView: PDFView {
         let safePoint = Self.sanitizePoint(destination.point, for: targetPage, displayBox: displayBox)
         let safeDestination = PDFDestination(page: targetPage, at: safePoint)
         go(to: safeDestination)
+        
+        if currentPage != targetPage {
+            go(to: targetPage)
+        }
     }
     
     public static func sanitizePoint(_ point: CGPoint, for page: PDFPage, displayBox: PDFDisplayBox) -> CGPoint {

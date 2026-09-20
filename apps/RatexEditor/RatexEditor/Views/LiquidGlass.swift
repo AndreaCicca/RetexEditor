@@ -99,7 +99,7 @@ public struct LiquidGlassModifier: ViewModifier {
     }
 }
 
-/// ViewModifier for docked/floating bars (WYSIWYG Toolbar, Subheaders, Sidebars).
+/// ViewModifier for docked/floating bars (Editor Toolbar, Subheaders, Sidebars).
 public struct LiquidGlassBarModifier: ViewModifier {
     @Environment(\.colorScheme) private var colorScheme
     var hasBottomBorder: Bool

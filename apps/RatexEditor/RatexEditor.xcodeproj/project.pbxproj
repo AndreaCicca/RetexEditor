@@ -16,7 +16,7 @@
 		51B31CCA98C14F284664B733 /* RatexEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = C79AC86B21DA893C1FE8EDC0 /* RatexEngine.swift */; };
 		65735538305F55D4007477E9 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65735537305F55D4007477E9 /* SettingsView.swift */; };
 		90945AFCCB876E942014ABA4 /* TeXDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A5EDAD871E93C6D259B8AE1 /* TeXDocument.swift */; };
-		97E9DEDDB05B441171B7D999 /* WYSIWYGToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1612EA3F45DF5BA2BE63FF7 /* WYSIWYGToolbar.swift */; };
+		97E9DEDDB05B441171B7D999 /* EditorToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1612EA3F45DF5BA2BE63FF7 /* EditorToolbar.swift */; };
 		A17A4D928FE8E0151E51901C /* Templates.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EC0209DB06113C27A831BE3 /* Templates.swift */; };
 		A1C01C01C01C01C01C01C002 /* AppIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = A1C01C01C01C01C01C01C001 /* AppIcon.icns */; };
 		A1C01C01C01C01C01C01C011 /* LiquidGlass.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C01C01C01C01C01C01C010 /* LiquidGlass.swift */; };
@@ -51,7 +51,7 @@
 		C01C01C01C01C01C01C00010 /* ConsoleLogTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsoleLogTextView.swift; sourceTree = "<group>"; };
 		C79AC86B21DA893C1FE8EDC0 /* RatexEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RatexEngine.swift; sourceTree = "<group>"; };
 		C7C98C73A6BCC373E9310188 /* RatexEditorApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RatexEditorApp.swift; sourceTree = "<group>"; };
-		D1612EA3F45DF5BA2BE63FF7 /* WYSIWYGToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WYSIWYGToolbar.swift; sourceTree = "<group>"; };
+		D1612EA3F45DF5BA2BE63FF7 /* EditorToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorToolbar.swift; sourceTree = "<group>"; };
 		E34EFE8821485D62E7C7752F /* EditorState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorState.swift; sourceTree = "<group>"; };
 		E93DD05592F907E7861685B7 /* MainSplitView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainSplitView.swift; sourceTree = "<group>"; };
 		F07FED15374212B79C09FBA7 /* ProjectSidebarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectSidebarView.swift; sourceTree = "<group>"; };
@@ -133,7 +133,7 @@
 				A1C01C01C01C01C01C01C010 /* LiquidGlass.swift */,
 				F4529BBBC6942CA1D0E54F30 /* SourceEditorView.swift */,
 				6E1BDBF0E8FEA2E92F80AEAE /* PDFKitRepresentable.swift */,
-				D1612EA3F45DF5BA2BE63FF7 /* WYSIWYGToolbar.swift */,
+				D1612EA3F45DF5BA2BE63FF7 /* EditorToolbar.swift */,
 				58575D004FBF483B95C7B70F /* MathPaletteView.swift */,
 				030A63D11EB29D7B0C05ED76 /* DiagnosticsView.swift */,
 				E93DD05592F907E7861685B7 /* MainSplitView.swift */,
@@ -245,7 +245,7 @@
 				65735538305F55D4007477E9 /* SettingsView.swift in Sources */,
 				F52F151697094F7BE5519D91 /* SourceEditorView.swift in Sources */,
 				1A0A3A18C5B0B1F8E342101B /* PDFKitRepresentable.swift in Sources */,
-				97E9DEDDB05B441171B7D999 /* WYSIWYGToolbar.swift in Sources */,
+				97E9DEDDB05B441171B7D999 /* EditorToolbar.swift in Sources */,
 				B50DB72C49E2CA29024FBDC9 /* MathPaletteView.swift in Sources */,
 				07F93E64C5DBAC310348DBCC /* DiagnosticsView.swift in Sources */,
 				D6ADEC0A7CC0A442931F6433 /* MainSplitView.swift in Sources */,

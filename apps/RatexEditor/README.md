@@ -101,7 +101,7 @@ L'integrazione tra il codice Rust e l'interfaccia grafica Swift avviene attraver
 - **Controlli di Zoom e Adattamento**: Zoom In, Zoom Out, Reset al 100% e pulsante *"Fit to Width"* (`arrow.left.and.right`) per adattare le pagine alla larghezza della colonna.
 - **Esportazione Diretta**: Pulsante *"Export…"* per salvare il PDF master compilato ovunque sul Mac.
 
-### 4. Strumenti WYSIWYG, Formule & Template
+### 4. Strumenti di Formattazione Rapida, Formule & Template
 - **Toolbar di Formattazione Rapida**: Grassetto (`\textbf`), corsivo (`\textit`), sottolineato (`\underline`), codice monospazio (`\texttt`).
 - **Struttura Documento**: Inserimento con un click di sezioni (`\section`), sottosezioni, liste puntate/numerate, tabelle e figure con didascalia.
 - **Menu "Lorem Ipsum"**: Raccolta di template completi pronti all'uso (Articolo Accademico, Formulario Scientifico, Presentazione Beamer, Documento Minimale) e inserimento rapido di paragrafi di testo fittizio per testare l'impaginazione.
@@ -194,7 +194,7 @@ apps/RatexEditor/
     │   ├── MainSplitView.swift         # Layout split view nativo macOS (NavigationSplitView + HSplitView)
     │   ├── SourceEditorView.swift      # Editor di testo nativo (LaTeXNSTextView) con interlinea, padding e zoom
     │   ├── PDFKitRepresentable.swift   # Visualizzatore PDF nativo a doppio buffer anti-flicker e anti-black flash
-    │   ├── WYSIWYGToolbar.swift        # Toolbar grafica di formattazione, inserimento, template e selettore master
+    │   ├── EditorToolbar.swift         # Toolbar grafica di formattazione, inserimento, template e selettore master
     │   ├── MathPaletteView.swift       # Palette visiva completa per simboli matematici e formule LaTeX
     │   └── DiagnosticsView.swift       # Drawer inferiore per visualizzare errori di sintassi e log del motore
     └── Resources/
