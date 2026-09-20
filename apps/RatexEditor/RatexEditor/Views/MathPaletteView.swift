@@ -106,108 +106,101 @@ public struct MathPaletteView: View {
             .labelsHidden()
             
             // Content Container
-            ScrollView(.vertical, showsIndicators: true) {
-                VStack(alignment: .leading, spacing: 12) {
-                    switch selectedTab {
-                    case 0:
-                        VStack(alignment: .leading, spacing: 6) {
-                            Text("Lowercase")
-                                .font(.system(size: 11, weight: .medium))
-                                .foregroundStyle(.secondary)
+            GlassEffectContainer {
+                ScrollView(.vertical, showsIndicators: true) {
+                    VStack(alignment: .leading, spacing: 12) {
+                        switch selectedTab {
+                        case 0:
+                            VStack(alignment: .leading, spacing: 6) {
+                                Text("Lowercase")
+                                    .font(.system(size: 11, weight: .medium))
+                                    .foregroundStyle(.secondary)
+                                LazyVGrid(columns: gridColumns, spacing: 6) {
+                                    ForEach(greekLower) { sym in
+                                        SymbolButton(symbol: sym) {
+                                            state.insertText(sym.latex)
+                                        }
+                                    }
+                                }
+                                
+                                Divider().padding(.vertical, 4)
+                                
+                                Text("Uppercase")
+                                    .font(.system(size: 11, weight: .medium))
+                                    .foregroundStyle(.secondary)
+                                LazyVGrid(columns: gridColumns, spacing: 6) {
+                                    ForEach(greekUpper) { sym in
+                                        SymbolButton(symbol: sym) {
+                                            state.insertText(sym.latex)
+                                        }
+                                    }
+                                }
+                            }
+                        case 1:
                             LazyVGrid(columns: gridColumns, spacing: 6) {
-                                ForEach(greekLower) { sym in
+                                ForEach(operators) { sym in
                                     SymbolButton(symbol: sym) {
                                         state.insertText(sym.latex)
                                     }
                                 }
                             }
-                            
-                            Divider().padding(.vertical, 4)
-                            
-                            Text("Uppercase")
-                                .font(.system(size: 11, weight: .medium))
-                                .foregroundStyle(.secondary)
+                        case 2:
                             LazyVGrid(columns: gridColumns, spacing: 6) {
-                                ForEach(greekUpper) { sym in
+                                ForEach(calculus) { sym in
                                     SymbolButton(symbol: sym) {
                                         state.insertText(sym.latex)
                                     }
                                 }
                             }
-                        }
-                    case 1:
-                        LazyVGrid(columns: gridColumns, spacing: 6) {
-                            ForEach(operators) { sym in
-                                SymbolButton(symbol: sym) {
-                                    state.insertText(sym.latex)
+                        case 3:
+                            VStack(spacing: 6) {
+                                ForEach(structures, id: \.title) { item in
+                                    StructureButton(
+                                        title: item.title,
+                                        latex: item.latex,
+                                        preview: item.preview
+                                    ) {
+                                        state.insertText(item.latex)
+                                    }
                                 }
                             }
+                        default:
+                            EmptyView()
                         }
-                    case 2:
-                        LazyVGrid(columns: gridColumns, spacing: 6) {
-                            ForEach(calculus) { sym in
-                                SymbolButton(symbol: sym) {
-                                    state.insertText(sym.latex)
-                                }
-                            }
-                        }
-                    case 3:
-                        VStack(spacing: 6) {
-                            ForEach(structures, id: \.title) { item in
-                                StructureButton(
-                                    title: item.title,
-                                    latex: item.latex,
-                                    preview: item.preview
-                                ) {
-                                    state.insertText(item.latex)
-                                }
-                            }
-                        }
-                    default:
-                        EmptyView()
                     }
+                    .padding(.trailing, 4)
                 }
-                .padding(.trailing, 4)
+                .frame(height: 290)
             }
-            .frame(height: 290)
         }
         .padding(14)
         .frame(width: 410, height: 370)
-        .liquidGlass(cornerRadius: 14)
     }
 }
 
-// Reusable symbol button with Liquid Glass hover effect
+// Reusable symbol button with native Glass button style
 struct SymbolButton: View {
     let symbol: MathSymbol
     let onSelect: () -> Void
-    @State private var isHovered = false
     
     var body: some View {
         Button(action: onSelect) {
             Text(symbol.label)
                 .font(.system(size: 15, weight: .medium, design: .serif))
                 .frame(width: 38, height: 38)
-                .liquidGlass(
-                    cornerRadius: 8,
-                    isInteractive: true,
-                    isHovered: isHovered,
-                    tint: isHovered ? Color.accentColor : nil
-                )
+                .contentShape(Rectangle())
         }
-        .buttonStyle(.plain)
-        .onHover { isHovered = $0 }
+        .buttonStyle(.glass)
         .help(symbol.description)
     }
 }
 
-// Reusable structure/template button with Liquid Glass effect
+// Reusable structure/template button with native Glass button style
 struct StructureButton: View {
     let title: String
     let latex: String
     let preview: String
     let onSelect: () -> Void
-    @State private var isHovered = false
     
     var body: some View {
         Button(action: onSelect) {
@@ -215,7 +208,7 @@ struct StructureButton: View {
                 Text(preview)
                     .font(.system(size: 13, weight: .bold, design: .serif))
                     .frame(width: 36, height: 28)
-                    .liquidGlass(cornerRadius: 6, isInteractive: true)
+                    .glassEffect(.regular, in: .rect(cornerRadius: 6))
                 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(LocalizedStringKey(title))
@@ -229,19 +222,13 @@ struct StructureButton: View {
                 Spacer()
                 
                 Image(systemName: "plus.circle.fill")
-                    .foregroundStyle(isHovered ? Color.accentColor : Color.secondary.opacity(0.6))
+                    .foregroundStyle(Color.secondary.opacity(0.6))
                     .font(.system(size: 14))
             }
             .padding(.horizontal, 10)
             .padding(.vertical, 6)
-            .liquidGlass(
-                cornerRadius: 8,
-                isInteractive: true,
-                isHovered: isHovered,
-                tint: isHovered ? Color.accentColor : nil
-            )
+            .contentShape(Rectangle())
         }
-        .buttonStyle(.plain)
-        .onHover { isHovered = $0 }
+        .buttonStyle(.glass)
     }
 }

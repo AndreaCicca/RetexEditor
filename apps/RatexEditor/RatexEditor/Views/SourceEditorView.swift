@@ -83,7 +83,6 @@ public struct SourceEditorView: NSViewRepresentable {
         scrollView.documentView = textView
         context.coordinator.textView = textView
         
-        // Connect the state modifier closure
         // Connect the state modifier closures
         state.textModifier = { [weak textView] insert, wrapPrefix, wrapSuffix, placeholder in
             guard let textView = textView else { return }
@@ -92,6 +91,9 @@ public struct SourceEditorView: NSViewRepresentable {
         state.textReplacer = { [weak textView] newText in
             guard let textView = textView else { return }
             textView.replaceAllTextWithUndo(newText: newText)
+        }
+        state.lineNavigator = { [weak textView] line in
+            textView?.scrollToLineNumber(line)
         }
         
         return scrollView
@@ -241,6 +243,32 @@ final class LaTeXNSTextView: NSTextView {
             self.replaceCharacters(in: fullRange, with: newText)
             self.didChangeText()
             self.setSelectedRange(NSRange(location: 0, length: 0))
+        }
+    }
+    
+    func scrollToLineNumber(_ lineNumber: Int) {
+        guard lineNumber > 0 else { return }
+        let text = self.string as NSString
+        guard text.length > 0 else { return }
+        
+        var currentLine = 1
+        var lineStart = 0
+        var lineEnd = 0
+        var contentsEnd = 0
+        var charIndex = 0
+        
+        while charIndex < text.length {
+            text.getLineStart(&lineStart, end: &lineEnd, contentsEnd: &contentsEnd, for: NSRange(location: charIndex, length: 0))
+            if currentLine == lineNumber {
+                let targetLength = max(1, contentsEnd - lineStart)
+                let targetRange = NSRange(location: lineStart, length: targetLength)
+                self.setSelectedRange(targetRange)
+                self.scrollRangeToVisible(targetRange)
+                self.showFindIndicator(for: targetRange)
+                return
+            }
+            charIndex = lineEnd
+            currentLine += 1
         }
     }
 }

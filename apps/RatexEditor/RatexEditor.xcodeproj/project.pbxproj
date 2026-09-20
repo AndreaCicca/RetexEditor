@@ -19,7 +19,6 @@
 		97E9DEDDB05B441171B7D999 /* EditorToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1612EA3F45DF5BA2BE63FF7 /* EditorToolbar.swift */; };
 		A17A4D928FE8E0151E51901C /* Templates.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EC0209DB06113C27A831BE3 /* Templates.swift */; };
 		A1C01C01C01C01C01C01C002 /* AppIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = A1C01C01C01C01C01C01C001 /* AppIcon.icns */; };
-		A1C01C01C01C01C01C01C011 /* LiquidGlass.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C01C01C01C01C01C01C010 /* LiquidGlass.swift */; };
 		A1C01C01C01C01C01C01C020 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = A1C01C01C01C01C01C01C021 /* Localizable.xcstrings */; };
 		A1C01C01C01C01C01C01C030 /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = A1C01C01C01C01C01C01C031 /* InfoPlist.xcstrings */; };
 		B50DB72C49E2CA29024FBDC9 /* MathPaletteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58575D004FBF483B95C7B70F /* MathPaletteView.swift */; };
@@ -44,7 +43,6 @@
 		73AD16181FDDB7427288C6BD /* RatexEditor.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RatexEditor.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		76E3C28BAF4A20419EC58432 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A1C01C01C01C01C01C01C001 /* AppIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = AppIcon.icns; sourceTree = "<group>"; };
-		A1C01C01C01C01C01C01C010 /* LiquidGlass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiquidGlass.swift; sourceTree = "<group>"; };
 		A1C01C01C01C01C01C01C021 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		A1C01C01C01C01C01C01C031 /* InfoPlist.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = InfoPlist.xcstrings; sourceTree = "<group>"; };
 		A280A0119C40070B9437C1C3 /* RatexEditor.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = RatexEditor.entitlements; sourceTree = "<group>"; };
@@ -130,7 +128,6 @@
 		D778815D691A486EF850AB00 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				A1C01C01C01C01C01C01C010 /* LiquidGlass.swift */,
 				F4529BBBC6942CA1D0E54F30 /* SourceEditorView.swift */,
 				6E1BDBF0E8FEA2E92F80AEAE /* PDFKitRepresentable.swift */,
 				D1612EA3F45DF5BA2BE63FF7 /* EditorToolbar.swift */,
@@ -252,7 +249,6 @@
 				3D4AFC07CF3C59CB23B78A75 /* WorkspaceModel.swift in Sources */,
 				C90AE133133FDDE6B931F5D9 /* ProjectSidebarView.swift in Sources */,
 				2D6C5FF3F0A4792E53002240 /* WelcomeView.swift in Sources */,
-				A1C01C01C01C01C01C01C011 /* LiquidGlass.swift in Sources */,
 				C01C01C01C01C01C01C00011 /* ConsoleLogTextView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -312,7 +308,7 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
@@ -332,7 +328,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_OPTIMIZATION_LEVEL = s;
-				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 				SWIFT_COMPILATION_MODE = wholemodule;

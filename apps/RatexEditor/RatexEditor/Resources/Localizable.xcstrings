@@ -566,6 +566,9 @@
         }
       }
     },
+    "Close Diagnostics (⇧⌘D)" : {
+
+    },
     "Close Diagnostics Drawer" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1158,6 +1161,9 @@
           }
         }
       }
+    },
+    "Drag to resize • Double-click to reset" : {
+
     },
     "Drag to resize • Double-click to reset (50/50)" : {
       "extractionState" : "manual",
@@ -2600,6 +2606,12 @@
         }
       }
     },
+    "No compiler errors or issues reported." : {
+
+    },
+    "No Diagnostics" : {
+
+    },
     "No diagnostics or errors reported." : {
       "extractionState" : "manual",
       "localizations" : {
@@ -3611,6 +3623,9 @@
           }
         }
       }
+    },
+    "Search in text…" : {
+
     },
     "Section (\\section)" : {
       "extractionState" : "manual",

@@ -62,6 +62,14 @@ public final class EditorState {
     @ObservationIgnored
     public var textReplacer: ((_ newText: String) -> Void)? = nil
     
+    // Jump to line navigation closure hook (communicates with NSTextView)
+    @ObservationIgnored
+    public var lineNavigator: ((_ line: Int) -> Void)? = nil
+    
+    public func scrollToLine(_ line: Int) {
+        lineNavigator?(line)
+    }
+    
     public init(source: String, documentURL: URL? = nil, entryPointURL: URL? = nil) {
         self.source = source
         self.documentURL = documentURL

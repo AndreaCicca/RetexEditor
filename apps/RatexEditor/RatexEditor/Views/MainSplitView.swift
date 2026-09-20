@@ -11,6 +11,11 @@ public struct MainSplitView: View {
     @State private var isDraggingDivider = false
     @State private var dragStartRatio: CGFloat? = nil
     
+    @AppStorage("diagnostics_drawer_height") private var drawerHeight: Double = 240
+    @State private var isHoveringDrawerDivider = false
+    @State private var isDraggingDrawerDivider = false
+    @State private var dragStartDrawerHeight: CGFloat? = nil
+    
     public init(workspace: WorkspaceModel) {
         self.workspace = workspace
         
@@ -38,20 +43,51 @@ public struct MainSplitView: View {
             }
             .navigationSplitViewColumnWidth(min: 200, ideal: 240, max: 320)
         } detail: {
-            VStack(spacing: 0) {
-                EditorToolbar(
-                    state: state,
-                    workspace: workspace
-                )
-                
-                Divider()
-                
-                splitPanes
-                
-                if state.isDiagnosticsDrawerOpen {
-                    DiagnosticsView(state: state)
+            GeometryReader { windowGeo in
+                VStack(spacing: 0) {
+                    EditorToolbar(
+                        state: state,
+                        workspace: workspace
+                    )
+                    
+                    Divider()
+                    
+                    splitPanes
+                    
+                    if state.isDiagnosticsDrawerOpen {
+                        VerticalResizeDividerHandle(
+                            isHovering: $isHoveringDrawerDivider,
+                            isDragging: $isDraggingDrawerDivider,
+                            onDragChanged: { deltaY in
+                                let start = dragStartDrawerHeight ?? CGFloat(drawerHeight)
+                                if dragStartDrawerHeight == nil {
+                                    dragStartDrawerHeight = start
+                                }
+                                let newHeight = start - deltaY
+                                let maxDrawer = max(140, windowGeo.size.height - 180)
+                                drawerHeight = Double(min(max(newHeight, 110), maxDrawer))
+                            },
+                            onDragEnded: {
+                                dragStartDrawerHeight = nil
+                            },
+                            onResetHeight: {
+                                withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+                                    drawerHeight = 240
+                                }
+                            }
+                        )
+                        .frame(height: 12)
+                        
+                        DiagnosticsView(
+                            state: state,
+                            drawerHeight: $drawerHeight,
+                            maxDrawerHeight: max(140, windowGeo.size.height - 180)
+                        )
+                        .frame(height: CGFloat(drawerHeight))
                         .transition(.move(edge: .bottom).combined(with: .opacity))
+                    }
                 }
+                .frame(width: windowGeo.size.width, height: windowGeo.size.height)
             }
         }
         .navigationSplitViewStyle(.balanced)
@@ -175,7 +211,7 @@ public struct MainSplitView: View {
                     .padding(.horizontal, 6)
                     .padding(.vertical, 2)
                     .foregroundStyle(.blue)
-                    .liquidGlassCapsule(tint: .blue)
+                    .glassEffect(.regular, in: .capsule)
             } else {
                 if let entry = workspace.entryPointURL {
                     Text(String.localizedStringWithFormat(NSLocalizedString("(Building: %@)", comment: ""), entry.lastPathComponent))
@@ -203,7 +239,7 @@ public struct MainSplitView: View {
             Spacer()
             
             HStack(spacing: 8) {
-                // Font Size Stepper in Liquid Glass Capsule
+                // Font Size Stepper
                 HStack(spacing: 4) {
                     Button(action: { state.decreaseFontSize() }) {
                         Image(systemName: "minus")
@@ -228,17 +264,14 @@ public struct MainSplitView: View {
                 }
                 .padding(.horizontal, 4)
                 .padding(.vertical, 2)
-                .liquidGlass(cornerRadius: 6, isInteractive: true)
+                .glassEffect(.regular, in: .rect(cornerRadius: 6))
                 
                 Button(action: { reloadCurrentFileFromDisk() }) {
                     Image(systemName: "arrow.clockwise")
                         .font(.system(size: 9, weight: .semibold))
                         .padding(4)
                 }
-                .buttonStyle(.plain)
-                .padding(.horizontal, 2)
-                .padding(.vertical, 2)
-                .liquidGlass(cornerRadius: 6, isInteractive: true)
+                .buttonStyle(.glass)
                 .help("Reload active file from disk")
                 
                 Text("•")
@@ -252,7 +285,7 @@ public struct MainSplitView: View {
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 6)
-        .liquidGlassBar(hasBottomBorder: true, hasTopHighlight: false)
+        .background(.bar)
     }
     
     // MARK: - Preview Pane
@@ -304,7 +337,6 @@ public struct MainSplitView: View {
                 }
                 .help("Fit to Width")
             }
-            .liquidGlass(cornerRadius: 7)
             
             if let pdfData = state.pdfData {
                 ShareLink(
@@ -333,7 +365,7 @@ public struct MainSplitView: View {
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 6)
-        .liquidGlassBar(hasBottomBorder: true, hasTopHighlight: false)
+        .background(.bar)
     }
     
     @ViewBuilder
@@ -596,6 +628,115 @@ private class CursorHostingNSView: NSView {
     override func resetCursorRects() {
         super.resetCursorRects()
         addCursorRect(bounds, cursor: .resizeLeftRight)
+    }
+}
+
+// MARK: - Draggable Vertical Split Divider Handle
+
+public struct VerticalResizeDividerHandle: View {
+    @Binding var isHovering: Bool
+    @Binding var isDragging: Bool
+    let onDragChanged: (CGFloat) -> Void
+    let onDragEnded: () -> Void
+    let onResetHeight: () -> Void
+    
+    public init(
+        isHovering: Binding<Bool>,
+        isDragging: Binding<Bool>,
+        onDragChanged: @escaping (CGFloat) -> Void,
+        onDragEnded: @escaping () -> Void,
+        onResetHeight: @escaping () -> Void
+    ) {
+        self._isHovering = isHovering
+        self._isDragging = isDragging
+        self.onDragChanged = onDragChanged
+        self.onDragEnded = onDragEnded
+        self.onResetHeight = onResetHeight
+    }
+    
+    public var body: some View {
+        ZStack {
+            // Full-width 12pt hit area
+            Color.clear
+                .contentShape(Rectangle())
+            
+            // Centered 1pt separator line
+            Rectangle()
+                .fill(Color(nsColor: .separatorColor))
+                .frame(height: 1)
+            
+            // Visual grab handle pill
+            Capsule()
+                .fill(
+                    (isHovering || isDragging)
+                    ? Color.accentColor
+                    : Color.secondary.opacity(0.35)
+                )
+                .frame(width: 44, height: (isHovering || isDragging) ? 5 : 4)
+                .overlay(
+                    HStack(spacing: 3) {
+                        ForEach(0..<3) { _ in
+                            Circle()
+                                .fill(Color.white.opacity((isHovering || isDragging) ? 0.95 : 0.65))
+                                .frame(width: 2, height: 2)
+                        }
+                    }
+                )
+                .shadow(
+                    color: (isHovering || isDragging) ? Color.accentColor.opacity(0.4) : Color.black.opacity(0.1),
+                    radius: (isHovering || isDragging) ? 3 : 1,
+                    y: 1
+                )
+                .animation(.easeInOut(duration: 0.15), value: isHovering || isDragging)
+        }
+        .frame(height: 12)
+        .overlay(VerticalResizeCursorView().allowsHitTesting(false))
+        .onHover { hovering in
+            isHovering = hovering
+            if hovering {
+                NSCursor.resizeUpDown.push()
+            } else if !isDragging {
+                NSCursor.pop()
+            }
+        }
+        .gesture(
+            DragGesture(minimumDistance: 1, coordinateSpace: .global)
+                .onChanged { gesture in
+                    if !isDragging {
+                        isDragging = true
+                        NSCursor.resizeUpDown.set()
+                    }
+                    onDragChanged(gesture.translation.height)
+                }
+                .onEnded { _ in
+                    isDragging = false
+                    onDragEnded()
+                    if !isHovering {
+                        NSCursor.arrow.set()
+                    }
+                }
+        )
+        .simultaneousGesture(
+            TapGesture(count: 2).onEnded {
+                onResetHeight()
+            }
+        )
+        .help(String(localized: "Drag to resize • Double-click to reset"))
+    }
+}
+
+private struct VerticalResizeCursorView: NSViewRepresentable {
+    func makeNSView(context: Context) -> VerticalCursorHostingNSView {
+        VerticalCursorHostingNSView()
+    }
+    
+    func updateNSView(_ nsView: VerticalCursorHostingNSView, context: Context) {}
+}
+
+private class VerticalCursorHostingNSView: NSView {
+    override func resetCursorRects() {
+        super.resetCursorRects()
+        addCursorRect(bounds, cursor: .resizeUpDown)
     }
 }
 

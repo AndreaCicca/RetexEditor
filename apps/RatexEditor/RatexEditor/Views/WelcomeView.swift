@@ -34,7 +34,7 @@ public struct WelcomeView: View {
                                 .font(.system(size: 32, weight: .bold, design: .serif))
                                 .foregroundStyle(Color.red)
                         }
-                        .liquidGlass(cornerRadius: 16)
+                        .glassEffect(.regular, in: .rect(cornerRadius: 16))
                     }
                     
                     VStack(alignment: .leading, spacing: 4) {
@@ -154,9 +154,9 @@ public struct WelcomeView: View {
                                     }
                                     .padding(.horizontal, 10)
                                     .padding(.vertical, 8)
-                                    .liquidGlass(cornerRadius: 8, isInteractive: true)
+                                    .contentShape(Rectangle())
                                 }
-                                .buttonStyle(.plain)
+                                .buttonStyle(.glass)
                             }
                         }
                     }
@@ -236,8 +236,6 @@ struct WelcomeActionButton: View {
     let shortcut: String
     let action: () -> Void
     
-    @State private var isHovered = false
-    
     var body: some View {
         Button(action: action) {
             HStack(spacing: 14) {
@@ -262,10 +260,9 @@ struct WelcomeActionButton: View {
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 14)
-            .liquidGlassCard(cornerRadius: 12, isHovered: isHovered, accentTint: iconColor)
+            .contentShape(Rectangle())
         }
-        .buttonStyle(.plain)
-        .onHover { isHovered = $0 }
+        .buttonStyle(.glass)
     }
 }
 

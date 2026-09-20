@@ -3,87 +3,142 @@ import AppKit
 
 public struct DiagnosticsView: View {
     @Bindable var state: EditorState
-    @State private var selectedTab = 0
-    @State private var isCopyHovered = false
-    @State private var isCloseHovered = false
+    @Binding var drawerHeight: Double
+    var maxDrawerHeight: CGFloat
     
-    public init(state: EditorState) {
+    @State private var filterQuery = ""
+    
+    public init(
+        state: EditorState,
+        drawerHeight: Binding<Double>? = nil,
+        maxDrawerHeight: CGFloat = 600
+    ) {
         self.state = state
+        self._drawerHeight = drawerHeight ?? .constant(240)
+        self.maxDrawerHeight = maxDrawerHeight
     }
     
     public var body: some View {
         VStack(spacing: 0) {
-            // Header bar in Liquid Glass
-            HStack(spacing: 12) {
-                Picker("", selection: $selectedTab) {
-                    Text("Diagnostics").tag(0)
-                    Text("TeX Log").tag(1)
-                }
-                .pickerStyle(.segmented)
-                .labelsHidden()
-                .frame(width: 220)
-                
-                // Status indicator capsule
-                if selectedTab == 0 {
-                    if state.diagnostics.isEmpty {
-                        HStack(spacing: 4) {
-                            Image(systemName: "checkmark.circle.fill")
-                                .foregroundStyle(.green)
-                            Text("No errors")
-                                .font(.system(size: 11, weight: .medium))
-                                .foregroundStyle(.secondary)
-                        }
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 3)
-                        .liquidGlassCapsule(tint: .green)
-                    } else {
-                        HStack(spacing: 4) {
-                            Image(systemName: "exclamationmark.triangle.fill")
-                                .foregroundStyle(.orange)
-                            Text("Issues detected")
-                                .font(.system(size: 11, weight: .semibold))
-                                .foregroundStyle(.orange)
-                        }
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 3)
-                        .liquidGlassCapsule(tint: .orange)
-                    }
-                }
-                
-                Spacer()
-                
-                Button(action: {
-                    let content = selectedTab == 0 ? state.diagnostics : state.log
-                    NSPasteboard.general.clearContents()
-                    NSPasteboard.general.setString(content, forType: .string)
-                }) {
-                    Label("Copy", systemImage: "doc.on.doc")
-                }
-                .buttonStyle(.bordered)
-                .controlSize(.small)
-                .help("Copy content to clipboard")
-                
-                Button(action: { state.isDiagnosticsDrawerOpen = false }) {
-                    Image(systemName: "xmark")
-                        .font(.system(size: 11, weight: .semibold))
-                        .foregroundStyle(.secondary)
-                }
-                .buttonStyle(.borderless)
-                .help("Close Diagnostics Drawer")
-            }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 6)
-            .liquidGlassBar(hasBottomBorder: true, hasTopHighlight: true)
-            
-            // Content
-            let contentText = selectedTab == 0
-                ? (state.diagnostics.isEmpty ? String(localized: "No diagnostics or errors reported.") : state.diagnostics)
-                : (state.log.isEmpty ? String(localized: "TeX log is empty.") : state.log)
-            let isErrorText = selectedTab == 0 && state.lastStatus != .success && !state.diagnostics.isEmpty
-
-            ConsoleLogTextView(text: contentText, isError: isErrorText)
-                .background(Color(nsColor: .textBackgroundColor).opacity(0.85))
+            headerBar
+            contentArea
         }
-        .frame(height: 180)
+        .background(Color(nsColor: .windowBackgroundColor))
+    }
+    
+    // MARK: - Minimalist Header Bar
+    
+    private var headerBar: some View {
+        HStack(spacing: 10) {
+            // Diagnostics Title & Status Indicator
+            HStack(spacing: 6) {
+                Image(systemName: "terminal.fill")
+                    .font(.system(size: 11))
+                    .foregroundStyle(.secondary)
+                
+                Text(String(localized: "Diagnostics"))
+                    .font(.system(size: 12, weight: .semibold))
+                
+                if state.isCompiling {
+                    ProgressView()
+                        .controlSize(.mini)
+                } else if state.diagnostics.isEmpty {
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundStyle(.green)
+                        .font(.system(size: 10))
+                } else {
+                    Circle()
+                        .fill(Color.orange)
+                        .frame(width: 6, height: 6)
+                }
+            }
+            
+            Spacer(minLength: 16)
+            
+            // Search / Filter Field
+            HStack(spacing: 5) {
+                Image(systemName: "magnifyingglass")
+                    .font(.system(size: 10))
+                    .foregroundStyle(.secondary)
+                
+                TextField(String(localized: "Search in text…"), text: $filterQuery)
+                    .textFieldStyle(.plain)
+                    .font(.system(size: 11))
+                
+                if !filterQuery.isEmpty {
+                    Button(action: { filterQuery = "" }) {
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.system(size: 10))
+                            .foregroundStyle(.secondary)
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+            .padding(.horizontal, 8)
+            .padding(.vertical, 3.5)
+            .background(Color(nsColor: .controlBackgroundColor).opacity(0.85))
+            .clipShape(RoundedRectangle(cornerRadius: 6))
+            .overlay(
+                RoundedRectangle(cornerRadius: 6)
+                    .strokeBorder(Color(nsColor: .separatorColor).opacity(0.4), lineWidth: 0.5)
+            )
+            .frame(minWidth: 110, maxWidth: 200)
+            
+            // Close Button
+            Button(action: {
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.82)) {
+                    state.isDiagnosticsDrawerOpen = false
+                }
+            }) {
+                Image(systemName: "xmark")
+                    .font(.system(size: 10, weight: .semibold))
+                    .foregroundStyle(.secondary)
+                    .padding(3)
+            }
+            .buttonStyle(.plain)
+            .help("Close Diagnostics (⇧⌘D)")
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 6)
+        .background(.bar)
+    }
+    
+    // MARK: - Content Area
+    
+    @ViewBuilder
+    private var contentArea: some View {
+        if state.diagnostics.isEmpty {
+            cleanBuildEmptyState
+        } else {
+            ConsoleLogTextView(
+                text: state.diagnostics,
+                isDiagnostics: true,
+                fontSize: 12.5,
+                isWrapEnabled: true,
+                searchQuery: filterQuery,
+                onNavigateToLine: { line in
+                    state.scrollToLine(line)
+                }
+            )
+        }
+    }
+    
+    // MARK: - Empty State
+    
+    private var cleanBuildEmptyState: some View {
+        VStack(spacing: 6) {
+            Image(systemName: "checkmark.circle.fill")
+                .font(.system(size: 24))
+                .foregroundStyle(.green)
+            
+            Text("No Diagnostics")
+                .font(.system(size: 12, weight: .semibold))
+                .foregroundStyle(.primary)
+            
+            Text("No compiler errors or issues reported.")
+                .font(.system(size: 11))
+                .foregroundStyle(.secondary)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }

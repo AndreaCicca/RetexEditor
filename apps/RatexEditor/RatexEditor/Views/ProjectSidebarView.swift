@@ -91,7 +91,7 @@ public struct ProjectSidebarView: View {
             }
             .padding(.horizontal, 12)
             .padding(.vertical, 7)
-            .liquidGlassBar(hasBottomBorder: true, hasTopHighlight: false)
+            .background(.bar)
             
             // File Tree List
             if workspace.fileTree.isEmpty {
@@ -174,7 +174,7 @@ public struct ProjectSidebarView: View {
             }
             .padding(.horizontal, 10)
             .padding(.vertical, 6)
-            .liquidGlassBar(hasBottomBorder: false, hasTopHighlight: true)
+            .background(.bar)
         }
         // New File Sheet
         .sheet(isPresented: $showingNewFileSheet) {
@@ -384,7 +384,7 @@ struct FileTreeNodeRow: View {
                     .padding(.horizontal, 5)
                     .padding(.vertical, 1.5)
                     .foregroundStyle(.blue)
-                    .liquidGlassCapsule(tint: .blue)
+                    .glassEffect(.regular, in: .capsule)
             }
         }
         .contentShape(Rectangle())

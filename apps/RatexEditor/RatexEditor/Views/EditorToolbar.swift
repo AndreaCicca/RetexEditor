@@ -5,7 +5,6 @@ public struct EditorToolbar: View {
     @Bindable var state: EditorState
     var workspace: WorkspaceModel? = nil
     
-    @State private var isStatusHovered = false
     @State private var pendingTemplate: TeXTemplate? = nil
     @State private var showingTemplateConfirmation = false
     
@@ -253,13 +252,9 @@ Fusce vehicula dolor arcu, sit amet blandit dolor mollis nec. Donec viverra elei
             }
             .padding(.horizontal, 10)
             .padding(.vertical, 4.5)
-            .liquidGlassCapsule(
-                tint: state.lastStatus == .success ? Color.green : (state.isCompiling ? Color.blue : Color.red),
-                isHovered: isStatusHovered
-            )
-            .onHover { isStatusHovered = $0 }
+            .glassEffect(.regular, in: .capsule)
             
-            // Manual Compile Button (native macOS bordered button)
+            // Manual Compile Button (native macOS glass button)
             Button(action: {
                 Task { @MainActor in
                     await state.compileImmediate()
@@ -268,22 +263,22 @@ Fusce vehicula dolor arcu, sit amet blandit dolor mollis nec. Donec viverra elei
                 Image(systemName: "bolt.fill")
                     .foregroundStyle(.orange)
             }
-            .buttonStyle(.bordered)
+            .buttonStyle(.glass)
             .controlSize(.small)
             .help("Recompile Document (⌘R)")
             
-            // Diagnostics Drawer Toggle Button (native macOS bordered button)
+            // Diagnostics Drawer Toggle Button (native macOS glass button)
             Button(action: { state.isDiagnosticsDrawerOpen.toggle() }) {
                 Image(systemName: state.diagnostics.isEmpty ? "terminal" : "exclamationmark.bubble.fill")
                     .foregroundStyle(state.diagnostics.isEmpty ? (state.isDiagnosticsDrawerOpen ? Color.accentColor : Color.primary) : Color.orange)
             }
-            .buttonStyle(.bordered)
+            .buttonStyle(.glass)
             .controlSize(.small)
             .help("Toggle Compiler Log & Diagnostics (⇧⌘D)")
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 7)
-        .liquidGlassBar(hasBottomBorder: true, hasTopHighlight: true)
+        .background(.bar)
         .confirmationDialog(
             "Replace Document Content?",
             isPresented: $showingTemplateConfirmation,
