@@ -146,7 +146,7 @@ Fusce vehicula dolor arcu, sit amet blandit dolor mollis nec. Donec viverra elei
             Button(action: { state.isMathPaletteOpen.toggle() }) {
                 Label("Math", systemImage: "function")
             }
-            .buttonStyle(.bordered)
+            .buttonStyle(.glass)
             .controlSize(.small)
             .popover(isPresented: $state.isMathPaletteOpen, arrowEdge: .bottom) {
                 MathPaletteView(state: state)
@@ -217,64 +217,72 @@ Fusce vehicula dolor arcu, sit amet blandit dolor mollis nec. Donec viverra elei
 
             Spacer()
             
-            // Status & Performance Capsule
-            HStack(spacing: 6) {
-                if state.isCompiling {
-                    ProgressView()
-                        .controlSize(.small)
-                    Text("Compiling...")
-                        .font(.system(size: 10, weight: .medium))
-                        .foregroundStyle(.secondary)
-                } else if state.lastStatus == .success {
-                    ZStack {
-                        Circle()
-                            .fill(Color.green.opacity(0.3))
-                            .frame(width: 10, height: 10)
-                        Circle()
-                            .fill(Color.green)
-                            .frame(width: 6, height: 6)
+            // Trailing Actions & Status Cluster in Liquid Glass Container
+            GlassEffectContainer(spacing: 8) {
+                HStack(spacing: 8) {
+                    // Status & Performance Capsule
+                    HStack(spacing: 6) {
+                        if state.isCompiling {
+                            ProgressView()
+                                .controlSize(.small)
+                            Text("Compiling...")
+                                .font(.system(size: 10, weight: .medium))
+                                .foregroundStyle(.secondary)
+                        } else if state.lastStatus == .success {
+                            ZStack {
+                                Circle()
+                                    .fill(Color.green.opacity(0.3))
+                                    .frame(width: 10, height: 10)
+                                Circle()
+                                    .fill(Color.green)
+                                    .frame(width: 6, height: 6)
+                            }
+                            Text(String.localizedStringWithFormat(
+                                NSLocalizedString("%1$.1f ms (%2$lld passes)", comment: ""),
+                                state.lastDurationMs,
+                                Int64(state.lastPasses)
+                            ))
+                                .font(.system(size: 10, weight: .medium, design: .monospaced))
+                                .foregroundStyle(.secondary)
+                        } else {
+                            Circle()
+                                .fill(Color.red)
+                                .frame(width: 6, height: 6)
+                            Text(state.lastStatus.description)
+                                .font(.system(size: 10, weight: .semibold))
+                                .foregroundStyle(.red)
+                        }
                     }
-                    Text(String.localizedStringWithFormat(
-                        NSLocalizedString("%1$.1f ms (%2$lld passes)", comment: ""),
-                        state.lastDurationMs,
-                        Int64(state.lastPasses)
-                    ))
-                        .font(.system(size: 10, weight: .medium, design: .monospaced))
-                        .foregroundStyle(.secondary)
-                } else {
-                    Circle()
-                        .fill(Color.red)
-                        .frame(width: 6, height: 6)
-                    Text(state.lastStatus.description)
-                        .font(.system(size: 10, weight: .semibold))
-                        .foregroundStyle(.red)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 4.5)
+                    .glassEffect(.regular, in: .capsule)
+                    
+                    // Manual Compile Button (prominent Liquid Glass button for primary action)
+                    Button(action: {
+                        Task { @MainActor in
+                            await state.compileImmediate()
+                        }
+                    }) {
+                        HStack(spacing: 4) {
+                            Image(systemName: "bolt.fill")
+                            Text("Typeset")
+                                .font(.system(size: 11, weight: .semibold))
+                        }
+                    }
+                    .buttonStyle(.glassProminent)
+                    .controlSize(.small)
+                    .help("Recompile Document (⌘R)")
+                    
+                    // Diagnostics Drawer Toggle Button (native macOS glass button)
+                    Button(action: { state.isDiagnosticsDrawerOpen.toggle() }) {
+                        Image(systemName: state.diagnostics.isEmpty ? "terminal" : "exclamationmark.bubble.fill")
+                            .foregroundStyle(state.diagnostics.isEmpty ? (state.isDiagnosticsDrawerOpen ? Color.accentColor : Color.primary) : Color.orange)
+                    }
+                    .buttonStyle(.glass)
+                    .controlSize(.small)
+                    .help("Toggle Compiler Log & Diagnostics (⇧⌘D)")
                 }
             }
-            .padding(.horizontal, 10)
-            .padding(.vertical, 4.5)
-            .glassEffect(.regular, in: .capsule)
-            
-            // Manual Compile Button (native macOS glass button)
-            Button(action: {
-                Task { @MainActor in
-                    await state.compileImmediate()
-                }
-            }) {
-                Image(systemName: "bolt.fill")
-                    .foregroundStyle(.orange)
-            }
-            .buttonStyle(.glass)
-            .controlSize(.small)
-            .help("Recompile Document (⌘R)")
-            
-            // Diagnostics Drawer Toggle Button (native macOS glass button)
-            Button(action: { state.isDiagnosticsDrawerOpen.toggle() }) {
-                Image(systemName: state.diagnostics.isEmpty ? "terminal" : "exclamationmark.bubble.fill")
-                    .foregroundStyle(state.diagnostics.isEmpty ? (state.isDiagnosticsDrawerOpen ? Color.accentColor : Color.primary) : Color.orange)
-            }
-            .buttonStyle(.glass)
-            .controlSize(.small)
-            .help("Toggle Compiler Log & Diagnostics (⇧⌘D)")
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 7)

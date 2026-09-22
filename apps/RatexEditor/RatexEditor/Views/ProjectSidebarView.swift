@@ -108,6 +108,7 @@ public struct ProjectSidebarView: View {
                             _ = workspace.createFile(name: "main.tex", inDirectory: root, initialContent: TeXTemplate.article.source)
                         }
                     }
+                    .buttonStyle(.glassProminent)
                     .controlSize(.small)
                     Spacer()
                 }
@@ -169,7 +170,8 @@ public struct ProjectSidebarView: View {
                         .foregroundStyle(.secondary)
                         .padding(4)
                 }
-                .buttonStyle(.borderless)
+                .buttonStyle(.glass)
+                .controlSize(.mini)
                 .help("New File in Project Root")
             }
             .padding(.horizontal, 10)
@@ -193,8 +195,10 @@ public struct ProjectSidebarView: View {
                 HStack {
                     Spacer()
                     Button("Cancel") { showingNewFileSheet = false }
+                        .buttonStyle(.glass)
                         .keyboardShortcut(.cancelAction)
                     Button("Create") { createNewFileAction() }
+                        .buttonStyle(.glassProminent)
                         .keyboardShortcut(.defaultAction)
                         .disabled(inputName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                 }
@@ -219,8 +223,10 @@ public struct ProjectSidebarView: View {
                 HStack {
                     Spacer()
                     Button("Cancel") { showingNewFolderSheet = false }
+                        .buttonStyle(.glass)
                         .keyboardShortcut(.cancelAction)
                     Button("Create") { createNewFolderAction() }
+                        .buttonStyle(.glassProminent)
                         .keyboardShortcut(.defaultAction)
                         .disabled(inputName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                 }
@@ -245,8 +251,10 @@ public struct ProjectSidebarView: View {
                 HStack {
                     Spacer()
                     Button("Cancel") { showingRenameSheet = false }
+                        .buttonStyle(.glass)
                         .keyboardShortcut(.cancelAction)
                     Button("Rename") { renameItemAction() }
+                        .buttonStyle(.glassProminent)
                         .keyboardShortcut(.defaultAction)
                         .disabled(inputName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                 }

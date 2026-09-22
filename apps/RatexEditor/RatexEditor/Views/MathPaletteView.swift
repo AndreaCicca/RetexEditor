@@ -77,108 +77,149 @@ public struct MathPaletteView: View {
         ("Text inside Math", "\\text{word}", "abc")
     ]
 
-    private let gridColumns = [GridItem(.adaptive(minimum: 38, maximum: 44), spacing: 6)]
+    private let gridColumns = [GridItem(.adaptive(minimum: 40, maximum: 44), spacing: 8)]
 
     public var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: 12) {
             // Header
             HStack {
                 Label("LaTeX Math Symbols", systemImage: "function")
                     .font(.system(size: 13, weight: .semibold))
                 Spacer()
                 Button(action: { state.isMathPaletteOpen = false }) {
-                    Image(systemName: "xmark.circle.fill")
-                        .font(.system(size: 14))
-                        .foregroundStyle(.secondary)
+                    Image(systemName: "xmark")
+                        .font(.system(size: 10, weight: .semibold))
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.glass)
+                .controlSize(.mini)
             }
-            .padding(.bottom, 2)
             
-            // Category Tabs
-            Picker("", selection: $selectedTab) {
-                Text("Greek").tag(0)
-                Text("Operators").tag(1)
-                Text("Calculus").tag(2)
-                Text("Structures").tag(3)
-            }
-            .pickerStyle(.segmented)
-            .labelsHidden()
+            // Category Tabs (Liquid Glass Sliding Selector)
+            GlassCategorySelector(selectedTab: $selectedTab)
             
-            // Content Container
-            GlassEffectContainer {
-                ScrollView(.vertical, showsIndicators: true) {
-                    VStack(alignment: .leading, spacing: 12) {
-                        switch selectedTab {
-                        case 0:
-                            VStack(alignment: .leading, spacing: 6) {
-                                Text("Lowercase")
-                                    .font(.system(size: 11, weight: .medium))
-                                    .foregroundStyle(.secondary)
-                                LazyVGrid(columns: gridColumns, spacing: 6) {
-                                    ForEach(greekLower) { sym in
-                                        SymbolButton(symbol: sym) {
-                                            state.insertText(sym.latex)
-                                        }
-                                    }
-                                }
-                                
-                                Divider().padding(.vertical, 4)
-                                
-                                Text("Uppercase")
-                                    .font(.system(size: 11, weight: .medium))
-                                    .foregroundStyle(.secondary)
-                                LazyVGrid(columns: gridColumns, spacing: 6) {
-                                    ForEach(greekUpper) { sym in
-                                        SymbolButton(symbol: sym) {
-                                            state.insertText(sym.latex)
-                                        }
-                                    }
-                                }
-                            }
-                        case 1:
-                            LazyVGrid(columns: gridColumns, spacing: 6) {
-                                ForEach(operators) { sym in
+            // Scrollable Symbols & Structures
+            ScrollView(.vertical, showsIndicators: true) {
+                VStack(alignment: .leading, spacing: 14) {
+                    switch selectedTab {
+                    case 0:
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Lowercase")
+                                .font(.system(size: 11, weight: .medium))
+                                .foregroundStyle(.secondary)
+                            LazyVGrid(columns: gridColumns, spacing: 8) {
+                                ForEach(greekLower) { sym in
                                     SymbolButton(symbol: sym) {
                                         state.insertText(sym.latex)
                                     }
                                 }
                             }
-                        case 2:
-                            LazyVGrid(columns: gridColumns, spacing: 6) {
-                                ForEach(calculus) { sym in
+                            
+                            Divider().padding(.vertical, 4)
+                            
+                            Text("Uppercase")
+                                .font(.system(size: 11, weight: .medium))
+                                .foregroundStyle(.secondary)
+                            LazyVGrid(columns: gridColumns, spacing: 8) {
+                                ForEach(greekUpper) { sym in
                                     SymbolButton(symbol: sym) {
                                         state.insertText(sym.latex)
                                     }
                                 }
                             }
-                        case 3:
-                            VStack(spacing: 6) {
-                                ForEach(structures, id: \.title) { item in
-                                    StructureButton(
-                                        title: item.title,
-                                        latex: item.latex,
-                                        preview: item.preview
-                                    ) {
-                                        state.insertText(item.latex)
-                                    }
-                                }
-                            }
-                        default:
-                            EmptyView()
                         }
+                    case 1:
+                        LazyVGrid(columns: gridColumns, spacing: 8) {
+                            ForEach(operators) { sym in
+                                SymbolButton(symbol: sym) {
+                                    state.insertText(sym.latex)
+                                }
+                            }
+                        }
+                    case 2:
+                        LazyVGrid(columns: gridColumns, spacing: 8) {
+                            ForEach(calculus) { sym in
+                                SymbolButton(symbol: sym) {
+                                    state.insertText(sym.latex)
+                                }
+                            }
+                        }
+                    case 3:
+                        VStack(spacing: 8) {
+                            ForEach(structures, id: \.title) { item in
+                                StructureButton(
+                                    title: item.title,
+                                    latex: item.latex,
+                                    preview: item.preview
+                                ) {
+                                    state.insertText(item.latex)
+                                }
+                            }
+                        }
+                    default:
+                        EmptyView()
                     }
-                    .padding(.trailing, 4)
                 }
-                .frame(height: 290)
+                .padding(.leading, 2)
+                .padding(.trailing, 16)
+                .padding(.vertical, 4)
             }
+            .frame(height: 310)
         }
         .padding(14)
-        .frame(width: 410, height: 370)
+        .frame(width: 420, height: 400)
     }
 }
 
-// Reusable symbol button with native Glass button style
+// MARK: - Liquid Glass Sliding Tab Selector
+
+struct GlassCategorySelector: View {
+    @Binding var selectedTab: Int
+    @Namespace private var tabNamespace
+    
+    private let tabs: [(id: Int, title: String, icon: String)] = [
+        (0, "Greek", "character.textbox"),
+        (1, "Operators", "plusminus"),
+        (2, "Calculus", "function"),
+        (3, "Structures", "square.stack.3d.up")
+    ]
+    
+    var body: some View {
+        HStack(spacing: 4) {
+            ForEach(tabs, id: \.id) { tab in
+                Button(action: {
+                    withAnimation(.spring(response: 0.32, dampingFraction: 0.8)) {
+                        selectedTab = tab.id
+                    }
+                }) {
+                    HStack(spacing: 5) {
+                        Image(systemName: tab.icon)
+                            .font(.system(size: 10, weight: .semibold))
+                        Text(LocalizedStringKey(tab.title))
+                            .font(.system(size: 11, weight: selectedTab == tab.id ? .semibold : .medium))
+                    }
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 5)
+                    .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.plain)
+                .background {
+                    if selectedTab == tab.id {
+                        Capsule()
+                            .fill(Color.accentColor.opacity(0.16))
+                            .glassEffect(.regular, in: .capsule)
+                            .matchedGeometryEffect(id: "activeTabGlassPill", in: tabNamespace)
+                    }
+                }
+                .foregroundStyle(selectedTab == tab.id ? Color.primary : Color.secondary)
+            }
+        }
+        .padding(3)
+        .glassEffect(.regular, in: .capsule)
+    }
+}
+
+// MARK: - Reusable Symbol & Structure Buttons
+
 struct SymbolButton: View {
     let symbol: MathSymbol
     let onSelect: () -> Void
@@ -187,15 +228,13 @@ struct SymbolButton: View {
         Button(action: onSelect) {
             Text(symbol.label)
                 .font(.system(size: 15, weight: .medium, design: .serif))
-                .frame(width: 38, height: 38)
-                .contentShape(Rectangle())
+                .frame(width: 40, height: 38)
         }
         .buttonStyle(.glass)
         .help(symbol.description)
     }
 }
 
-// Reusable structure/template button with native Glass button style
 struct StructureButton: View {
     let title: String
     let latex: String
@@ -227,7 +266,6 @@ struct StructureButton: View {
             }
             .padding(.horizontal, 10)
             .padding(.vertical, 6)
-            .contentShape(Rectangle())
         }
         .buttonStyle(.glass)
     }

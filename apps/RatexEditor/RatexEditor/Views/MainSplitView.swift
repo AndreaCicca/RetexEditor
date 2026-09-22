@@ -230,7 +230,7 @@ public struct MainSplitView: View {
                         .font(.system(size: 10, weight: .semibold))
                         .foregroundStyle(.blue)
                     }
-                    .buttonStyle(.bordered)
+                    .buttonStyle(.glass)
                     .controlSize(.mini)
                     .help("Set this file as project entry point and compile it")
                 }
@@ -238,50 +238,52 @@ public struct MainSplitView: View {
             
             Spacer()
             
-            HStack(spacing: 8) {
-                // Font Size Stepper
-                HStack(spacing: 4) {
-                    Button(action: { state.decreaseFontSize() }) {
-                        Image(systemName: "minus")
+            GlassEffectContainer(spacing: 8) {
+                HStack(spacing: 8) {
+                    // Font Size Stepper
+                    HStack(spacing: 4) {
+                        Button(action: { state.decreaseFontSize() }) {
+                            Image(systemName: "minus")
+                                .font(.system(size: 9, weight: .semibold))
+                                .padding(4)
+                        }
+                        .buttonStyle(.plain)
+                        .help("Decrease Font Size (⌘-)")
+                        
+                        Text(String(format: "%.1f pt", state.editorFontSize))
+                            .font(.system(size: 11, weight: .medium, design: .monospaced))
+                            .foregroundStyle(.secondary)
+                            .frame(minWidth: 44, alignment: .center)
+                        
+                        Button(action: { state.increaseFontSize() }) {
+                            Image(systemName: "plus")
+                                .font(.system(size: 9, weight: .semibold))
+                                .padding(4)
+                        }
+                        .buttonStyle(.plain)
+                        .help("Increase Font Size (⌘+)")
+                    }
+                    .padding(.horizontal, 4)
+                    .padding(.vertical, 2)
+                    .glassEffect(.regular, in: .rect(cornerRadius: 6))
+                    
+                    Button(action: { reloadCurrentFileFromDisk() }) {
+                        Image(systemName: "arrow.clockwise")
                             .font(.system(size: 9, weight: .semibold))
                             .padding(4)
                     }
-                    .buttonStyle(.plain)
-                    .help("Decrease Font Size (⌘-)")
-                    
-                    Text(String(format: "%.1f pt", state.editorFontSize))
-                        .font(.system(size: 11, weight: .medium, design: .monospaced))
-                        .foregroundStyle(.secondary)
-                        .frame(minWidth: 44, alignment: .center)
-                    
-                    Button(action: { state.increaseFontSize() }) {
-                        Image(systemName: "plus")
-                            .font(.system(size: 9, weight: .semibold))
-                            .padding(4)
-                    }
-                    .buttonStyle(.plain)
-                    .help("Increase Font Size (⌘+)")
+                    .buttonStyle(.glass)
+                    .help("Reload active file from disk")
                 }
-                .padding(.horizontal, 4)
-                .padding(.vertical, 2)
-                .glassEffect(.regular, in: .rect(cornerRadius: 6))
-                
-                Button(action: { reloadCurrentFileFromDisk() }) {
-                    Image(systemName: "arrow.clockwise")
-                        .font(.system(size: 9, weight: .semibold))
-                        .padding(4)
-                }
-                .buttonStyle(.glass)
-                .help("Reload active file from disk")
-                
-                Text("•")
-                    .font(.system(size: 10))
-                    .foregroundStyle(.quaternary)
-                
-                Text("\(state.source.count) chars")
-                    .font(.system(size: 11))
-                    .foregroundStyle(.tertiary)
             }
+            
+            Text("•")
+                .font(.system(size: 10))
+                .foregroundStyle(.quaternary)
+            
+            Text("\(state.source.count) chars")
+                .font(.system(size: 11))
+                .foregroundStyle(.tertiary)
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 6)
@@ -306,61 +308,66 @@ public struct MainSplitView: View {
             
             Spacer()
             
-            ControlGroup {
-                Button(action: {
-                    if state.zoomScale <= 0 { state.zoomScale = 1.0 }
-                    state.zoomScale = max(0.5, state.zoomScale - 0.15)
-                }) {
-                    Image(systemName: "minus.magnifyingglass")
+            GlassEffectContainer(spacing: 8) {
+                HStack(spacing: 8) {
+                    ControlGroup {
+                        Button(action: {
+                            if state.zoomScale <= 0 { state.zoomScale = 1.0 }
+                            state.zoomScale = max(0.5, state.zoomScale - 0.15)
+                        }) {
+                            Image(systemName: "minus.magnifyingglass")
+                        }
+                        .help("Zoom Out")
+                        
+                        Button(action: { state.zoomScale = 1.0 }) {
+                            Text(state.zoomScale <= 0 ? "Fit" : "\(Int(state.zoomScale * 100))%")
+                                .font(.system(size: 10, weight: .medium))
+                        }
+                        .help("Reset Zoom (100%)")
+                        
+                        Button(action: {
+                            if state.zoomScale <= 0 { state.zoomScale = 1.0 }
+                            state.zoomScale = min(3.0, state.zoomScale + 0.15)
+                        }) {
+                            Image(systemName: "plus.magnifyingglass")
+                        }
+                        .help("Zoom In")
+                        
+                        Button(action: {
+                            state.zoomScale = (state.zoomScale == 0 ? 1.0 : 0)
+                        }) {
+                            Image(systemName: "arrow.left.and.right")
+                                .foregroundStyle(state.zoomScale == 0 ? Color.accentColor : Color.primary)
+                        }
+                        .help("Fit to Width")
+                    }
+                    .controlSize(.small)
+                    
+                    if let pdfData = state.pdfData {
+                        ShareLink(
+                            item: DocumentPDFExport(
+                                data: pdfData,
+                                title: (workspace.entryPointURL ?? state.documentURL)?.deletingPathExtension().lastPathComponent ?? "document"
+                            ),
+                            preview: SharePreview(
+                                (workspace.entryPointURL ?? state.documentURL)?.deletingPathExtension().lastPathComponent ?? "document",
+                                image: Image(systemName: "doc.text.fill")
+                            )
+                        ) {
+                            Label("Share…", systemImage: "square.and.arrow.up")
+                        }
+                        .buttonStyle(.glass)
+                        .controlSize(.small)
+                        .help("Share Compiled PDF via AirDrop, Mail, Messages…")
+                        
+                        Button(action: exportPDF) {
+                            Label("Export…", systemImage: "arrow.down.doc")
+                        }
+                        .buttonStyle(.glassProminent)
+                        .controlSize(.small)
+                        .help("Export Master PDF to Disk")
+                    }
                 }
-                .help("Zoom Out")
-                
-                Button(action: { state.zoomScale = 1.0 }) {
-                    Text(state.zoomScale <= 0 ? "Fit" : "\(Int(state.zoomScale * 100))%")
-                        .font(.system(size: 10, weight: .medium))
-                }
-                .help("Reset Zoom (100%)")
-                
-                Button(action: {
-                    if state.zoomScale <= 0 { state.zoomScale = 1.0 }
-                    state.zoomScale = min(3.0, state.zoomScale + 0.15)
-                }) {
-                    Image(systemName: "plus.magnifyingglass")
-                }
-                .help("Zoom In")
-                
-                Button(action: {
-                    state.zoomScale = (state.zoomScale == 0 ? 1.0 : 0)
-                }) {
-                    Image(systemName: "arrow.left.and.right")
-                        .foregroundStyle(state.zoomScale == 0 ? Color.accentColor : Color.primary)
-                }
-                .help("Fit to Width")
-            }
-            
-            if let pdfData = state.pdfData {
-                ShareLink(
-                    item: DocumentPDFExport(
-                        data: pdfData,
-                        title: (workspace.entryPointURL ?? state.documentURL)?.deletingPathExtension().lastPathComponent ?? "document"
-                    ),
-                    preview: SharePreview(
-                        (workspace.entryPointURL ?? state.documentURL)?.deletingPathExtension().lastPathComponent ?? "document",
-                        image: Image(systemName: "doc.text.fill")
-                    )
-                ) {
-                    Label("Share…", systemImage: "square.and.arrow.up")
-                }
-                .buttonStyle(.bordered)
-                .controlSize(.small)
-                .help("Share Compiled PDF via AirDrop, Mail, Messages…")
-                
-                Button(action: exportPDF) {
-                    Label("Export…", systemImage: "arrow.down.doc")
-                }
-                .buttonStyle(.borderedProminent)
-                .controlSize(.small)
-                .help("Export Master PDF to Disk")
             }
         }
         .padding(.horizontal, 14)
@@ -564,6 +571,7 @@ public struct ResizeDividerHandle: View {
                     : Color.secondary.opacity(0.35)
                 )
                 .frame(width: (isHovering || isDragging) ? 6 : 5, height: 42)
+                .glassEffect(.regular.interactive(), in: .capsule)
                 .overlay(
                     VStack(spacing: 3) {
                         ForEach(0..<3) { _ in
@@ -673,6 +681,7 @@ public struct VerticalResizeDividerHandle: View {
                     : Color.secondary.opacity(0.35)
                 )
                 .frame(width: 44, height: (isHovering || isDragging) ? 5 : 4)
+                .glassEffect(.regular.interactive(), in: .capsule)
                 .overlay(
                     HStack(spacing: 3) {
                         ForEach(0..<3) { _ in

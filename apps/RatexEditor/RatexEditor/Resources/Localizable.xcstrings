@@ -1,9 +1,6 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "" : {
-
-    },
     "(Building: %@)" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -122,6 +119,9 @@
           }
         }
       }
+    },
+    "%lld ms" : {
+
     },
     "%lld%%" : {
       "extractionState" : "manual",
@@ -636,6 +636,9 @@
           }
         }
       }
+    },
+    "Compile debounce" : {
+
     },
     "Compile debounce:" : {
 
@@ -1515,6 +1518,9 @@
       }
     },
     "Follow Active Document (Auto)" : {
+
+    },
+    "Font size" : {
 
     },
     "Font size:" : {

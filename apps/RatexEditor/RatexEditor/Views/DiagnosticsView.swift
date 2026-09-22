@@ -52,6 +52,9 @@ public struct DiagnosticsView: View {
                         .frame(width: 6, height: 6)
                 }
             }
+            .padding(.horizontal, 8)
+            .padding(.vertical, 3)
+            .glassEffect(.regular, in: .capsule)
             
             Spacer(minLength: 16)
             
@@ -95,7 +98,8 @@ public struct DiagnosticsView: View {
                     .foregroundStyle(.secondary)
                     .padding(3)
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.glass)
+            .controlSize(.mini)
             .help("Close Diagnostics (⇧⌘D)")
         }
         .padding(.horizontal, 12)

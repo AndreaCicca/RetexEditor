@@ -49,36 +49,38 @@ public struct WelcomeView: View {
                 
                 Divider()
                 
-                // Action Buttons
-                VStack(spacing: 12) {
-                    WelcomeActionButton(
-                        icon: "folder.fill.badge.gearshape",
-                        iconColor: .blue,
-                        title: "Open Project Folder…",
-                        subtitle: "Open an existing folder with classes, styles, and chapters",
-                        shortcut: "⌘O"
-                    ) {
-                        openProjectFolder()
-                    }
-                    
-                    WelcomeActionButton(
-                        icon: "doc.text.fill",
-                        iconColor: .orange,
-                        title: "Open TeX Document…",
-                        subtitle: "Open an individual .tex or .ltx file",
-                        shortcut: "⇧⌘O"
-                    ) {
-                        openSingleDocument()
-                    }
-                    
-                    WelcomeActionButton(
-                        icon: "plus.rectangle.on.folder.fill",
-                        iconColor: .green,
-                        title: "New Project…",
-                        subtitle: "Create a new project directory from a template",
-                        shortcut: "⌘N"
-                    ) {
-                        showingNewProjectSheet = true
+                // Action Buttons in Liquid Glass Container
+                GlassEffectContainer(spacing: 12) {
+                    VStack(spacing: 12) {
+                        WelcomeActionButton(
+                            icon: "folder.fill.badge.gearshape",
+                            iconColor: .blue,
+                            title: "Open Project Folder…",
+                            subtitle: "Open an existing folder with classes, styles, and chapters",
+                            shortcut: "⌘O"
+                        ) {
+                            openProjectFolder()
+                        }
+                        
+                        WelcomeActionButton(
+                            icon: "doc.text.fill",
+                            iconColor: .orange,
+                            title: "Open TeX Document…",
+                            subtitle: "Open an individual .tex or .ltx file",
+                            shortcut: "⇧⌘O"
+                        ) {
+                            openSingleDocument()
+                        }
+                        
+                        WelcomeActionButton(
+                            icon: "plus.rectangle.on.folder.fill",
+                            iconColor: .green,
+                            title: "New Project…",
+                            subtitle: "Create a new project directory from a template",
+                            shortcut: "⌘N"
+                        ) {
+                            showingNewProjectSheet = true
+                        }
                     }
                 }
                 
@@ -127,36 +129,38 @@ public struct WelcomeView: View {
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
-                    ScrollView {
-                        LazyVStack(spacing: 4) {
-                            ForEach(workspace.recentProjects, id: \.self) { url in
-                                Button(action: {
-                                    workspace.openFolder(url: url)
-                                }) {
-                                    HStack(spacing: 10) {
-                                        Image(systemName: "folder.fill")
-                                            .foregroundStyle(.blue)
-                                            .font(.title3)
-                                        
-                                        VStack(alignment: .leading, spacing: 2) {
-                                            Text(url.lastPathComponent)
-                                                .font(.subheadline)
-                                                .fontWeight(.medium)
-                                                .lineLimit(1)
+                    GlassEffectContainer(spacing: 4) {
+                        ScrollView {
+                            LazyVStack(spacing: 4) {
+                                ForEach(workspace.recentProjects, id: \.self) { url in
+                                    Button(action: {
+                                        workspace.openFolder(url: url)
+                                    }) {
+                                        HStack(spacing: 10) {
+                                            Image(systemName: "folder.fill")
+                                                .foregroundStyle(.blue)
+                                                .font(.title3)
                                             
-                                            Text(url.deletingLastPathComponent().path)
-                                                .font(.caption2)
-                                                .foregroundStyle(.secondary)
-                                                .lineLimit(1)
-                                                .truncationMode(.middle)
+                                            VStack(alignment: .leading, spacing: 2) {
+                                                Text(url.lastPathComponent)
+                                                    .font(.subheadline)
+                                                    .fontWeight(.medium)
+                                                    .lineLimit(1)
+                                                
+                                                Text(url.deletingLastPathComponent().path)
+                                                    .font(.caption2)
+                                                    .foregroundStyle(.secondary)
+                                                    .lineLimit(1)
+                                                    .truncationMode(.middle)
+                                            }
+                                            Spacer()
                                         }
-                                        Spacer()
+                                        .padding(.horizontal, 10)
+                                        .padding(.vertical, 8)
+                                        .contentShape(Rectangle())
                                     }
-                                    .padding(.horizontal, 10)
-                                    .padding(.vertical, 8)
-                                    .contentShape(Rectangle())
+                                    .buttonStyle(.glass)
                                 }
-                                .buttonStyle(.glass)
                             }
                         }
                     }
@@ -331,6 +335,7 @@ struct NewProjectSheetView: View {
             HStack {
                 Spacer()
                 Button("Cancel") { isPresented = false }
+                    .buttonStyle(.glass)
                     .keyboardShortcut(.cancelAction)
                 Button("Create & Open") {
                     if let parent = selectedParentDir {
@@ -342,6 +347,7 @@ struct NewProjectSheetView: View {
                         isPresented = false
                     }
                 }
+                .buttonStyle(.glassProminent)
                 .keyboardShortcut(.defaultAction)
                 .disabled(projectName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || selectedParentDir == nil)
             }

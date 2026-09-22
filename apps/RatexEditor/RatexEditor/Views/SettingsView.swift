@@ -45,21 +45,35 @@ public struct SettingsView: View {
             Section {
                 Toggle("Auto-compile on file changes", isOn: $autoCompileEnabled)
                 
-                Slider(
-                    value: $autoCompileDelayMs,
-                    in: 150...1000,
-                    step: 50
-                ) {
-                    Text("Compile debounce:")
-                } minimumValueLabel: {
-                    Text("150ms")
-                        .font(.caption2)
-                        .foregroundStyle(.secondary)
-                } maximumValueLabel: {
-                    Text("1000ms")
-                        .font(.caption2)
-                        .foregroundStyle(.secondary)
+                VStack(alignment: .leading, spacing: 6) {
+                    HStack {
+                        Text("Compile debounce:")
+                        Spacer()
+                        Text("\(Int(autoCompileDelayMs)) ms")
+                            .font(.system(size: 11, weight: .medium, design: .monospaced))
+                            .foregroundStyle(.secondary)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 2)
+                            .glassEffect(.regular, in: .capsule)
+                    }
+                    
+                    Slider(
+                        value: $autoCompileDelayMs,
+                        in: 150...1000,
+                        step: 50
+                    ) {
+                        Text("Compile debounce")
+                    } minimumValueLabel: {
+                        Text("150ms")
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                    } maximumValueLabel: {
+                        Text("1000ms")
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                    }
                 }
+                .padding(.vertical, 2)
                 
                 Text("Delay before compiling LaTeX while typing: \(Int(autoCompileDelayMs)) ms")
                     .font(.caption)
@@ -74,21 +88,35 @@ public struct SettingsView: View {
     private var editorTab: some View {
         Form {
             Section {
-                Slider(
-                    value: $defaultFontSize,
-                    in: 10...24,
-                    step: 0.5
-                ) {
-                    Text("Font size:")
-                } minimumValueLabel: {
-                    Text("10pt")
-                        .font(.caption2)
-                        .foregroundStyle(.secondary)
-                } maximumValueLabel: {
-                    Text("24pt")
-                        .font(.caption2)
-                        .foregroundStyle(.secondary)
+                VStack(alignment: .leading, spacing: 6) {
+                    HStack {
+                        Text("Font size:")
+                        Spacer()
+                        Text(String(format: "%.1f pt", defaultFontSize))
+                            .font(.system(size: 11, weight: .medium, design: .monospaced))
+                            .foregroundStyle(.secondary)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 2)
+                            .glassEffect(.regular, in: .capsule)
+                    }
+                    
+                    Slider(
+                        value: $defaultFontSize,
+                        in: 10...24,
+                        step: 0.5
+                    ) {
+                        Text("Font size")
+                    } minimumValueLabel: {
+                        Text("10pt")
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                    } maximumValueLabel: {
+                        Text("24pt")
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                    }
                 }
+                .padding(.vertical, 2)
                 
                 Text("Default editor font size: \(String(format: "%.1f", defaultFontSize)) pt")
                     .font(.caption)
