@@ -23,7 +23,7 @@ To understand the project architecture, it is helpful to distinguish between its
 │                        RetexEditor (macOS App)                          │
 │   Native SwiftUI / AppKit desktop IDE for writing and previewing LaTeX  │
 └────────────────────────────────────┬────────────────────────────────────┘
-                                     │ In-Memory C FFI (`crates/libtex`)
+                                     │ In-Memory C FFI (`vendor/ratex/crates/libtex`)
                                      ▼
 ┌─────────────────────────────────────────────────────────────────────────┐
 │                          ratex (Rust Engine)                            │
@@ -123,61 +123,66 @@ ratex diff.tex
 ## 🏗️ Building from Source
 
 ### Prerequisites
+- **Xcode**: 15.0+ or 16.0+ with Command Line Tools (`xcode-select --install`)
 - **Rust**: 1.80 or newer (`cargo`) &mdash; [rustup.rs](https://rustup.rs)
-- **Xcode**: 15.0+ or 16.0+ with Command Line Tools (`xcode-select --install`) for the macOS application
-- **Python**: 3.11+ (optional, for WebAssembly bundling scripts)
 
-### 1. Build the Rust CLI & Toolchain
+### 1. Clone with Submodules
 ```bash
-git clone https://github.com/AndreaCicca/RetexEditor.git
+git clone --recurse-submodules https://github.com/AndreaCicca/RetexEditor.git
 cd RetexEditor
+```
+*(If you already cloned without `--recurse-submodules`, run `git submodule update --init --recursive`)*.
 
-# Build all workspace crates in release mode
-cargo build --release
+### 2. One-Command Setup & Build
+```bash
+# Initialize submodule and build Rust C FFI static library (libtex.a)
+make bootstrap
 
-# The compiled binary is located at target/release/ratex
+# Compile the macOS application
+make build-app
 ```
 
-### 2. Build and Run the macOS Application
+### 3. Open in Xcode
 ```bash
-# 1. Compile the C FFI static library (libtex.a)
-./apps/RatexEditor/Scripts/build_libtex.sh
-
-# 2. Build the macOS application using xcodebuild
-xcodebuild -project apps/RatexEditor/RatexEditor.xcodeproj -scheme RatexEditor -configuration Debug build
-
-# 3. Or open in Xcode directly
 open apps/RatexEditor/RatexEditor.xcodeproj
 ```
+Press **⌘R** to run in Xcode.
 
 ---
 
-## 📦 Workspace Structure
+## 📦 Repository Structure
 
 ```
 RetexEditor/
 ├── apps/
 │   └── RatexEditor/         # Native macOS IDE (SwiftUI + AppKit + PDFKit)
-├── crates/
-│   ├── tex-core/            # Pure-Rust TeX state machine, math layout, line breaking, PDF generator
-│   ├── tex-kpse/            # In-memory package resolver, font loader, and kpathsea emulator
-│   ├── tex-bibtex/          # Native pure-Rust BibTeX interpreter
-│   ├── tex-runtime/         # Multi-pass compilation orchestrator and session management
-│   ├── tex-cli/             # Unified multi-pass CLI driver, command aliases, and artifact cache
-│   ├── libtex/              # C FFI static and shared library (tex.h) for host application embedding
-│   └── tex-wasm/            # In-memory WebAssembly module for browsers and Node.js
-├── docs/
-│   ├── libraries.md         # Documentation for C API (libtex) and WebAssembly (tex.wasm)
-│   └── internals/           # Deep-dive engineering notes (Knuth-Plass, math layout, page builder)
-├── packaging/               # Distribution installers for Linux, macOS, and Windows
-└── scripts/                 # Corpus validation, parity testing, and benchmark suites
+│       ├── RatexEditor/     # App sources, Views, Models, and Bridge
+│       ├── RatexEditor.xcodeproj
+│       └── Scripts/         # build_libtex.sh FFI script
+├── vendor/
+│   └── ratex/               # [Git Submodule] Pure-Rust TeX engine (leoliu0/ratex)
+│       ├── crates/
+│       │   ├── libtex/      # C FFI static library (tex.h / libtex.a)
+│       │   ├── tex-core/    # TeX state machine, math layout, PDF generator
+│       │   ├── tex-kpse/    # Package resolver & virtual CTAN bundle
+│       │   ├── tex-bibtex/  # Embedded pure-Rust BibTeX interpreter
+│       │   └── tex-cli/     # Standalone CLI driver
+│       └── ...
+├── Makefile                 # Convenient developer tasks (bootstrap, build, clean)
+├── .gitmodules              # Submodule configuration for vendor/ratex
+└── README.md                # Project documentation
 ```
 
 ---
 
-## 📚 Technical Documentation & Internals
+## 🔄 Updating the TeX Engine Submodule
 
-- [Native C API (`libtex`) and WebAssembly Guide](docs/libraries.md)
+To update the `ratex` engine to the latest upstream release:
+
+```bash
+git submodule update --remote --merge vendor/ratex
+make bootstrap
+```
 - [RetexEditor macOS App Architecture](apps/RatexEditor/README.md)
 - [TeX Engine Internals & Technical Notes](docs/internals/README.md):
   - [Math Formula Layout (TeX82 Appendix G)](docs/internals/math.md)

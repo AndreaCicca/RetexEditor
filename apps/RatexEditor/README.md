@@ -54,14 +54,14 @@ L'integrazione tra il codice Rust e l'interfaccia grafica Swift avviene attraver
                                │ C Bridging Header (RatexBridge.h)
                                ▼
 ┌─────────────────────────────────────────────────────────────┐
-│                 crates/libtex (C FFI ABI)                   │
-│  Libreria statica C-compatible: target/ffi-release/libtex.a │
+│            vendor/ratex/crates/libtex (C FFI ABI)           │
+│  Libreria statica: vendor/ratex/target/ffi-release/libtex.a │
 │  Header C: tex.h (tex_session_*, tex_compile, tex_result_*) │
 └──────────────────────────────┬──────────────────────────────┘
                                │ Rust FFI
                                ▼
 ┌─────────────────────────────────────────────────────────────┐
-│               ratex Engine Workspace (Rust)                 │
+│          ratex Engine Submodule (vendor/ratex, Rust)        │
 │  ├── tex-core     (TeX state machine, math layout, PDF gen) │
 │  ├── tex-kpse     (In-memory package resolver & fonts)      │
 │  ├── tex-bibtex   (Interprete BibTeX integrato)             │
@@ -69,7 +69,7 @@ L'integrazione tra il codice Rust e l'interfaccia grafica Swift avviene attraver
 └─────────────────────────────────────────────────────────────┘
 ```
 
-1. **Compilazione Rust FFI (`libtex.a`)**: Il crate `crates/libtex` esporta simboli C puri (`extern "C"`) con panic unwinding controllato (`ffi-release`). Lo script `build_libtex.sh` compila la libreria statica universale `libtex.a`.
+1. **Compilazione Rust FFI (`libtex.a`)**: Il crate `crates/libtex` (all'interno del sottomodulo `vendor/ratex`) esporta simboli C puri (`extern "C"`) con panic unwinding controllato (`ffi-release`). Lo script `build_libtex.sh` compila la libreria statica universale `libtex.a`.
 2. **Bridging Header (`RatexBridge.h`)**: Espone le firme C di `tex.h` direttamente al compilatore Swift/Clang di Xcode.
 3. **Actor Swift (`RatexEngine.swift`)**: Gestisce un'istanza thread-safe della sessione:
    - Carica il testo del documento master e di tutti i file secondari (`\include`, `\input`, `.cls`, `.sty`, `.bib`) direttamente come buffer di byte nella sessione in-memory (`tex_session_add_file`).
@@ -142,16 +142,16 @@ L'integrazione tra il codice Rust e l'interfaccia grafica Swift avviene attraver
 
 ### 1. Clona il Repository
 ```bash
-git clone https://github.com/leoliu0/ratex.git
-cd ratex
+git clone --recurse-submodules https://github.com/AndreaCicca/RetexEditor.git
+cd RetexEditor
 ```
 
 ### 2. Compila la Libreria Rust FFI (`libtex.a`)
-Dalla radice del progetto, esegui lo script di compilazione FFI:
+Dalla radice del progetto, esegui lo script di compilazione FFI (oppure `make bootstrap`):
 ```bash
 ./apps/RatexEditor/Scripts/build_libtex.sh
 ```
-Questo comando compila il crate `crates/libtex` con il profilo `ffi-release` e genera la libreria statica in `target/ffi-release/libtex.a` e il relativo header C `crates/libtex/include/tex.h`.
+Questo comando compila il crate `crates/libtex` all'interno del sottomodulo `vendor/ratex` con il profilo `ffi-release` e genera la libreria statica in `vendor/ratex/target/ffi-release/libtex.a` e il relativo header C `vendor/ratex/crates/libtex/include/tex.h`.
 
 ### 3. Compila ed Esegui l'Applicazione macOS
 Puoi aprire il progetto in Xcode:

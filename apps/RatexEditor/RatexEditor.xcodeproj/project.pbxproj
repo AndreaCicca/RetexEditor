@@ -39,7 +39,7 @@
 		60296D6062E5C4F4F919738E /* WorkspaceModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceModel.swift; sourceTree = "<group>"; };
 		65735537305F55D4007477E9 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		6E1BDBF0E8FEA2E92F80AEAE /* PDFKitRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFKitRepresentable.swift; sourceTree = "<group>"; };
-		6FF00E145772C9B23EF172E6 /* libtex.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libtex.a; path = "../../target/ffi-release/libtex.a"; sourceTree = "<group>"; };
+		6FF00E145772C9B23EF172E6 /* libtex.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libtex.a; path = "../../vendor/ratex/target/ffi-release/libtex.a"; sourceTree = "<group>"; };
 		73AD16181FDDB7427288C6BD /* RatexEditor.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RatexEditor.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		76E3C28BAF4A20419EC58432 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A1C01C01C01C01C01C01C001 /* AppIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = AppIcon.icns; sourceTree = "<group>"; };
@@ -267,7 +267,7 @@
 				GENERATE_INFOPLIST_FILE = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(SRCROOT)/../../crates/libtex/include",
+					"$(SRCROOT)/../../vendor/ratex/crates/libtex/include",
 				);
 				INFOPLIST_FILE = RatexEditor/Resources/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = RatexEditor;
@@ -277,12 +277,12 @@
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(SRCROOT)/../../target/ffi-release",
+					"$(SRCROOT)/../../vendor/ratex/target/ffi-release",
 				);
 				MARKETING_VERSION = 0.3.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
-					"$(SRCROOT)/../../target/ffi-release/libtex.a",
+					"$(SRCROOT)/../../vendor/ratex/target/ffi-release/libtex.a",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ratex.RatexEditor;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -347,7 +347,7 @@
 				GENERATE_INFOPLIST_FILE = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(SRCROOT)/../../crates/libtex/include",
+					"$(SRCROOT)/../../vendor/ratex/crates/libtex/include",
 				);
 				INFOPLIST_FILE = RatexEditor/Resources/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = RatexEditor;
@@ -357,12 +357,12 @@
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(SRCROOT)/../../target/ffi-release",
+					"$(SRCROOT)/../../vendor/ratex/target/ffi-release",
 				);
 				MARKETING_VERSION = 0.3.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
-					"$(SRCROOT)/../../target/ffi-release/libtex.a",
+					"$(SRCROOT)/../../vendor/ratex/target/ffi-release/libtex.a",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ratex.RatexEditor;
 				PRODUCT_NAME = "$(TARGET_NAME)";
