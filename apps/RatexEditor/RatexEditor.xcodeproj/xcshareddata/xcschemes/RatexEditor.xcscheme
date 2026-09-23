@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1600"
+   LastUpgradeVersion = "2700"
    version = "1.7">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -15,7 +15,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B01CE08CEB38A8EB41E66CE6"
+               BlueprintIdentifier = "3AE6B15BEA674341CF335134"
                BuildableName = "RatexEditor.app"
                BlueprintName = "RatexEditor"
                ReferencedContainer = "container:RatexEditor.xcodeproj">
@@ -44,7 +44,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "B01CE08CEB38A8EB41E66CE6"
+            BlueprintIdentifier = "3AE6B15BEA674341CF335134"
             BuildableName = "RatexEditor.app"
             BlueprintName = "RatexEditor"
             ReferencedContainer = "container:RatexEditor.xcodeproj">
@@ -61,7 +61,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "B01CE08CEB38A8EB41E66CE6"
+            BlueprintIdentifier = "3AE6B15BEA674341CF335134"
             BuildableName = "RatexEditor.app"
             BlueprintName = "RatexEditor"
             ReferencedContainer = "container:RatexEditor.xcodeproj">
