@@ -4,13 +4,39 @@ import AppKit
 public struct EditorToolbar: View {
     @Bindable var state: EditorState
     var workspace: WorkspaceModel? = nil
+    var isSidebarOpen: Bool = false
+    var availableWidth: CGFloat? = nil
+    var isCompactStatus: Bool? = nil
     
     @State private var pendingTemplate: TeXTemplate? = nil
     @State private var showingTemplateConfirmation = false
+    @State private var isCompilingPulsing = false
+    @State private var measuredWidth: CGFloat = 1200
     
-    public init(state: EditorState, workspace: WorkspaceModel? = nil) {
+    public init(
+        state: EditorState,
+        workspace: WorkspaceModel? = nil,
+        isSidebarOpen: Bool = false,
+        availableWidth: CGFloat? = nil,
+        isCompactStatus: Bool? = nil
+    ) {
         self.state = state
         self.workspace = workspace
+        self.isSidebarOpen = isSidebarOpen
+        self.availableWidth = availableWidth
+        self.isCompactStatus = isCompactStatus
+    }
+    
+    private var shouldCompactStatus: Bool {
+        if let explicit = isCompactStatus {
+            return explicit
+        }
+        let width = availableWidth ?? measuredWidth
+        if isSidebarOpen {
+            return width < 1250
+        } else {
+            return width < 1050
+        }
     }
     
     public var body: some View {
@@ -222,40 +248,18 @@ Fusce vehicula dolor arcu, sit amet blandit dolor mollis nec. Donec viverra elei
                 HStack(spacing: 8) {
                     // Status & Performance Capsule
                     HStack(spacing: 6) {
-                        if state.isCompiling {
-                            ProgressView()
-                                .controlSize(.small)
-                            Text("Compiling...")
-                                .font(.system(size: 10, weight: .medium))
-                                .foregroundStyle(.secondary)
-                        } else if state.lastStatus == .success {
-                            ZStack {
-                                Circle()
-                                    .fill(Color.green.opacity(0.3))
-                                    .frame(width: 10, height: 10)
-                                Circle()
-                                    .fill(Color.green)
-                                    .frame(width: 6, height: 6)
-                            }
-                            Text(String.localizedStringWithFormat(
-                                NSLocalizedString("%1$.1f ms (%2$lld passes)", comment: ""),
-                                state.lastDurationMs,
-                                Int64(state.lastPasses)
-                            ))
-                                .font(.system(size: 10, weight: .medium, design: .monospaced))
-                                .foregroundStyle(.secondary)
-                        } else {
-                            Circle()
-                                .fill(Color.red)
-                                .frame(width: 6, height: 6)
-                            Text(state.lastStatus.description)
-                                .font(.system(size: 10, weight: .semibold))
-                                .foregroundStyle(.red)
+                        statusDot
+                        
+                        if !shouldCompactStatus {
+                            statusText
+                                .transition(.opacity.combined(with: .move(edge: .trailing)))
                         }
                     }
-                    .padding(.horizontal, 10)
+                    .padding(.horizontal, shouldCompactStatus ? 8 : 10)
                     .padding(.vertical, 4.5)
+                    .frame(minHeight: 20)
                     .glassEffect(.regular, in: .capsule)
+                    .help(statusTooltip)
                     
                     // Manual Compile Button (prominent Liquid Glass button for primary action)
                     Button(action: {
@@ -287,6 +291,18 @@ Fusce vehicula dolor arcu, sit amet blandit dolor mollis nec. Donec viverra elei
         .padding(.horizontal, 12)
         .padding(.vertical, 7)
         .background(.bar)
+        .background(
+            GeometryReader { proxy in
+                Color.clear
+                    .onAppear {
+                        measuredWidth = proxy.size.width
+                    }
+                    .onChange(of: proxy.size.width) { _, newWidth in
+                        measuredWidth = newWidth
+                    }
+            }
+        )
+        .animation(.easeInOut(duration: 0.2), value: shouldCompactStatus)
         .confirmationDialog(
             "Replace Document Content?",
             isPresented: $showingTemplateConfirmation,
@@ -301,6 +317,113 @@ Fusce vehicula dolor arcu, sit amet blandit dolor mollis nec. Donec viverra elei
             }
         } message: { template in
             Text("Applying the '\(template.name)' template will replace all text in '\(state.documentURL?.lastPathComponent ?? "Untitled.tex")'. This action can be undone with ⌘Z.")
+        }
+    }
+    
+    // MARK: - Status Indicators
+    
+    @ViewBuilder
+    private var statusDot: some View {
+        if state.isCompiling {
+            ZStack {
+                Circle()
+                    .fill(Color.orange.opacity(0.35))
+                    .frame(width: 10, height: 10)
+                Circle()
+                    .fill(Color.orange)
+                    .frame(width: 6, height: 6)
+                    .scaleEffect(isCompilingPulsing ? 1.2 : 0.85)
+            }
+            .onAppear {
+                if state.isCompiling {
+                    withAnimation(.easeInOut(duration: 0.6).repeatForever(autoreverses: true)) {
+                        isCompilingPulsing = true
+                    }
+                }
+            }
+            .onChange(of: state.isCompiling) { _, compiling in
+                if compiling {
+                    withAnimation(.easeInOut(duration: 0.6).repeatForever(autoreverses: true)) {
+                        isCompilingPulsing = true
+                    }
+                } else {
+                    withAnimation(.default) {
+                        isCompilingPulsing = false
+                    }
+                }
+            }
+        } else if state.lastStatus == .success {
+            if !state.diagnostics.isEmpty {
+                ZStack {
+                    Circle()
+                        .fill(Color.orange.opacity(0.35))
+                        .frame(width: 10, height: 10)
+                    Circle()
+                        .fill(Color.orange)
+                        .frame(width: 6, height: 6)
+                }
+            } else {
+                ZStack {
+                    Circle()
+                        .fill(Color.green.opacity(0.3))
+                        .frame(width: 10, height: 10)
+                    Circle()
+                        .fill(Color.green)
+                        .frame(width: 6, height: 6)
+                }
+            }
+        } else {
+            ZStack {
+                Circle()
+                    .fill(Color.red.opacity(0.35))
+                    .frame(width: 10, height: 10)
+                Circle()
+                    .fill(Color.red)
+                    .frame(width: 6, height: 6)
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private var statusText: some View {
+        if state.isCompiling {
+            Text(String(localized: "Compiling..."))
+                .font(.system(size: 10, weight: .medium))
+                .foregroundStyle(.secondary)
+                .lineLimit(1)
+        } else if state.lastStatus == .success {
+            Text(String.localizedStringWithFormat(
+                NSLocalizedString("%1$.1f ms (%2$lld passes)", comment: ""),
+                state.lastDurationMs,
+                Int64(state.lastPasses)
+            ))
+            .font(.system(size: 10, weight: .medium, design: .monospaced))
+            .foregroundStyle(.secondary)
+            .lineLimit(1)
+        } else {
+            Text(state.lastStatus.description)
+                .font(.system(size: 10, weight: .semibold))
+                .foregroundStyle(.red)
+                .lineLimit(1)
+        }
+    }
+    
+    private var statusTooltip: String {
+        if state.isCompiling {
+            return String(localized: "Compiling...")
+        } else if state.lastStatus == .success {
+            let stats = String.localizedStringWithFormat(
+                NSLocalizedString("%1$.1f ms (%2$lld passes)", comment: ""),
+                state.lastDurationMs,
+                Int64(state.lastPasses)
+            )
+            if !state.diagnostics.isEmpty {
+                return "\(stats) - \(String(localized: "Warnings"))"
+            } else {
+                return "\(stats) - \(String(localized: "Success"))"
+            }
+        } else {
+            return state.lastStatus.description
         }
     }
     

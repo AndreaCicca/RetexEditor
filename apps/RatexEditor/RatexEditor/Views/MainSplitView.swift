@@ -44,10 +44,20 @@ public struct MainSplitView: View {
             .navigationSplitViewColumnWidth(min: 200, ideal: 240, max: 320)
         } detail: {
             GeometryReader { windowGeo in
+                let isSidebarOpen: Bool = {
+                    if columnVisibility == .detailOnly { return false }
+                    if let window = NSApp.windows.first(where: { $0.isVisible }) ?? NSApp.keyWindow {
+                        return (window.frame.width - windowGeo.size.width) >= 150
+                    }
+                    return columnVisibility != .detailOnly
+                }()
+                
                 VStack(spacing: 0) {
                     EditorToolbar(
                         state: state,
-                        workspace: workspace
+                        workspace: workspace,
+                        isSidebarOpen: isSidebarOpen,
+                        availableWidth: windowGeo.size.width
                     )
                     
                     Divider()
