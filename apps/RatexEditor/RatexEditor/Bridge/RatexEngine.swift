@@ -172,8 +172,8 @@ public actor RatexEngine {
         guard b.len > 0, let ptr = b.data else { return "" }
         let data = Data(bytes: ptr, count: b.len)
         let str = String(data: data, encoding: .utf8) ?? ""
-        // Strip ANSI escape codes (e.g. \x1b[1;31m) for clean GUI presentation
-        return str.replacingOccurrences(of: "\\x1B\\[[0-9;]*[a-zA-Z]", with: "", options: .regularExpression)
+        // Strip ANSI escape codes (e.g. \u{1B}[1;31m) for clean GUI presentation
+        return str.replacingOccurrences(of: "\u{1B}\\[[0-9;]*[a-zA-Z]", with: "", options: .regularExpression)
     }
 }
 

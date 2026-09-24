@@ -42,14 +42,29 @@ public struct DiagnosticsView: View {
                 if state.isCompiling {
                     ProgressView()
                         .controlSize(.mini)
-                } else if state.diagnostics.isEmpty {
-                    Image(systemName: "checkmark.circle.fill")
-                        .foregroundStyle(.green)
+                } else if state.hasErrors {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundStyle(.red)
                         .font(.system(size: 10))
-                } else {
+                    Text("\(state.errorCount) \(String(localized: "errors"))")
+                        .font(.system(size: 10, weight: .medium))
+                        .foregroundStyle(.red)
+                } else if state.hasWarnings {
                     Circle()
                         .fill(Color.orange)
                         .frame(width: 6, height: 6)
+                    Text("\(state.warningCount) \(String(localized: "warnings"))")
+                        .font(.system(size: 10, weight: .medium))
+                        .foregroundStyle(.orange)
+                } else {
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundStyle(.green)
+                        .font(.system(size: 10))
+                    if state.hasBadBoxes {
+                        Text("\(state.badBoxCount) \(String(localized: "bad boxes"))")
+                            .font(.system(size: 10, weight: .medium))
+                            .foregroundStyle(.secondary)
+                    }
                 }
             }
             .padding(.horizontal, 8)

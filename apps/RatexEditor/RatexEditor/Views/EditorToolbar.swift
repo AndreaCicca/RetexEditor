@@ -279,8 +279,8 @@ Fusce vehicula dolor arcu, sit amet blandit dolor mollis nec. Donec viverra elei
                     
                     // Diagnostics Drawer Toggle Button (native macOS glass button)
                     Button(action: { state.isDiagnosticsDrawerOpen.toggle() }) {
-                        Image(systemName: state.diagnostics.isEmpty ? "terminal" : "exclamationmark.bubble.fill")
-                            .foregroundStyle(state.diagnostics.isEmpty ? (state.isDiagnosticsDrawerOpen ? Color.accentColor : Color.primary) : Color.orange)
+                        Image(systemName: diagnosticsButtonIcon)
+                            .foregroundStyle(diagnosticsButtonColor)
                     }
                     .buttonStyle(.glass)
                     .controlSize(.small)
@@ -352,8 +352,8 @@ Fusce vehicula dolor arcu, sit amet blandit dolor mollis nec. Donec viverra elei
                     }
                 }
             }
-        } else if state.lastStatus == .success {
-            if !state.diagnostics.isEmpty {
+        } else if !state.hasErrors && state.lastStatus == .success {
+            if state.hasWarnings {
                 ZStack {
                     Circle()
                         .fill(Color.orange.opacity(0.35))
@@ -391,7 +391,7 @@ Fusce vehicula dolor arcu, sit amet blandit dolor mollis nec. Donec viverra elei
                 .font(.system(size: 10, weight: .medium))
                 .foregroundStyle(.secondary)
                 .lineLimit(1)
-        } else if state.lastStatus == .success {
+        } else if !state.hasErrors && state.lastStatus == .success {
             Text(String.localizedStringWithFormat(
                 NSLocalizedString("%1$.1f ms (%2$lld passes)", comment: ""),
                 state.lastDurationMs,
@@ -401,7 +401,7 @@ Fusce vehicula dolor arcu, sit amet blandit dolor mollis nec. Donec viverra elei
             .foregroundStyle(.secondary)
             .lineLimit(1)
         } else {
-            Text(state.lastStatus.description)
+            Text(state.lastStatus != .success ? state.lastStatus.description : String(localized: "Compilation Error"))
                 .font(.system(size: 10, weight: .semibold))
                 .foregroundStyle(.red)
                 .lineLimit(1)
@@ -411,19 +411,45 @@ Fusce vehicula dolor arcu, sit amet blandit dolor mollis nec. Donec viverra elei
     private var statusTooltip: String {
         if state.isCompiling {
             return String(localized: "Compiling...")
-        } else if state.lastStatus == .success {
+        } else if !state.hasErrors && state.lastStatus == .success {
             let stats = String.localizedStringWithFormat(
                 NSLocalizedString("%1$.1f ms (%2$lld passes)", comment: ""),
                 state.lastDurationMs,
                 Int64(state.lastPasses)
             )
-            if !state.diagnostics.isEmpty {
-                return "\(stats) - \(String(localized: "Warnings"))"
+            if state.hasWarnings {
+                return "\(stats) - \(state.warningCount) \(String(localized: "Warnings"))"
+            } else if state.hasBadBoxes {
+                return "\(stats) - \(String(localized: "Success")) (\(state.badBoxCount) \(String(localized: "Bad Boxes")))"
             } else {
                 return "\(stats) - \(String(localized: "Success"))"
             }
         } else {
-            return state.lastStatus.description
+            if state.errorCount > 0 {
+                return "\(String(localized: "Compilation Error")) (\(state.errorCount) \(String(localized: "Errors")))"
+            } else {
+                return state.lastStatus.description
+            }
+        }
+    }
+    
+    private var diagnosticsButtonIcon: String {
+        if state.hasErrors {
+            return "exclamationmark.triangle.fill"
+        } else if state.hasWarnings {
+            return "exclamationmark.bubble.fill"
+        } else {
+            return "terminal"
+        }
+    }
+    
+    private var diagnosticsButtonColor: Color {
+        if state.hasErrors {
+            return .red
+        } else if state.hasWarnings {
+            return .orange
+        } else {
+            return state.isDiagnosticsDrawerOpen ? Color.accentColor : Color.primary
         }
     }
     

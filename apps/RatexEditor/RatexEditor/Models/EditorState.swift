@@ -21,6 +21,116 @@ public final class EditorState {
     public var log: String = ""
     public var lastCompiledDate: Date? = nil
     
+    // MARK: - Smart Diagnostic Metrics
+    
+    /// Number of fatal compilation errors or explicit error diagnostics.
+    public var errorCount: Int {
+        var count = (lastStatus != .success && lastStatus != .noConvergence) ? 1 : 0
+        if lastStatus == .noConvergence {
+            count += 1
+        }
+        for line in diagnostics.components(separatedBy: .newlines) {
+            let trimmed = line.trimmingCharacters(in: .whitespaces)
+            if trimmed.starts(with: "error:") || trimmed.starts(with: "Fatal error") || trimmed.starts(with: "! ") {
+                count += 1
+            }
+        }
+        return count
+    }
+    
+    /// Number of typographic line-breaking/page-breaking overflow notices (Overfull/Underfull \hbox or \vbox).
+    public var badBoxCount: Int {
+        var count = 0
+        for line in diagnostics.components(separatedBy: .newlines) {
+            let trimmed = line.trimmingCharacters(in: .whitespaces)
+            if trimmed.contains("Overfull \\hbox") ||
+               trimmed.contains("Underfull \\hbox") ||
+               trimmed.contains("Overfull \\vbox") ||
+               trimmed.contains("Underfull \\vbox") ||
+               trimmed.contains("tight \\hbox") ||
+               trimmed.contains("loose \\hbox") {
+                count += 1
+            }
+        }
+        return count
+    }
+    
+    /// Number of genuine, semantic LaTeX compiler warnings (excluding layout bad boxes).
+    public var warningCount: Int {
+        var count = 0
+        for line in diagnostics.components(separatedBy: .newlines) {
+            let trimmed = line.trimmingCharacters(in: .whitespaces)
+            let isWarning = trimmed.starts(with: "warning:") ||
+                            trimmed.starts(with: "LaTeX Warning:") ||
+                            trimmed.contains(" Warning:")
+            let isBadBox = trimmed.contains("Overfull") ||
+                           trimmed.contains("Underfull") ||
+                           trimmed.contains("tight \\hbox") ||
+                           trimmed.contains("loose \\hbox")
+            if isWarning && !isBadBox {
+                count += 1
+            }
+        }
+        
+        // Also check if the converged pass log reports unresolved references or missing citations
+        let finalLog = log.components(separatedBy: "--- TeX pass ").last ?? log
+        if finalLog.contains("There were undefined references") {
+            count += 1
+        }
+        return count
+    }
+    
+    /// Indicates whether the document compilation resulted in fatal errors.
+    public var hasErrors: Bool {
+        lastStatus != .success || errorCount > 0
+    }
+    
+    /// Indicates whether there are actionable compiler warnings (excluding bad boxes).
+    public var hasWarnings: Bool {
+        warningCount > 0
+    }
+    
+    /// Indicates whether there are typographic layout bad boxes (Overfull/Underfull).
+    public var hasBadBoxes: Bool {
+        badBoxCount > 0
+    }
+    
+    /// Deduplicates repeated multi-pass diagnostic message blocks while preserving original order.
+    public static func deduplicateDiagnostics(_ text: String) -> String {
+        guard !text.isEmpty else { return "" }
+        var blocks: [String] = []
+        var currentBlock = ""
+        
+        for line in text.components(separatedBy: .newlines) {
+            let trimmed = line.trimmingCharacters(in: .whitespaces)
+            let isBlockStart = trimmed.starts(with: "warning:") ||
+                               trimmed.starts(with: "error:") ||
+                               trimmed.starts(with: "! ")
+            if isBlockStart && !currentBlock.isEmpty {
+                blocks.append(currentBlock.trimmingCharacters(in: .newlines))
+                currentBlock = ""
+            }
+            if !currentBlock.isEmpty {
+                currentBlock += "\n"
+            }
+            currentBlock += line
+        }
+        if !currentBlock.isEmpty {
+            blocks.append(currentBlock.trimmingCharacters(in: .newlines))
+        }
+        
+        var seen = Set<String>()
+        var uniqueBlocks: [String] = []
+        for block in blocks {
+            if !seen.contains(block) {
+                seen.insert(block)
+                uniqueBlocks.append(block)
+            }
+        }
+        
+        return uniqueBlocks.joined(separator: "\n\n")
+    }
+    
     // UI state
     public var isDiagnosticsDrawerOpen: Bool = false
     public var isMathPaletteOpen: Bool = false
@@ -171,7 +281,7 @@ public final class EditorState {
         self.lastStatus = result.status
         self.lastDurationMs = result.durationMs
         self.lastPasses = result.passes
-        self.diagnostics = result.diagnostics
+        self.diagnostics = EditorState.deduplicateDiagnostics(result.diagnostics)
         self.log = result.log
         self.lastCompiledDate = result.timestamp
         
