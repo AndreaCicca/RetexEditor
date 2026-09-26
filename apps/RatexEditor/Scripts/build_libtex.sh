@@ -6,8 +6,8 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
 ENGINE_DIR="$REPO_ROOT/vendor/ratex"
 
-if [ ! -d "$ENGINE_DIR" ]; then
-    echo "Error: Ratex submodule not found at $ENGINE_DIR" >&2
+if [ ! -f "$ENGINE_DIR/Cargo.toml" ]; then
+    echo "Error: Ratex submodule not found or uninitialized at $ENGINE_DIR" >&2
     echo "Run 'git submodule update --init --recursive' first." >&2
     exit 1
 fi
